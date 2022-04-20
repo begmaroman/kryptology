@@ -41,7 +41,7 @@ func setupDkgRound3ParticipantMap(curve elliptic.Curve, t, n int) map[uint32]*Dk
 		pIds[id].ProofParams = &dealer.ProofParams{}
 		participants[id] = &DkgParticipant{
 			Curve: curve,
-			id:    id,
+			Id:    id,
 			Round: 3,
 			state: &dkgstate{
 				Sk:                   sk,
@@ -249,7 +249,7 @@ func TestDkgRound1Works(t *testing.T) {
 	// Initiate a DKG participant
 	dkgParticipant := &DkgParticipant{
 		Curve: curve,
-		id:    uint32(1),
+		Id:    uint32(1),
 		Round: 1,
 		state: &dkgstate{
 			Threshold: uint32(threshold),
@@ -338,7 +338,7 @@ func TestDkgRound1RepeatCall(t *testing.T) {
 	threshold := 2
 	dkgParticipant := &DkgParticipant{
 		Curve: curve,
-		id:    uint32(1),
+		Id:    uint32(1),
 		Round: 1,
 		state: &dkgstate{
 			Threshold: uint32(threshold),
@@ -390,7 +390,7 @@ func setupDkgRound2Params(curve elliptic.Curve, threshold, total int) (map[uint3
 			Threshold: uint32(threshold),
 			Limit:     uint32(total),
 		},
-		id:    uint32(1),
+		Id:    uint32(1),
 		Round: 2,
 	}
 
@@ -456,7 +456,7 @@ func setupDkgRound2Params(curve elliptic.Curve, threshold, total int) (map[uint3
 			Threshold: uint32(threshold),
 			Limit:     uint32(total),
 		},
-		id:    uint32(2),
+		Id:    uint32(2),
 		Round: 2,
 	}
 
@@ -522,7 +522,7 @@ func setupDkgRound2Params(curve elliptic.Curve, threshold, total int) (map[uint3
 			Threshold: uint32(threshold),
 			Limit:     uint32(total),
 		},
-		id:    uint32(3),
+		Id:    uint32(3),
 		Round: 2,
 	}
 
@@ -910,7 +910,7 @@ func TestDkgFullRoundsWorks(t *testing.T) {
 	for i := 1; i <= total; i++ {
 		dkgParticipants[uint32(i)] = &DkgParticipant{
 			Curve: curve,
-			id:    uint32(i),
+			Id:    uint32(i),
 			Round: 1,
 			state: &dkgstate{
 				Threshold: uint32(threshold),
