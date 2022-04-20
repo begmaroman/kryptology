@@ -4,9 +4,9 @@ import (
 	crand "crypto/rand"
 	"fmt"
 
-	"github.com/coinbase/kryptology/pkg/core/curves"
-	"github.com/coinbase/kryptology/pkg/sharing"
-	"github.com/coinbase/kryptology/pkg/verenc/elgamal"
+	"gitlab.com/neatfusion/chainfusion/kryptology/pkg/core/curves"
+	"gitlab.com/neatfusion/chainfusion/kryptology/pkg/sharing"
+	"gitlab.com/neatfusion/chainfusion/kryptology/pkg/verenc/elgamal"
 )
 
 func main() {

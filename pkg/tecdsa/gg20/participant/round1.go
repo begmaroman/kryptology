@@ -10,10 +10,10 @@ import (
 	"fmt"
 	"math/big"
 
-	"github.com/coinbase/kryptology/internal"
-	"github.com/coinbase/kryptology/pkg/core"
-	"github.com/coinbase/kryptology/pkg/core/curves"
-	"github.com/coinbase/kryptology/pkg/tecdsa/gg20/proof"
+	"gitlab.com/neatfusion/chainfusion/kryptology/internal"
+	"gitlab.com/neatfusion/chainfusion/kryptology/pkg/core"
+	"gitlab.com/neatfusion/chainfusion/kryptology/pkg/core/curves"
+	"gitlab.com/neatfusion/chainfusion/kryptology/pkg/tecdsa/gg20/proof"
 )
 
 // Round1Bcast contains values to be broadcast to all players after the completion of singing round 1

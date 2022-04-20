@@ -4,7 +4,7 @@ import (
 	"github.com/gtank/merlin"
 	"github.com/pkg/errors"
 
-	"github.com/coinbase/kryptology/pkg/core/curves"
+	"gitlab.com/neatfusion/chainfusion/kryptology/pkg/core/curves"
 )
 
 // InnerProductVerifier is the struct used to verify inner product proofs

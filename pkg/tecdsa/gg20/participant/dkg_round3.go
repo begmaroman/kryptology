@@ -11,11 +11,11 @@ import (
 	"fmt"
 	"math/big"
 
-	"github.com/coinbase/kryptology/internal"
-	"github.com/coinbase/kryptology/pkg/core"
-	"github.com/coinbase/kryptology/pkg/core/curves"
-	"github.com/coinbase/kryptology/pkg/paillier"
-	v1 "github.com/coinbase/kryptology/pkg/sharing/v1"
+	"gitlab.com/neatfusion/chainfusion/kryptology/internal"
+	"gitlab.com/neatfusion/chainfusion/kryptology/pkg/core"
+	"gitlab.com/neatfusion/chainfusion/kryptology/pkg/core/curves"
+	"gitlab.com/neatfusion/chainfusion/kryptology/pkg/paillier"
+	v1 "gitlab.com/neatfusion/chainfusion/kryptology/pkg/sharing/v1"
 )
 
 // DkgRound3 computes dkg round 3 as shown in
@@ -31,7 +31,7 @@ func (dp *DkgParticipant) DkgRound3(d map[uint32]*core.Witness, x map[uint32]*v1
 	// Extract the share verifiers from the commitment
 	verifiers := make(map[uint32][]*v1.ShareVerifier, len(d))
 	// NOTE: ID-1 because participant IDs are 1-based
-	verifiers[dp.id] = dp.state.V
+	verifiers[dp.Id] = dp.state.V
 	verifierSize := internal.CalcFieldSize(dp.Curve) * 2
 	feldman, err := v1.NewFeldman(dp.state.Threshold, dp.state.Limit, dp.Curve)
 	if err != nil {
@@ -39,12 +39,12 @@ func (dp *DkgParticipant) DkgRound3(d map[uint32]*core.Witness, x map[uint32]*v1
 	}
 
 	// 1. set xi = xii
-	xi := dp.state.X[dp.id-1]
+	xi := dp.state.X[dp.Id-1]
 
 	// 2. for j = [1,...,n]
 	for j, wit := range d {
 		// 3. if i == j continue
-		if j == dp.id {
+		if j == dp.Id {
 			continue
 		}
 		// 4. Compute [vj0, . . . , vjt] ←Open(Cj , Dj )
@@ -139,7 +139,7 @@ func (dp *DkgParticipant) DkgRound3(d map[uint32]*core.Witness, x map[uint32]*v1
 	psfParams := paillier.PsfProofParams{
 		Curve:     dp.Curve,
 		SecretKey: dp.state.Sk,
-		Pi:        dp.id,
+		Pi:        dp.Id,
 		Y:         y,
 	}
 	psfProof, err := psfParams.Prove()

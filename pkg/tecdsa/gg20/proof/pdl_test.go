@@ -14,11 +14,11 @@ import (
 	"github.com/btcsuite/btcd/btcec"
 	"github.com/stretchr/testify/require"
 
-	tt "github.com/coinbase/kryptology/internal"
-	crypto "github.com/coinbase/kryptology/pkg/core"
-	"github.com/coinbase/kryptology/pkg/core/curves"
-	paillier "github.com/coinbase/kryptology/pkg/paillier"
-	"github.com/coinbase/kryptology/pkg/tecdsa/gg20/dealer"
+	tt "gitlab.com/neatfusion/chainfusion/kryptology/internal"
+	crypto "gitlab.com/neatfusion/chainfusion/kryptology/pkg/core"
+	"gitlab.com/neatfusion/chainfusion/kryptology/pkg/core/curves"
+	paillier "gitlab.com/neatfusion/chainfusion/kryptology/pkg/paillier"
+	"gitlab.com/neatfusion/chainfusion/kryptology/pkg/tecdsa/gg20/dealer"
 )
 
 func makeNewPaillierPublicKey(t *testing.T, n *big.Int) *paillier.PublicKey {

@@ -12,9 +12,9 @@ import (
 	"encoding/hex"
 	"fmt"
 
-	"github.com/coinbase/kryptology/pkg/core/curves"
-	"github.com/coinbase/kryptology/pkg/sharing/v1"
-	"github.com/coinbase/kryptology/pkg/verenc/elgamal"
+	"gitlab.com/neatfusion/chainfusion/kryptology/pkg/core/curves"
+	v1 "gitlab.com/neatfusion/chainfusion/kryptology/pkg/sharing/v1"
+	"gitlab.com/neatfusion/chainfusion/kryptology/pkg/verenc/elgamal"
 )
 
 func main() {

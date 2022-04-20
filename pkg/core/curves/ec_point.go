@@ -14,8 +14,8 @@ import (
 
 	"github.com/btcsuite/btcd/btcec"
 
-	"github.com/coinbase/kryptology/internal"
-	"github.com/coinbase/kryptology/pkg/core"
+	"gitlab.com/neatfusion/chainfusion/kryptology/internal"
+	"gitlab.com/neatfusion/chainfusion/kryptology/pkg/core"
 )
 
 var curveNameToId = map[string]byte{

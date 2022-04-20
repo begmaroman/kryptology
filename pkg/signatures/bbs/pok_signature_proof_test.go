@@ -13,8 +13,8 @@ import (
 	"github.com/gtank/merlin"
 	"github.com/stretchr/testify/require"
 
-	"github.com/coinbase/kryptology/pkg/core/curves"
-	"github.com/coinbase/kryptology/pkg/signatures/common"
+	"gitlab.com/neatfusion/chainfusion/kryptology/pkg/core/curves"
+	"gitlab.com/neatfusion/chainfusion/kryptology/pkg/signatures/common"
 )
 
 func TestPokSignatureProofSomeMessagesRevealed(t *testing.T) {

@@ -13,10 +13,10 @@ import (
 	"fmt"
 	"math/big"
 
-	"github.com/coinbase/kryptology/pkg/core"
-	"github.com/coinbase/kryptology/pkg/core/curves"
-	"github.com/coinbase/kryptology/pkg/paillier"
-	"github.com/coinbase/kryptology/pkg/sharing/v1"
+	"gitlab.com/neatfusion/chainfusion/kryptology/pkg/core"
+	"gitlab.com/neatfusion/chainfusion/kryptology/pkg/core/curves"
+	"gitlab.com/neatfusion/chainfusion/kryptology/pkg/paillier"
+	v1 "gitlab.com/neatfusion/chainfusion/kryptology/pkg/sharing/v1"
 )
 
 // ParticipantData represents all data to be sent to a participant

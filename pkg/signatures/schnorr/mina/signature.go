@@ -9,8 +9,8 @@ package mina
 import (
 	"fmt"
 
-	"github.com/coinbase/kryptology/pkg/core/curves/native/pasta/fp"
-	"github.com/coinbase/kryptology/pkg/core/curves/native/pasta/fq"
+	"gitlab.com/neatfusion/chainfusion/kryptology/pkg/core/curves/native/pasta/fp"
+	"gitlab.com/neatfusion/chainfusion/kryptology/pkg/core/curves/native/pasta/fq"
 )
 
 // Signature is a Mina compatible signature either for payment or delegation

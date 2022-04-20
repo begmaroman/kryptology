@@ -7,7 +7,7 @@ import (
 	"github.com/gtank/merlin"
 	"github.com/stretchr/testify/require"
 
-	"github.com/coinbase/kryptology/pkg/core/curves"
+	"gitlab.com/neatfusion/chainfusion/kryptology/pkg/core/curves"
 )
 
 func TestRangeVerifyHappyPath(t *testing.T) {

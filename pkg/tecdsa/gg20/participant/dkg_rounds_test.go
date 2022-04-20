@@ -14,13 +14,13 @@ import (
 	"github.com/btcsuite/btcd/btcec"
 	"github.com/stretchr/testify/require"
 
-	tt "github.com/coinbase/kryptology/internal"
-	"github.com/coinbase/kryptology/pkg/core"
-	"github.com/coinbase/kryptology/pkg/core/curves"
-	"github.com/coinbase/kryptology/pkg/paillier"
-	v1 "github.com/coinbase/kryptology/pkg/sharing/v1"
-	"github.com/coinbase/kryptology/pkg/tecdsa/gg20/dealer"
-	"github.com/coinbase/kryptology/pkg/tecdsa/gg20/proof"
+	tt "gitlab.com/neatfusion/chainfusion/kryptology/internal"
+	"gitlab.com/neatfusion/chainfusion/kryptology/pkg/core"
+	"gitlab.com/neatfusion/chainfusion/kryptology/pkg/core/curves"
+	"gitlab.com/neatfusion/chainfusion/kryptology/pkg/paillier"
+	v1 "gitlab.com/neatfusion/chainfusion/kryptology/pkg/sharing/v1"
+	"gitlab.com/neatfusion/chainfusion/kryptology/pkg/tecdsa/gg20/dealer"
+	"gitlab.com/neatfusion/chainfusion/kryptology/pkg/tecdsa/gg20/proof"
 )
 
 func setupDkgRound3ParticipantMap(curve elliptic.Curve, t, n int) map[uint32]*DkgParticipant {
@@ -266,7 +266,7 @@ func TestDkgRound1Works(t *testing.T) {
 		t.Errorf("dkgParticipant curve is nil")
 	}
 
-	if dkgParticipant.id == 0 {
+	if dkgParticipant.Id == 0 {
 		t.Errorf("dkgParticipant id is zero")
 	}
 

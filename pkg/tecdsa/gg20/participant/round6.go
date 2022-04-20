@@ -11,9 +11,9 @@ import (
 	"fmt"
 	"math/big"
 
-	"github.com/coinbase/kryptology/pkg/core"
-	"github.com/coinbase/kryptology/pkg/core/curves"
-	"github.com/coinbase/kryptology/pkg/tecdsa/gg20/proof"
+	"gitlab.com/neatfusion/chainfusion/kryptology/pkg/core"
+	"gitlab.com/neatfusion/chainfusion/kryptology/pkg/core/curves"
+	"gitlab.com/neatfusion/chainfusion/kryptology/pkg/tecdsa/gg20/proof"
 )
 
 // Round6FullBcast are the values to be broadcast to the other players
@@ -121,7 +121,7 @@ func (signer *Signer) signRound6Offline(in map[uint32]*Round5Bcast, p2p map[uint
 	}
 	// 6 If V != g, Abort
 	if !v.IsBasePoint() {
-		return fmt.Errorf("V != g")
+		return fmt.Errorf("v != g")
 	}
 	// 7. return r, k, \sigma,
 	// These are already stored

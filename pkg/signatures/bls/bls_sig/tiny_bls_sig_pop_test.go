@@ -12,7 +12,7 @@ import (
 	"math/rand"
 	"testing"
 
-	"github.com/coinbase/kryptology/pkg/core/curves/native/bls12381"
+	"gitlab.com/neatfusion/chainfusion/kryptology/pkg/core/curves/native/bls12381"
 )
 
 const numAggregateG1 = 10

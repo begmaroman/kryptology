@@ -11,9 +11,9 @@ import (
 	"math/big"
 	"sync"
 
-	"github.com/coinbase/kryptology/internal"
-	"github.com/coinbase/kryptology/pkg/core/curves/native"
-	"github.com/coinbase/kryptology/pkg/core/curves/native/bls12381"
+	"gitlab.com/neatfusion/chainfusion/kryptology/internal"
+	"gitlab.com/neatfusion/chainfusion/kryptology/pkg/core/curves/native"
+	"gitlab.com/neatfusion/chainfusion/kryptology/pkg/core/curves/native/bls12381"
 )
 
 var bls12381g1Initonce sync.Once

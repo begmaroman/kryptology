@@ -10,10 +10,10 @@ import (
 	"fmt"
 	"math/big"
 
-	"github.com/coinbase/kryptology/internal"
-	"github.com/coinbase/kryptology/pkg/core/curves"
-	"github.com/coinbase/kryptology/pkg/paillier"
-	"github.com/coinbase/kryptology/pkg/tecdsa/gg20/dealer"
+	"gitlab.com/neatfusion/chainfusion/kryptology/internal"
+	"gitlab.com/neatfusion/chainfusion/kryptology/pkg/core/curves"
+	"gitlab.com/neatfusion/chainfusion/kryptology/pkg/paillier"
+	"gitlab.com/neatfusion/chainfusion/kryptology/pkg/tecdsa/gg20/dealer"
 )
 
 // DkgResult is all the data generated from the DKG
@@ -41,7 +41,7 @@ func (dp *DkgParticipant) DkgRound4(psfProof map[uint32]paillier.PsfProof) (*Dkg
 	}
 	// Make sure all participants sent a proof
 	for id := range dp.state.otherParticipantData {
-		if id == dp.id {
+		if id == dp.Id {
 			continue
 		}
 		if _, ok := psfProof[id]; !ok {
@@ -56,7 +56,7 @@ func (dp *DkgParticipant) DkgRound4(psfProof map[uint32]paillier.PsfProof) (*Dkg
 	// 1. for j = [1,...,n]
 	for id, p := range psfProof {
 		// 2. if i == j, continue
-		if dp.id == id {
+		if dp.Id == id {
 			continue
 		}
 		verifyPsfParams.PublicKey = dp.state.otherParticipantData[id].PublicKey

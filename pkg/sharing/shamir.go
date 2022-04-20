@@ -16,7 +16,7 @@ import (
 	"fmt"
 	"io"
 
-	"github.com/coinbase/kryptology/pkg/core/curves"
+	"gitlab.com/neatfusion/chainfusion/kryptology/pkg/core/curves"
 )
 
 type ShamirShare struct {

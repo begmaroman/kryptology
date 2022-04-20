@@ -10,7 +10,7 @@ import (
 	"crypto/sha512"
 	"strconv"
 
-	"github.com/coinbase/kryptology/pkg/core/curves"
+	"gitlab.com/neatfusion/chainfusion/kryptology/pkg/core/curves"
 )
 
 // GeAdd returns the sum of two public keys, a and b.

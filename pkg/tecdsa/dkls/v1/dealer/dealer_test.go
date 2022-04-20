@@ -6,9 +6,9 @@ import (
 	"github.com/stretchr/testify/require"
 	"golang.org/x/crypto/sha3"
 
-	"github.com/coinbase/kryptology/pkg/core/curves"
-	"github.com/coinbase/kryptology/pkg/tecdsa/dkls/v1/dealer"
-	"github.com/coinbase/kryptology/pkg/tecdsa/dkls/v1/sign"
+	"gitlab.com/neatfusion/chainfusion/kryptology/pkg/core/curves"
+	"gitlab.com/neatfusion/chainfusion/kryptology/pkg/tecdsa/dkls/v1/dealer"
+	"gitlab.com/neatfusion/chainfusion/kryptology/pkg/tecdsa/dkls/v1/sign"
 )
 
 func Test_DealerCanGenerateKeysThatSign(t *testing.T) {

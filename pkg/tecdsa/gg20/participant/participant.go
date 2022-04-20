@@ -13,12 +13,12 @@ import (
 	"math/big"
 	"reflect"
 
-	"github.com/coinbase/kryptology/internal"
-	"github.com/coinbase/kryptology/pkg/core"
-	"github.com/coinbase/kryptology/pkg/core/curves"
-	"github.com/coinbase/kryptology/pkg/paillier"
-	v1 "github.com/coinbase/kryptology/pkg/sharing/v1"
-	"github.com/coinbase/kryptology/pkg/tecdsa/gg20/dealer"
+	"gitlab.com/neatfusion/chainfusion/kryptology/internal"
+	"gitlab.com/neatfusion/chainfusion/kryptology/pkg/core"
+	"gitlab.com/neatfusion/chainfusion/kryptology/pkg/core/curves"
+	"gitlab.com/neatfusion/chainfusion/kryptology/pkg/paillier"
+	v1 "gitlab.com/neatfusion/chainfusion/kryptology/pkg/sharing/v1"
+	"gitlab.com/neatfusion/chainfusion/kryptology/pkg/tecdsa/gg20/dealer"
 )
 
 // Participant is a tECDSA player that receives information from a trusted dealer
@@ -301,6 +301,15 @@ type DkgParticipant struct {
 	state *dkgstate
 	Id    uint32
 	Round uint
+}
+
+func NewDkgParticipant(curve elliptic.Curve, id uint32) *DkgParticipant {
+	return &DkgParticipant{
+		Curve: curve,
+		state: new(dkgstate),
+		Id:    id,
+		Round: 1,
+	}
 }
 
 type dkgParticipantData struct {

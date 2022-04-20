@@ -9,12 +9,12 @@ package participant
 import (
 	"fmt"
 
-	"github.com/coinbase/kryptology/internal"
-	"github.com/coinbase/kryptology/pkg/core"
-	"github.com/coinbase/kryptology/pkg/paillier"
-	v1 "github.com/coinbase/kryptology/pkg/sharing/v1"
-	"github.com/coinbase/kryptology/pkg/tecdsa/gg20/dealer"
-	"github.com/coinbase/kryptology/pkg/tecdsa/gg20/proof"
+	"gitlab.com/neatfusion/chainfusion/kryptology/internal"
+	"gitlab.com/neatfusion/chainfusion/kryptology/pkg/core"
+	"gitlab.com/neatfusion/chainfusion/kryptology/pkg/paillier"
+	v1 "gitlab.com/neatfusion/chainfusion/kryptology/pkg/sharing/v1"
+	"gitlab.com/neatfusion/chainfusion/kryptology/pkg/tecdsa/gg20/dealer"
+	"gitlab.com/neatfusion/chainfusion/kryptology/pkg/tecdsa/gg20/proof"
 )
 
 // DkgRound2Bcast contains value that will be echo broadcast to all other players.
@@ -46,7 +46,7 @@ func (dp *DkgParticipant) DkgRound2(params map[uint32]*DkgRound1Bcast) (*DkgRoun
 		if params[id] == nil {
 			continue
 		}
-		if id == dp.id {
+		if id == dp.Id {
 			continue
 		}
 		cnt++
@@ -72,7 +72,7 @@ func (dp *DkgParticipant) DkgRound2(params map[uint32]*DkgRound1Bcast) (*DkgRoun
 	expKeySize := 2 * paillier.PaillierPrimeBits
 	for id, param := range params {
 		// If i = j, Continue
-		if id == dp.id {
+		if id == dp.Id {
 			continue
 		}
 
@@ -105,10 +105,10 @@ func (dp *DkgParticipant) DkgRound2(params map[uint32]*DkgRound1Bcast) (*DkgRoun
 
 		// P2PSend xij to player Pj
 		if dp.state.X == nil || dp.state.X[id-1] == nil {
-			return nil, nil, fmt.Errorf("Missing Shamir share to P2P send")
+			return nil, nil, fmt.Errorf("missing Shamir share to P2P send")
 		}
 		p2PSend[id] = &DkgRound2P2PSend{
-			xij: dp.state.X[id-1],
+			Xij: dp.state.X[id-1],
 		}
 
 		// Store other parties data

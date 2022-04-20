@@ -10,7 +10,7 @@ import (
 	"errors"
 	"fmt"
 
-	"github.com/coinbase/kryptology/pkg/core/curves"
+	"gitlab.com/neatfusion/chainfusion/kryptology/pkg/core/curves"
 )
 
 // PublicKey is a BBS+ verification key

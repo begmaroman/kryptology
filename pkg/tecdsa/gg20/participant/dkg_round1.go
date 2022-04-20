@@ -10,11 +10,11 @@ import (
 	"fmt"
 	"math/big"
 
-	"github.com/coinbase/kryptology/internal"
-	"github.com/coinbase/kryptology/pkg/core"
-	"github.com/coinbase/kryptology/pkg/paillier"
-	v1 "github.com/coinbase/kryptology/pkg/sharing/v1"
-	"github.com/coinbase/kryptology/pkg/tecdsa/gg20/proof"
+	"gitlab.com/neatfusion/chainfusion/kryptology/internal"
+	"gitlab.com/neatfusion/chainfusion/kryptology/pkg/core"
+	"gitlab.com/neatfusion/chainfusion/kryptology/pkg/paillier"
+	v1 "gitlab.com/neatfusion/chainfusion/kryptology/pkg/sharing/v1"
+	"gitlab.com/neatfusion/chainfusion/kryptology/pkg/tecdsa/gg20/proof"
 )
 
 // DkgRound1Bcast contains values to be broadcast to all players after the completion of DKG round 1
@@ -183,6 +183,6 @@ func (dp *DkgParticipant) DkgRound1(threshold, total uint32) (*DkgRound1Bcast, e
 
 	// Step 15: EchoBroadcast Ci, pki, tildeNi, h1i, h2i, proof1, proof2
 	return &DkgRound1Bcast{
-		dp.id, Ci, pki, h1i, h2i, tildeNi, proof1, proof2,
+		dp.Id, Ci, pki, h1i, h2i, tildeNi, proof1, proof2,
 	}, nil
 }

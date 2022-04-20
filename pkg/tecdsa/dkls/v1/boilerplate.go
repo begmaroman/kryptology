@@ -5,11 +5,11 @@ import (
 
 	"github.com/pkg/errors"
 
-	"github.com/coinbase/kryptology/pkg/core/curves"
-	"github.com/coinbase/kryptology/pkg/core/protocol"
-	"github.com/coinbase/kryptology/pkg/tecdsa/dkls/v1/dkg"
-	"github.com/coinbase/kryptology/pkg/tecdsa/dkls/v1/refresh"
-	"github.com/coinbase/kryptology/pkg/tecdsa/dkls/v1/sign"
+	"gitlab.com/neatfusion/chainfusion/kryptology/pkg/core/curves"
+	"gitlab.com/neatfusion/chainfusion/kryptology/pkg/core/protocol"
+	"gitlab.com/neatfusion/chainfusion/kryptology/pkg/tecdsa/dkls/v1/dkg"
+	"gitlab.com/neatfusion/chainfusion/kryptology/pkg/tecdsa/dkls/v1/refresh"
+	"gitlab.com/neatfusion/chainfusion/kryptology/pkg/tecdsa/dkls/v1/sign"
 )
 
 // AliceDkg DKLS DKG implementation that satisfies the protocol iterator interface.

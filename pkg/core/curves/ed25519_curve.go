@@ -19,7 +19,7 @@ import (
 	"github.com/bwesterb/go-ristretto"
 	ed "github.com/bwesterb/go-ristretto/edwards25519"
 
-	"github.com/coinbase/kryptology/internal"
+	"gitlab.com/neatfusion/chainfusion/kryptology/internal"
 )
 
 type ScalarEd25519 struct {

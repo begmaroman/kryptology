@@ -13,11 +13,11 @@ import (
 	"math/big"
 	"sync"
 
-	"github.com/coinbase/kryptology/internal"
-	"github.com/coinbase/kryptology/pkg/core/curves/native"
-	p256n "github.com/coinbase/kryptology/pkg/core/curves/native/p256"
-	"github.com/coinbase/kryptology/pkg/core/curves/native/p256/fp"
-	"github.com/coinbase/kryptology/pkg/core/curves/native/p256/fq"
+	"gitlab.com/neatfusion/chainfusion/kryptology/internal"
+	"gitlab.com/neatfusion/chainfusion/kryptology/pkg/core/curves/native"
+	p256n "gitlab.com/neatfusion/chainfusion/kryptology/pkg/core/curves/native/p256"
+	"gitlab.com/neatfusion/chainfusion/kryptology/pkg/core/curves/native/p256/fp"
+	"gitlab.com/neatfusion/chainfusion/kryptology/pkg/core/curves/native/p256/fq"
 )
 
 var oldP256InitOnce sync.Once

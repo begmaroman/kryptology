@@ -10,10 +10,10 @@ import (
 	"flag"
 	"fmt"
 
-	"github.com/coinbase/kryptology/pkg/core/curves"
-	dkg "github.com/coinbase/kryptology/pkg/dkg/gennaro"
-	sharing "github.com/coinbase/kryptology/pkg/sharing/v1"
-	bls "github.com/coinbase/kryptology/pkg/signatures/bls/bls_sig"
+	"gitlab.com/neatfusion/chainfusion/kryptology/pkg/core/curves"
+	dkg "gitlab.com/neatfusion/chainfusion/kryptology/pkg/dkg/gennaro"
+	sharing "gitlab.com/neatfusion/chainfusion/kryptology/pkg/sharing/v1"
+	bls "gitlab.com/neatfusion/chainfusion/kryptology/pkg/signatures/bls/bls_sig"
 )
 
 const LIMIT = 4
