@@ -40,7 +40,7 @@ func (dp *DkgParticipant) DkgRound4(psfProof map[uint32]paillier.PsfProof) (*Dkg
 		return nil, internal.ErrInvalidRound
 	}
 	// Make sure all participants sent a proof
-	for id := range dp.state.otherParticipantData {
+	for id := range dp.state.OtherParticipantData {
 		if id == dp.Id {
 			continue
 		}
@@ -59,7 +59,7 @@ func (dp *DkgParticipant) DkgRound4(psfProof map[uint32]paillier.PsfProof) (*Dkg
 		if dp.Id == id {
 			continue
 		}
-		verifyPsfParams.PublicKey = dp.state.otherParticipantData[id].PublicKey
+		verifyPsfParams.PublicKey = dp.state.OtherParticipantData[id].PublicKey
 		verifyPsfParams.Pi = id
 		// 3. if VerifyPSF(\pi_j, pk_j.N, y, g, q, pj) = false, abort
 		if err := p.Verify(&verifyPsfParams); err != nil {
@@ -70,7 +70,7 @@ func (dp *DkgParticipant) DkgRound4(psfProof map[uint32]paillier.PsfProof) (*Dkg
 	// Return paillier public keys and proof params
 	// from all participants
 	participantData := make(map[uint32]*DkgParticipantData)
-	for id, data := range dp.state.otherParticipantData {
+	for id, data := range dp.state.OtherParticipantData {
 		participantData[id] = &DkgParticipantData{
 			PublicKey:   data.PublicKey,
 			ProofParams: data.ProofParams,

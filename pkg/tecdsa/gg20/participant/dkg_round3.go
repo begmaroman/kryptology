@@ -48,7 +48,7 @@ func (dp *DkgParticipant) DkgRound3(d map[uint32]*core.Witness, x map[uint32]*v1
 			continue
 		}
 		// 4. Compute [vj0, . . . , vjt] ←Open(Cj , Dj )
-		if ok, err := core.Open(dp.state.otherParticipantData[j].Commitment, *d[j]); !ok {
+		if ok, err := core.Open(dp.state.OtherParticipantData[j].Commitment, *d[j]); !ok {
 			if err != nil {
 				return nil, err
 			} else {

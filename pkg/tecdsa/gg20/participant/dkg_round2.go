@@ -66,7 +66,7 @@ func (dp *DkgParticipant) DkgRound2(params map[uint32]*DkgRound1Bcast) (*DkgRoun
 		Curve: dp.Curve,
 	}
 
-	dp.state.otherParticipantData = make(map[uint32]*dkgParticipantData)
+	dp.state.OtherParticipantData = make(map[uint32]*dkgParticipantData)
 
 	// For j = [1...n]
 	expKeySize := 2 * paillier.PaillierPrimeBits
@@ -112,7 +112,7 @@ func (dp *DkgParticipant) DkgRound2(params map[uint32]*DkgRound1Bcast) (*DkgRoun
 		}
 
 		// Store other parties data
-		dp.state.otherParticipantData[id] = &dkgParticipantData{
+		dp.state.OtherParticipantData[id] = &dkgParticipantData{
 			PublicKey:  param.Pki,
 			Commitment: param.Ci,
 			ProofParams: &dealer.ProofParams{

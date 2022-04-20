@@ -298,7 +298,7 @@ func makeXMap(curve elliptic.Curve, publicSharesMap map[uint32]*dealer.PublicSha
 // DkgParticipant is a DKG player that contains information needed to perform DKG rounds and finally get info for signing rounds.
 type DkgParticipant struct {
 	Curve elliptic.Curve
-	state *dkgstate
+	state *DkgState
 	Id    uint32
 	Round uint
 }
@@ -306,7 +306,7 @@ type DkgParticipant struct {
 func NewDkgParticipant(curve elliptic.Curve, id uint32) *DkgParticipant {
 	return &DkgParticipant{
 		Curve: curve,
-		state: new(dkgstate),
+		state: new(DkgState),
 		Id:    id,
 		Round: 1,
 	}
@@ -319,7 +319,7 @@ type dkgParticipantData struct {
 }
 
 // dkgstate encapsulates all the values used in the dkg rounds state machine
-type dkgstate struct {
+type DkgState struct {
 	// Round 1 variables
 	D  *core.Witness
 	Sk *paillier.SecretKey
@@ -335,7 +335,7 @@ type dkgstate struct {
 	Threshold uint32
 	Limit     uint32
 	// Commitments and paillier public keys received from other participants
-	otherParticipantData map[uint32]*dkgParticipantData
+	OtherParticipantData map[uint32]*dkgParticipantData
 	// xi returned from Round 3
 	Xi *big.Int
 	// X1,...,Xn returned from Round 3

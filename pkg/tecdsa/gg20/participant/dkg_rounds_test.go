@@ -43,14 +43,14 @@ func setupDkgRound3ParticipantMap(curve elliptic.Curve, t, n int) map[uint32]*Dk
 			Curve: curve,
 			Id:    id,
 			Round: 3,
-			state: &dkgstate{
+			state: &DkgState{
 				Sk:                   sk,
 				Pk:                   &sk.PublicKey,
 				Threshold:            uint32(t),
 				Limit:                uint32(n),
 				X:                    x,
 				V:                    v,
-				otherParticipantData: pIds,
+				OtherParticipantData: pIds,
 			},
 		}
 		prime1Idx++
@@ -67,7 +67,7 @@ func setupDkgRound3Commitments(t *testing.T, participants map[uint32]*DkgPartici
 	decommitments := make(map[uint32]*core.Witness, playerCnt)
 	for id, p := range participants {
 		commitments[id], decommitments[id], err = commitVerifiers(participants[id].state.V)
-		p.state.otherParticipantData[id].Commitment = commitments[id]
+		p.state.OtherParticipantData[id].Commitment = commitments[id]
 		require.NoError(t, err)
 	}
 
@@ -251,7 +251,7 @@ func TestDkgRound1Works(t *testing.T) {
 		Curve: curve,
 		Id:    uint32(1),
 		Round: 1,
-		state: &dkgstate{
+		state: &DkgState{
 			Threshold: uint32(threshold),
 			Limit:     uint32(total),
 		},
@@ -340,7 +340,7 @@ func TestDkgRound1RepeatCall(t *testing.T) {
 		Curve: curve,
 		Id:    uint32(1),
 		Round: 1,
-		state: &dkgstate{
+		state: &DkgState{
 			Threshold: uint32(threshold),
 			Limit:     uint32(total),
 		},
@@ -378,7 +378,7 @@ func setupDkgRound2Params(curve elliptic.Curve, threshold, total int) (map[uint3
 
 	dkgParticipants[1] = &DkgParticipant{
 		Curve: curve,
-		state: &dkgstate{
+		state: &DkgState{
 			D:         d1,
 			Sk:        sk1,
 			Pk:        pk1,
@@ -444,7 +444,7 @@ func setupDkgRound2Params(curve elliptic.Curve, threshold, total int) (map[uint3
 
 	dkgParticipants[2] = &DkgParticipant{
 		Curve: curve,
-		state: &dkgstate{
+		state: &DkgState{
 			D:         d2,
 			Sk:        sk2,
 			Pk:        pk2,
@@ -510,7 +510,7 @@ func setupDkgRound2Params(curve elliptic.Curve, threshold, total int) (map[uint3
 
 	dkgParticipants[3] = &DkgParticipant{
 		Curve: curve,
-		state: &dkgstate{
+		state: &DkgState{
 			D:         d3,
 			Sk:        sk3,
 			Pk:        pk3,
@@ -912,7 +912,7 @@ func TestDkgFullRoundsWorks(t *testing.T) {
 			Curve: curve,
 			Id:    uint32(i),
 			Round: 1,
-			state: &dkgstate{
+			state: &DkgState{
 				Threshold: uint32(threshold),
 				Limit:     uint32(total),
 			},
@@ -997,12 +997,12 @@ func TestDkgFullRoundsWorks(t *testing.T) {
 
 	// Testing validity of paillier public key and secret key
 	// Check every participant receives equal paillier public keys from other parties
-	require.Equal(t, dkgParticipants[1].state.otherParticipantData[2].PublicKey, dkgParticipants[3].state.otherParticipantData[2].PublicKey)
-	require.Equal(t, dkgParticipants[1].state.otherParticipantData[3].PublicKey, dkgParticipants[2].state.otherParticipantData[3].PublicKey)
-	require.Equal(t, dkgParticipants[2].state.otherParticipantData[1].PublicKey, dkgParticipants[3].state.otherParticipantData[1].PublicKey)
+	require.Equal(t, dkgParticipants[1].state.OtherParticipantData[2].PublicKey, dkgParticipants[3].state.OtherParticipantData[2].PublicKey)
+	require.Equal(t, dkgParticipants[1].state.OtherParticipantData[3].PublicKey, dkgParticipants[2].state.OtherParticipantData[3].PublicKey)
+	require.Equal(t, dkgParticipants[2].state.OtherParticipantData[1].PublicKey, dkgParticipants[3].state.OtherParticipantData[1].PublicKey)
 
 	// Testing validity of paillier keys of participant 1
-	pk1 := dkgParticipants[2].state.otherParticipantData[1].PublicKey
+	pk1 := dkgParticipants[2].state.OtherParticipantData[1].PublicKey
 	sk1 := dkgParticipants[1].state.Sk
 	msg1, _ := core.Rand(pk1.N)
 	c1, r1, err := pk1.Encrypt(msg1)
@@ -1013,7 +1013,7 @@ func TestDkgFullRoundsWorks(t *testing.T) {
 	require.NoError(t, err)
 
 	// Testing validity of paillier keys of participant 2
-	pk2 := dkgParticipants[1].state.otherParticipantData[2].PublicKey
+	pk2 := dkgParticipants[1].state.OtherParticipantData[2].PublicKey
 	sk2 := dkgParticipants[2].state.Sk
 	msg, _ := core.Rand(pk2.N)
 	c, r, err := pk2.Encrypt(msg)
@@ -1024,7 +1024,7 @@ func TestDkgFullRoundsWorks(t *testing.T) {
 	require.NoError(t, err)
 
 	// Testing validity of paillier keys of participant 3
-	pk3 := dkgParticipants[1].state.otherParticipantData[3].PublicKey
+	pk3 := dkgParticipants[1].state.OtherParticipantData[3].PublicKey
 	sk3 := dkgParticipants[3].state.Sk
 	msg3, _ := core.Rand(pk3.N)
 	c3, r3, err := pk3.Encrypt(msg3)
