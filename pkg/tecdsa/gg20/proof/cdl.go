@@ -8,7 +8,6 @@ package proof
 
 import (
 	"crypto/elliptic"
-	"encoding/json"
 	"fmt"
 	"math/big"
 
@@ -28,32 +27,7 @@ type CdlProofParams struct {
 }
 
 type CdlProof struct {
-	u, s []*big.Int
-}
-
-// U, S are small u, s in JSON format
-type cdlProofJSON struct {
 	U, S []*big.Int
-}
-
-func (cdlp CdlProof) MarshalJSON() ([]byte, error) {
-	data := cdlProofJSON{
-		U: cdlp.u,
-		S: cdlp.s,
-	}
-	return json.Marshal(data)
-}
-
-func (cdlp *CdlProof) UnmarshalJSON(bytes []byte) error {
-	data := new(cdlProofJSON)
-
-	err := json.Unmarshal(bytes, &data)
-	if err != nil {
-		return err
-	}
-	cdlp.u = data.U
-	cdlp.s = data.S
-	return nil
 }
 
 type CdlVerifyParams struct {
@@ -118,7 +92,7 @@ func (p CdlProofParams) Prove() (*CdlProof, error) {
 // Verify checks the CdlProof as specified in
 // [spec] §10.fig 16
 func (p CdlProof) Verify(cv *CdlVerifyParams) error {
-	if p.u == nil || p.s == nil {
+	if p.U == nil || p.S == nil {
 		return fmt.Errorf("proof values cannot be nil")
 	}
 
@@ -143,7 +117,7 @@ func (p CdlProof) Verify(cv *CdlVerifyParams) error {
 	fsInput[3] = cv.N
 	fsInput[4] = cv.H1
 	fsInput[5] = cv.H2
-	copy(fsInput[6:], p.u)
+	copy(fsInput[6:], p.U)
 	challenge, err := mod.FiatShamir(fsInput...)
 	if err != nil {
 		return err
@@ -154,8 +128,8 @@ func (p CdlProof) Verify(cv *CdlVerifyParams) error {
 	// Step 3-4
 	for i := 0; i < ell; i++ {
 		ei := big.NewInt(int64(e.Bit(i)))
-		left := new(big.Int).Exp(cv.H1, p.s[i], cv.N)
-		right := new(big.Int).Mod(new(big.Int).Mul(p.u[i], new(big.Int).Exp(cv.H2, ei, cv.N)), cv.N)
+		left := new(big.Int).Exp(cv.H1, p.S[i], cv.N)
+		right := new(big.Int).Mod(new(big.Int).Mul(p.U[i], new(big.Int).Exp(cv.H2, ei, cv.N)), cv.N)
 		if left.Cmp(right) != 0 {
 			return fmt.Errorf("h1^si != ui*h2^ei")
 		}

@@ -132,18 +132,18 @@ func TestCdlProofTampered(t *testing.T) {
 			N:     pp.N,
 		}
 
-		proof.u[0].Add(proof.u[0], mod.One)
+		proof.U[0].Add(proof.U[0], mod.One)
 		if err := proof.Verify(cv); err == nil {
 			t.Errorf("Expected CdlVerify to fail but succeeded")
 		}
 
-		proof.s[0].Add(proof.s[0], mod.One)
+		proof.S[0].Add(proof.S[0], mod.One)
 		if err := proof.Verify(cv); err == nil {
 			t.Errorf("Expected CdlVerify to fail but succeeded")
 		}
 
-		proof.u[0].Sub(proof.u[0], mod.One)
-		proof.s[0].Sub(proof.s[0], mod.One)
+		proof.U[0].Sub(proof.U[0], mod.One)
+		proof.S[0].Sub(proof.S[0], mod.One)
 		cv.H1.Add(cv.H1, mod.One).Mod(cv.H1, cv.N)
 		if err := proof.Verify(cv); err == nil {
 			t.Errorf("Expected CdlVerify to fail but succeeded")
@@ -244,7 +244,7 @@ func TestCdlProofInvalidParams(t *testing.T) {
 // Numbers in array u and s are randomly generated via a side program
 func TestMarshalJsonCdlProof(t *testing.T) {
 	test := CdlProof{
-		u: []*big.Int{
+		U: []*big.Int{
 			bi(31), bi(38), bi(77), bi(43), bi(27),
 			bi(42), bi(56), bi(36), bi(45), bi(20),
 			bi(81), bi(31), bi(69), bi(36), bi(35),
@@ -272,7 +272,7 @@ func TestMarshalJsonCdlProof(t *testing.T) {
 			bi(23), bi(39), bi(92), bi(32), bi(78),
 			bi(96), bi(72), bi(23),
 		},
-		s: []*big.Int{
+		S: []*big.Int{
 			bi(58), bi(85), bi(46), bi(71), bi(67),
 			bi(64), bi(15), bi(98), bi(47), bi(22),
 			bi(82), bi(26), bi(40), bi(76), bi(74),
@@ -310,8 +310,8 @@ func TestMarshalJsonCdlProof(t *testing.T) {
 	err = json.Unmarshal(testJSON, unmarshaled)
 	require.NoError(t, err)
 
-	require.Equal(t, test.u, unmarshaled.u)
-	require.Equal(t, test.s, unmarshaled.s)
+	require.Equal(t, test.U, unmarshaled.U)
+	require.Equal(t, test.S, unmarshaled.S)
 }
 
 // Set SafePrimes P, Q to 100-bit length instead of 1024-bit length to test small modulus.
