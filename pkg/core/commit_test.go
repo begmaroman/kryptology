@@ -138,8 +138,8 @@ func TestCommmitNonceIsExpectedLength(t *testing.T) {
 
 	// Check the pre-computed nonces
 	for _, entry := range testResults {
-		if len(entry.decommit.r) != expLen {
-			t.Errorf("nonce is not expected length: %v != %v", len(entry.decommit.r), expLen)
+		if len(entry.decommit.R) != expLen {
+			t.Errorf("nonce is not expected length: %v != %v", len(entry.decommit.R), expLen)
 		}
 	}
 }
@@ -159,10 +159,10 @@ func TestCommmitProducesDistinctNonces(t *testing.T) {
 		}
 
 		// Ensure each nonce is unique
-		if seen[dee.r] {
-			t.Errorf("duplicate nonce found: %v", dee.r)
+		if seen[dee.R] {
+			t.Errorf("duplicate nonce found: %v", dee.R)
 		}
-		seen[dee.r] = true
+		seen[dee.R] = true
 	}
 }
 
@@ -189,7 +189,7 @@ func TestOpenOnModifiedNonce(t *testing.T) {
 		dʹ := copyWitness(entry.decommit)
 
 		// Modify the nonce
-		dʹ.r[0] ^= 0x40
+		dʹ.R[0] ^= 0x40
 
 		// Open and check for failure
 		ok, err := Open(entry.commit, *dʹ)
@@ -202,17 +202,17 @@ func TestOpenOnZeroPrefixNonce(t *testing.T) {
 		dʹ := copyWitness(entry.decommit)
 
 		// Modify the nonce
-		dʹ.r[0] = 0x00
-		dʹ.r[1] = 0x00
-		dʹ.r[2] = 0x00
-		dʹ.r[3] = 0x00
-		dʹ.r[4] = 0x00
-		dʹ.r[5] = 0x00
-		dʹ.r[6] = 0x00
-		dʹ.r[7] = 0x00
-		dʹ.r[8] = 0x00
-		dʹ.r[9] = 0x00
-		dʹ.r[10] = 0x00
+		dʹ.R[0] = 0x00
+		dʹ.R[1] = 0x00
+		dʹ.R[2] = 0x00
+		dʹ.R[3] = 0x00
+		dʹ.R[4] = 0x00
+		dʹ.R[5] = 0x00
+		dʹ.R[6] = 0x00
+		dʹ.R[7] = 0x00
+		dʹ.R[8] = 0x00
+		dʹ.R[9] = 0x00
+		dʹ.R[10] = 0x00
 
 		// Open and check for failure
 		ok, err := Open(entry.commit, *dʹ)
@@ -226,7 +226,7 @@ func copyWitness(d *Witness) *Witness {
 	var r [Size]byte
 
 	copy(msg, d.Msg)
-	copy(r[:], d.r[:])
+	copy(r[:], d.R[:])
 	return &Witness{msg, r}
 }
 
@@ -355,7 +355,7 @@ func TestWitnessMarshalRoundTrip(t *testing.T) {
 	actual := &Witness{}
 	require.NoError(t, json.Unmarshal(jsonBytes, actual))
 	require.Equal(t, expected.Msg, actual.Msg)
-	require.Equal(t, expected.r, actual.r)
+	require.Equal(t, expected.R, actual.R)
 }
 
 // Tests that marshal-unmarshal is the identity function

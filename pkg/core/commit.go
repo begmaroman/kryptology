@@ -11,7 +11,6 @@ import (
 	crand "crypto/rand"
 	"crypto/sha256"
 	"crypto/subtle"
-	"encoding/json"
 	"fmt"
 	"hash"
 )
@@ -29,32 +28,9 @@ type (
 	// committed message hasn't been altered by later information.
 	Witness struct {
 		Msg []byte
-		r   [Size]byte
-	}
-
-	// witnessJSON is used for un/marshaling.
-	witnessJSON struct {
-		Msg []byte
 		R   [Size]byte
 	}
 )
-
-// MarshalJSON encodes Witness in JSON
-func (w Witness) MarshalJSON() ([]byte, error) {
-	return json.Marshal(witnessJSON{w.Msg, w.r})
-}
-
-// UnmarshalJSON decodes JSON into a Witness struct
-func (w *Witness) UnmarshalJSON(data []byte) error {
-	witness := &witnessJSON{}
-	err := json.Unmarshal(data, witness)
-	if err != nil {
-		return err
-	}
-	w.Msg = witness.Msg
-	w.r = witness.R
-	return nil
-}
 
 // Commit to a given message. Uses SHA256 as the hash function.
 func Commit(msg []byte) (Commitment, *Witness, error) {
@@ -62,7 +38,7 @@ func Commit(msg []byte) (Commitment, *Witness, error) {
 	d := Witness{msg, [Size]byte{}}
 
 	// Generate a random nonce of the required length
-	n, err := crand.Read(d.r[:])
+	n, err := crand.Read(d.R[:])
 	// Ensure no errors retrieving nonce
 	if err != nil {
 		return nil, nil, err
@@ -73,7 +49,7 @@ func Commit(msg []byte) (Commitment, *Witness, error) {
 		return nil, nil, fmt.Errorf("failed to read %v bytes from crypto/rand: received %v bytes", Size, n)
 	}
 	// Compute the commitment: HMAC(Sha2, msg, key)
-	c, err := ComputeHMAC(sha256.New, msg, d.r[:])
+	c, err := ComputeHMAC(sha256.New, msg, d.R[:])
 	if err != nil {
 		return nil, nil, err
 	}
@@ -89,7 +65,7 @@ func Open(c Commitment, d Witness) (bool, error) {
 	}
 
 	// Re-compute the commitment: HMAC(Sha2, msg, key)
-	cʹ, err := ComputeHMAC(sha256.New, d.Msg, d.r[:])
+	cʹ, err := ComputeHMAC(sha256.New, d.Msg, d.R[:])
 	if err != nil {
 		return false, err
 	}
