@@ -51,7 +51,7 @@ func (dp *DkgParticipant) DkgRound2(params map[uint32]*DkgRound1Bcast) (*DkgRoun
 		}
 		cnt++
 	}
-	if uint32(cnt) != dp.state.Limit-1 {
+	if uint32(cnt) != dp.State.Limit-1 {
 		return nil, nil, internal.ErrIncorrectCount
 	}
 
@@ -66,7 +66,7 @@ func (dp *DkgParticipant) DkgRound2(params map[uint32]*DkgRound1Bcast) (*DkgRoun
 		Curve: dp.Curve,
 	}
 
-	dp.state.OtherParticipantData = make(map[uint32]*dkgParticipantData)
+	dp.State.OtherParticipantData = make(map[uint32]*dkgParticipantData)
 
 	// For j = [1...n]
 	expKeySize := 2 * paillier.PaillierPrimeBits
@@ -104,15 +104,15 @@ func (dp *DkgParticipant) DkgRound2(params map[uint32]*DkgRound1Bcast) (*DkgRoun
 		}
 
 		// P2PSend xij to player Pj
-		if dp.state.X == nil || dp.state.X[id-1] == nil {
+		if dp.State.X == nil || dp.State.X[id-1] == nil {
 			return nil, nil, fmt.Errorf("missing Shamir share to P2P send")
 		}
 		p2PSend[id] = &DkgRound2P2PSend{
-			Xij: dp.state.X[id-1],
+			Xij: dp.State.X[id-1],
 		}
 
 		// Store other parties data
-		dp.state.OtherParticipantData[id] = &dkgParticipantData{
+		dp.State.OtherParticipantData[id] = &dkgParticipantData{
 			PublicKey:  param.Pki,
 			Commitment: param.Ci,
 			ProofParams: &dealer.ProofParams{
@@ -128,7 +128,7 @@ func (dp *DkgParticipant) DkgRound2(params map[uint32]*DkgRound1Bcast) (*DkgRoun
 
 	// EchoBroadcast Di to all other players. Also return it with P2PSend
 	return &DkgRound2Bcast{
-		Di: dp.state.D,
+		Di: dp.State.D,
 	}, p2PSend, nil
 
 }

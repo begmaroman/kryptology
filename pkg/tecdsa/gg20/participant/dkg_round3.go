@@ -31,15 +31,15 @@ func (dp *DkgParticipant) DkgRound3(d map[uint32]*core.Witness, x map[uint32]*v1
 	// Extract the share verifiers from the commitment
 	verifiers := make(map[uint32][]*v1.ShareVerifier, len(d))
 	// NOTE: ID-1 because participant IDs are 1-based
-	verifiers[dp.Id] = dp.state.V
+	verifiers[dp.Id] = dp.State.V
 	verifierSize := internal.CalcFieldSize(dp.Curve) * 2
-	feldman, err := v1.NewFeldman(dp.state.Threshold, dp.state.Limit, dp.Curve)
+	feldman, err := v1.NewFeldman(dp.State.Threshold, dp.State.Limit, dp.Curve)
 	if err != nil {
 		return nil, err
 	}
 
 	// 1. set xi = xii
-	xi := dp.state.X[dp.Id-1]
+	xi := dp.State.X[dp.Id-1]
 
 	// 2. for j = [1,...,n]
 	for j, wit := range d {
@@ -48,7 +48,7 @@ func (dp *DkgParticipant) DkgRound3(d map[uint32]*core.Witness, x map[uint32]*v1
 			continue
 		}
 		// 4. Compute [vj0, . . . , vjt] ←Open(Cj , Dj )
-		if ok, err := core.Open(dp.state.OtherParticipantData[j].Commitment, *d[j]); !ok {
+		if ok, err := core.Open(dp.State.OtherParticipantData[j].Commitment, *d[j]); !ok {
 			if err != nil {
 				return nil, err
 			} else {
@@ -56,7 +56,7 @@ func (dp *DkgParticipant) DkgRound3(d map[uint32]*core.Witness, x map[uint32]*v1
 			}
 		}
 
-		verifiers[j], err = unmarshalFeldmanVerifiers(dp.Curve, wit.Msg, verifierSize, int(dp.state.Threshold))
+		verifiers[j], err = unmarshalFeldmanVerifiers(dp.Curve, wit.Msg, verifierSize, int(dp.State.Threshold))
 		if err != nil {
 			return nil, err
 		}
@@ -74,9 +74,9 @@ func (dp *DkgParticipant) DkgRound3(d map[uint32]*core.Witness, x map[uint32]*v1
 		xi.Value = xi.Value.Add(x[j].Value)
 	}
 
-	v := make([]*curves.EcPoint, dp.state.Threshold)
+	v := make([]*curves.EcPoint, dp.State.Threshold)
 	// 8. for j = [0,...,t]
-	for j := 0; j < int(dp.state.Threshold); j++ {
+	for j := 0; j < int(dp.State.Threshold); j++ {
 		// 9. Set vj = 1 or identity point
 		v[j], err = curves.NewScalarBaseMult(dp.Curve, big.NewInt(0))
 		if err != nil {
@@ -103,10 +103,10 @@ func (dp *DkgParticipant) DkgRound3(d map[uint32]*core.Witness, x map[uint32]*v1
 	}
 
 	// Xj's
-	publicShares := make([]*curves.EcPoint, dp.state.Limit)
+	publicShares := make([]*curves.EcPoint, dp.State.Limit)
 
 	// 13. for j = [1,...,n]
-	for j := 0; j < int(dp.state.Limit); j++ {
+	for j := 0; j < int(dp.State.Limit); j++ {
 		id := uint32(j + 1)
 		// 14. Set Xj = y
 		publicShares[j] = &curves.EcPoint{
@@ -115,7 +115,7 @@ func (dp *DkgParticipant) DkgRound3(d map[uint32]*core.Witness, x map[uint32]*v1
 			Y:     new(big.Int).Set(y.Y),
 		}
 		// 15. for k = [1,...,t]
-		for k := 0; k < int(dp.state.Threshold); k++ {
+		for k := 0; k < int(dp.State.Threshold); k++ {
 			// 16. compute ck = pj^k mod q
 			pj := big.NewInt(int64(id))
 			ck, err := core.Mul(pj, big.NewInt(int64(k+1)), dp.Curve.Params().N)
@@ -138,7 +138,7 @@ func (dp *DkgParticipant) DkgRound3(d map[uint32]*core.Witness, x map[uint32]*v1
 	// 18. Compute πPSF = ProvePSF(ski.N, ski.φ(N), y, g, q, pi)
 	psfParams := paillier.PsfProofParams{
 		Curve:     dp.Curve,
-		SecretKey: dp.state.Sk,
+		SecretKey: dp.State.Sk,
 		Pi:        dp.Id,
 		Y:         y,
 	}
@@ -148,9 +148,9 @@ func (dp *DkgParticipant) DkgRound3(d map[uint32]*core.Witness, x map[uint32]*v1
 	}
 
 	dp.Round = 4
-	dp.state.Y = y
-	dp.state.Xi = xi.Value.BigInt()
-	dp.state.PublicShares = publicShares
+	dp.State.Y = y
+	dp.State.Xi = xi.Value.BigInt()
+	dp.State.PublicShares = publicShares
 
 	return psfProof, nil
 }

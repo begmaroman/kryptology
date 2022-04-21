@@ -167,16 +167,16 @@ func (dp *DkgParticipant) DkgRound1(threshold, total uint32) (*DkgRound1Bcast, e
 
 	// Step 16:
 	// Store Di, ski, pki, tildeNi, h1i, h2i, [vi0...vit], [xi1,...xin] locally
-	dp.state.D = Di
-	dp.state.Sk = ski
-	dp.state.Pk = pki
-	dp.state.N = tildeNi
-	dp.state.H1 = h1i
-	dp.state.H2 = h2i
-	dp.state.V = V
-	dp.state.X = X
-	dp.state.Threshold = threshold
-	dp.state.Limit = total
+	dp.State.D = Di
+	dp.State.Sk = ski
+	dp.State.Pk = pki
+	dp.State.N = tildeNi
+	dp.State.H1 = h1i
+	dp.State.H2 = h2i
+	dp.State.V = V
+	dp.State.X = X
+	dp.State.Threshold = threshold
+	dp.State.Limit = total
 
 	// used in Round 2
 	dp.Round = 2
