@@ -10,9 +10,9 @@ package frost
 import (
 	"strconv"
 
-	"gitlab.com/neatfusion/chainfusion/kryptology/internal"
-	"gitlab.com/neatfusion/chainfusion/kryptology/pkg/core/curves"
-	"gitlab.com/neatfusion/chainfusion/kryptology/pkg/sharing"
+	"gitlab.com/chainfusion/kryptology/internal"
+	"gitlab.com/chainfusion/kryptology/pkg/core/curves"
+	"gitlab.com/chainfusion/kryptology/pkg/sharing"
 )
 
 type DkgParticipant struct {

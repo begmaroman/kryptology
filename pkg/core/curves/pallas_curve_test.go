@@ -12,8 +12,8 @@ import (
 
 	"github.com/stretchr/testify/require"
 
-	"gitlab.com/neatfusion/chainfusion/kryptology/pkg/core/curves/native/pasta/fp"
-	"gitlab.com/neatfusion/chainfusion/kryptology/pkg/core/curves/native/pasta/fq"
+	"gitlab.com/chainfusion/kryptology/pkg/core/curves/native/pasta/fp"
+	"gitlab.com/chainfusion/kryptology/pkg/core/curves/native/pasta/fq"
 )
 
 func TestPointPallasAddDoubleMul(t *testing.T) {

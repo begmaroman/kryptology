@@ -3,9 +3,9 @@ package k256
 import (
 	"sync"
 
-	"gitlab.com/neatfusion/chainfusion/kryptology/internal"
-	"gitlab.com/neatfusion/chainfusion/kryptology/pkg/core/curves/native"
-	"gitlab.com/neatfusion/chainfusion/kryptology/pkg/core/curves/native/k256/fp"
+	"gitlab.com/chainfusion/kryptology/internal"
+	"gitlab.com/chainfusion/kryptology/pkg/core/curves/native"
+	"gitlab.com/chainfusion/kryptology/pkg/core/curves/native/k256/fp"
 )
 
 var (

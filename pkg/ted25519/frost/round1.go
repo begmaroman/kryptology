@@ -13,8 +13,8 @@ import (
 
 	"github.com/pkg/errors"
 
-	"gitlab.com/neatfusion/chainfusion/kryptology/internal"
-	"gitlab.com/neatfusion/chainfusion/kryptology/pkg/core/curves"
+	"gitlab.com/chainfusion/kryptology/internal"
+	"gitlab.com/chainfusion/kryptology/pkg/core/curves"
 )
 
 // Round1Bcast contains values to be broadcast to all players after the completion of signing round 1.

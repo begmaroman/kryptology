@@ -9,9 +9,9 @@ package bls_sig
 import (
 	"fmt"
 
-	"gitlab.com/neatfusion/chainfusion/kryptology/internal"
-	"gitlab.com/neatfusion/chainfusion/kryptology/pkg/core/curves/native"
-	"gitlab.com/neatfusion/chainfusion/kryptology/pkg/core/curves/native/bls12381"
+	"gitlab.com/chainfusion/kryptology/internal"
+	"gitlab.com/chainfusion/kryptology/pkg/core/curves/native"
+	"gitlab.com/chainfusion/kryptology/pkg/core/curves/native/bls12381"
 )
 
 // Implement BLS signatures on the BLS12-381 curve

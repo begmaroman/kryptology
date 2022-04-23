@@ -10,7 +10,7 @@ import (
 	"fmt"
 	"math"
 
-	"gitlab.com/neatfusion/chainfusion/kryptology/pkg/core/curves"
+	"gitlab.com/chainfusion/kryptology/pkg/core/curves"
 )
 
 // dad constructs two polynomials - dA(x) and dD(x)

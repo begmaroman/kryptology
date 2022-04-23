@@ -10,9 +10,9 @@ import (
 	"encoding/json"
 	"math/big"
 
-	"gitlab.com/neatfusion/chainfusion/kryptology/pkg/core"
-	"gitlab.com/neatfusion/chainfusion/kryptology/pkg/paillier"
-	"gitlab.com/neatfusion/chainfusion/kryptology/pkg/tecdsa/gg20/proof"
+	"gitlab.com/chainfusion/kryptology/pkg/core"
+	"gitlab.com/chainfusion/kryptology/pkg/paillier"
+	"gitlab.com/chainfusion/kryptology/pkg/tecdsa/gg20/proof"
 )
 
 // P2PSend is all the values that need to be sent to each player

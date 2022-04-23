@@ -9,10 +9,10 @@ package gennaro
 import (
 	"math/big"
 
-	"gitlab.com/neatfusion/chainfusion/kryptology/internal"
-	"gitlab.com/neatfusion/chainfusion/kryptology/pkg/core"
-	"gitlab.com/neatfusion/chainfusion/kryptology/pkg/core/curves"
-	v1 "gitlab.com/neatfusion/chainfusion/kryptology/pkg/sharing/v1"
+	"gitlab.com/chainfusion/kryptology/internal"
+	"gitlab.com/chainfusion/kryptology/pkg/core"
+	"gitlab.com/chainfusion/kryptology/pkg/core/curves"
+	v1 "gitlab.com/chainfusion/kryptology/pkg/sharing/v1"
 )
 
 // Round4 computes the public shares used by tECDSA during signing

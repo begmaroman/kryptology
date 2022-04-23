@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"math/big"
 
-	"gitlab.com/neatfusion/chainfusion/kryptology/internal"
+	"gitlab.com/chainfusion/kryptology/internal"
 )
 
 // FieldLimbs is the number of limbs needed to represent this field

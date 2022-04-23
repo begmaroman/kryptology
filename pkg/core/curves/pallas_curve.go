@@ -18,8 +18,8 @@ import (
 
 	"golang.org/x/crypto/blake2b"
 
-	"gitlab.com/neatfusion/chainfusion/kryptology/pkg/core/curves/native/pasta/fp"
-	"gitlab.com/neatfusion/chainfusion/kryptology/pkg/core/curves/native/pasta/fq"
+	"gitlab.com/chainfusion/kryptology/pkg/core/curves/native/pasta/fp"
+	"gitlab.com/chainfusion/kryptology/pkg/core/curves/native/pasta/fq"
 )
 
 var b = new(fp.Fp).SetUint64(5)

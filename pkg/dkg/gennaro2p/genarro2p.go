@@ -15,9 +15,9 @@ import (
 
 	"github.com/pkg/errors"
 
-	"gitlab.com/neatfusion/chainfusion/kryptology/pkg/core/curves"
-	"gitlab.com/neatfusion/chainfusion/kryptology/pkg/dkg/gennaro"
-	v1 "gitlab.com/neatfusion/chainfusion/kryptology/pkg/sharing/v1"
+	"gitlab.com/chainfusion/kryptology/pkg/core/curves"
+	"gitlab.com/chainfusion/kryptology/pkg/dkg/gennaro"
+	v1 "gitlab.com/chainfusion/kryptology/pkg/sharing/v1"
 )
 
 const threshold = 2

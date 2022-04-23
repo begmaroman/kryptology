@@ -11,9 +11,9 @@ import (
 
 	"github.com/stretchr/testify/require"
 
-	"gitlab.com/neatfusion/chainfusion/kryptology/pkg/core/curves"
-	dkg "gitlab.com/neatfusion/chainfusion/kryptology/pkg/dkg/frost"
-	"gitlab.com/neatfusion/chainfusion/kryptology/pkg/sharing"
+	"gitlab.com/chainfusion/kryptology/pkg/core/curves"
+	dkg "gitlab.com/chainfusion/kryptology/pkg/dkg/frost"
+	"gitlab.com/chainfusion/kryptology/pkg/sharing"
 )
 
 var (

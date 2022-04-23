@@ -13,7 +13,7 @@ import (
 
 	"golang.org/x/crypto/hkdf"
 
-	"gitlab.com/neatfusion/chainfusion/kryptology/pkg/core/curves"
+	"gitlab.com/chainfusion/kryptology/pkg/core/curves"
 )
 
 // NonceShare represents a share of a generated nonce.

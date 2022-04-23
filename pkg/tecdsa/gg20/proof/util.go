@@ -9,8 +9,8 @@ package proof
 import (
 	"math/big"
 
-	"gitlab.com/neatfusion/chainfusion/kryptology/internal"
-	core "gitlab.com/neatfusion/chainfusion/kryptology/pkg/core"
+	"gitlab.com/chainfusion/kryptology/internal"
+	core "gitlab.com/chainfusion/kryptology/pkg/core"
 )
 
 // inc computes the incremented commitment in the extension ring:

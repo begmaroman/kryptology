@@ -1,4 +1,4 @@
-module gitlab.com/neatfusion/chainfusion/kryptology
+module gitlab.com/chainfusion/kryptology
 
 go 1.17
 

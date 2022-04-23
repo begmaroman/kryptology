@@ -9,8 +9,8 @@ package gennaro
 import (
 	"fmt"
 
-	"gitlab.com/neatfusion/chainfusion/kryptology/internal"
-	v1 "gitlab.com/neatfusion/chainfusion/kryptology/pkg/sharing/v1"
+	"gitlab.com/chainfusion/kryptology/internal"
+	v1 "gitlab.com/chainfusion/kryptology/pkg/sharing/v1"
 )
 
 type Round2Bcast = []*v1.ShareVerifier

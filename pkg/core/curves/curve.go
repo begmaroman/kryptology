@@ -16,7 +16,7 @@ import (
 	"math/big"
 	"sync"
 
-	"gitlab.com/neatfusion/chainfusion/kryptology/pkg/core/curves/native/bls12381"
+	"gitlab.com/chainfusion/kryptology/pkg/core/curves/native/bls12381"
 )
 
 var (

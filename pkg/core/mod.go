@@ -16,7 +16,7 @@ import (
 	"fmt"
 	"math/big"
 
-	"gitlab.com/neatfusion/chainfusion/kryptology/internal"
+	"gitlab.com/chainfusion/kryptology/internal"
 )
 
 var (

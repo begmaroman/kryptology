@@ -14,8 +14,8 @@ import (
 	"filippo.io/edwards25519"
 	"github.com/stretchr/testify/require"
 
-	"gitlab.com/neatfusion/chainfusion/kryptology/internal"
-	core "gitlab.com/neatfusion/chainfusion/kryptology/pkg/core/curves"
+	"gitlab.com/chainfusion/kryptology/internal"
+	core "gitlab.com/chainfusion/kryptology/pkg/core/curves"
 )
 
 var (

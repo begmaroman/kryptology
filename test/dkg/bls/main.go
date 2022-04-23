@@ -10,10 +10,10 @@ import (
 	"flag"
 	"fmt"
 
-	"gitlab.com/neatfusion/chainfusion/kryptology/pkg/core/curves"
-	dkg "gitlab.com/neatfusion/chainfusion/kryptology/pkg/dkg/gennaro"
-	sharing "gitlab.com/neatfusion/chainfusion/kryptology/pkg/sharing/v1"
-	bls "gitlab.com/neatfusion/chainfusion/kryptology/pkg/signatures/bls/bls_sig"
+	"gitlab.com/chainfusion/kryptology/pkg/core/curves"
+	dkg "gitlab.com/chainfusion/kryptology/pkg/dkg/gennaro"
+	sharing "gitlab.com/chainfusion/kryptology/pkg/sharing/v1"
+	bls "gitlab.com/chainfusion/kryptology/pkg/signatures/bls/bls_sig"
 )
 
 const LIMIT = 4

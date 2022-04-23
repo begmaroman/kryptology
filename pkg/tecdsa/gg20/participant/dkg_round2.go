@@ -9,12 +9,12 @@ package participant
 import (
 	"fmt"
 
-	"gitlab.com/neatfusion/chainfusion/kryptology/internal"
-	"gitlab.com/neatfusion/chainfusion/kryptology/pkg/core"
-	"gitlab.com/neatfusion/chainfusion/kryptology/pkg/paillier"
-	v1 "gitlab.com/neatfusion/chainfusion/kryptology/pkg/sharing/v1"
-	"gitlab.com/neatfusion/chainfusion/kryptology/pkg/tecdsa/gg20/dealer"
-	"gitlab.com/neatfusion/chainfusion/kryptology/pkg/tecdsa/gg20/proof"
+	"gitlab.com/chainfusion/kryptology/internal"
+	"gitlab.com/chainfusion/kryptology/pkg/core"
+	"gitlab.com/chainfusion/kryptology/pkg/paillier"
+	v1 "gitlab.com/chainfusion/kryptology/pkg/sharing/v1"
+	"gitlab.com/chainfusion/kryptology/pkg/tecdsa/gg20/dealer"
+	"gitlab.com/chainfusion/kryptology/pkg/tecdsa/gg20/proof"
 )
 
 // DkgRound2Bcast contains value that will be echo broadcast to all other players.

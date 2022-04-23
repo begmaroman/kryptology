@@ -13,10 +13,10 @@ import (
 	"fmt"
 	"math/big"
 
-	"gitlab.com/neatfusion/chainfusion/kryptology/pkg/core"
-	"gitlab.com/neatfusion/chainfusion/kryptology/pkg/core/curves"
-	"gitlab.com/neatfusion/chainfusion/kryptology/pkg/paillier"
-	"gitlab.com/neatfusion/chainfusion/kryptology/pkg/tecdsa/gg20/dealer"
+	"gitlab.com/chainfusion/kryptology/pkg/core"
+	"gitlab.com/chainfusion/kryptology/pkg/core/curves"
+	"gitlab.com/chainfusion/kryptology/pkg/paillier"
+	"gitlab.com/chainfusion/kryptology/pkg/tecdsa/gg20/dealer"
 )
 
 // ResponseProofParams encapsulates the values over which a range proof (2) is computed.

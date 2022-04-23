@@ -16,7 +16,7 @@ import (
 	"math/big"
 	"testing"
 
-	"gitlab.com/neatfusion/chainfusion/kryptology/pkg/core"
+	"gitlab.com/chainfusion/kryptology/pkg/core"
 )
 
 func BenchmarkP256(b *testing.B) {

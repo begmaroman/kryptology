@@ -3,8 +3,8 @@ package bls12381
 import (
 	"io"
 
-	"gitlab.com/neatfusion/chainfusion/kryptology/internal"
-	"gitlab.com/neatfusion/chainfusion/kryptology/pkg/core/curves/native"
+	"gitlab.com/chainfusion/kryptology/internal"
+	"gitlab.com/chainfusion/kryptology/pkg/core/curves/native"
 )
 
 // GtFieldBytes is the number of bytes needed to represent this field

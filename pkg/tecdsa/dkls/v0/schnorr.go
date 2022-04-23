@@ -12,7 +12,7 @@ import (
 	"fmt"
 	"math/big"
 
-	"gitlab.com/neatfusion/chainfusion/kryptology/pkg/core/curves"
+	"gitlab.com/chainfusion/kryptology/pkg/core/curves"
 )
 
 type Schnorr struct {

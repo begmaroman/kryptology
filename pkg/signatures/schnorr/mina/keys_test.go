@@ -11,7 +11,7 @@ import (
 
 	"github.com/stretchr/testify/require"
 
-	"gitlab.com/neatfusion/chainfusion/kryptology/pkg/core/curves/native/pasta/fq"
+	"gitlab.com/chainfusion/kryptology/pkg/core/curves/native/pasta/fq"
 )
 
 func TestNewKeys(t *testing.T) {

@@ -12,10 +12,10 @@ import (
 
 	"github.com/stretchr/testify/require"
 
-	"gitlab.com/neatfusion/chainfusion/kryptology/pkg/core/curves"
-	"gitlab.com/neatfusion/chainfusion/kryptology/pkg/ot/base/simplest"
-	"gitlab.com/neatfusion/chainfusion/kryptology/pkg/ot/extension/kos"
-	"gitlab.com/neatfusion/chainfusion/kryptology/pkg/ot/ottest"
+	"gitlab.com/chainfusion/kryptology/pkg/core/curves"
+	"gitlab.com/chainfusion/kryptology/pkg/ot/base/simplest"
+	"gitlab.com/chainfusion/kryptology/pkg/ot/extension/kos"
+	"gitlab.com/chainfusion/kryptology/pkg/ot/ottest"
 )
 
 func TestMultiply(t *testing.T) {

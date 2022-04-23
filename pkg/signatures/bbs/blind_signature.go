@@ -10,8 +10,8 @@ import (
 	"errors"
 	"fmt"
 
-	"gitlab.com/neatfusion/chainfusion/kryptology/pkg/core/curves"
-	"gitlab.com/neatfusion/chainfusion/kryptology/pkg/signatures/common"
+	"gitlab.com/chainfusion/kryptology/pkg/core/curves"
+	"gitlab.com/chainfusion/kryptology/pkg/signatures/common"
 )
 
 // BlindSignature is a BBS+ blind signature

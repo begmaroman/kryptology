@@ -12,7 +12,7 @@ import (
 
 	"github.com/stretchr/testify/require"
 
-	"gitlab.com/neatfusion/chainfusion/kryptology/internal"
+	"gitlab.com/chainfusion/kryptology/internal"
 )
 
 var (

@@ -3,7 +3,7 @@
 package v1
 
 import (
-	"gitlab.com/neatfusion/chainfusion/kryptology/pkg/core/protocol"
+	"gitlab.com/chainfusion/kryptology/pkg/core/protocol"
 )
 
 // Basic protocol interface implementation that calls the next step func in a pre-defined list

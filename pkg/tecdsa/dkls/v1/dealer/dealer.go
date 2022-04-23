@@ -15,10 +15,10 @@ import (
 
 	"github.com/pkg/errors"
 
-	"gitlab.com/neatfusion/chainfusion/kryptology/pkg/core/curves"
-	"gitlab.com/neatfusion/chainfusion/kryptology/pkg/ot/base/simplest"
-	"gitlab.com/neatfusion/chainfusion/kryptology/pkg/ot/extension/kos"
-	"gitlab.com/neatfusion/chainfusion/kryptology/pkg/tecdsa/dkls/v1/dkg"
+	"gitlab.com/chainfusion/kryptology/pkg/core/curves"
+	"gitlab.com/chainfusion/kryptology/pkg/ot/base/simplest"
+	"gitlab.com/chainfusion/kryptology/pkg/ot/extension/kos"
+	"gitlab.com/chainfusion/kryptology/pkg/tecdsa/dkls/v1/dkg"
 )
 
 // GenerationAndDeal produces private key material for alice and bob which they can later use in signing.

@@ -14,8 +14,8 @@ import (
 	"github.com/btcsuite/btcd/btcec"
 	"github.com/stretchr/testify/require"
 
-	tt "gitlab.com/neatfusion/chainfusion/kryptology/internal"
-	mod "gitlab.com/neatfusion/chainfusion/kryptology/pkg/core"
+	tt "gitlab.com/chainfusion/kryptology/internal"
+	mod "gitlab.com/chainfusion/kryptology/pkg/core"
 )
 
 // To test ProveCompositeDL, the input must satisfy the following relationship

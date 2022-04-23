@@ -12,8 +12,8 @@ import (
 	"fmt"
 	"os"
 
-	"gitlab.com/neatfusion/chainfusion/kryptology/pkg/accumulator"
-	"gitlab.com/neatfusion/chainfusion/kryptology/pkg/core/curves"
+	"gitlab.com/chainfusion/kryptology/pkg/accumulator"
+	"gitlab.com/chainfusion/kryptology/pkg/core/curves"
 )
 
 func main() {

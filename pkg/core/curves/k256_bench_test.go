@@ -9,8 +9,8 @@ import (
 
 	"github.com/btcsuite/btcd/btcec"
 
-	"gitlab.com/neatfusion/chainfusion/kryptology/internal"
-	mod "gitlab.com/neatfusion/chainfusion/kryptology/pkg/core"
+	"gitlab.com/chainfusion/kryptology/internal"
+	mod "gitlab.com/chainfusion/kryptology/pkg/core"
 )
 
 func BenchmarkK256(b *testing.B) {

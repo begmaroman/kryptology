@@ -4,7 +4,7 @@
 // SPDX-License-Identifier: Apache-2.0
 //
 
-// NOTE that the bls curves are NOT constant time. There is an open issue to address it: https://gitlab.com/neatfusion/chainfusion/kryptology/issues/233
+// NOTE that the bls curves are NOT constant time. There is an open issue to address it: https://gitlab.com/chainfusion/kryptology/issues/233
 
 package curves
 
@@ -19,7 +19,7 @@ import (
 	bls12377 "github.com/consensys/gnark-crypto/ecc/bls12-377"
 	"golang.org/x/crypto/sha3"
 
-	"gitlab.com/neatfusion/chainfusion/kryptology/pkg/core"
+	"gitlab.com/chainfusion/kryptology/pkg/core"
 )
 
 // See 'r' = https://eprint.iacr.org/2018/962.pdf Figure 16

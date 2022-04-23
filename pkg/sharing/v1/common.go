@@ -7,7 +7,7 @@
 package v1
 
 import (
-	kryptology "gitlab.com/neatfusion/chainfusion/kryptology/pkg/core/curves"
+	kryptology "gitlab.com/chainfusion/kryptology/pkg/core/curves"
 )
 
 // ShareVerifier is used to verify secret shares from Feldman or Pedersen VSS

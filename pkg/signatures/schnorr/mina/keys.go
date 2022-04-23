@@ -17,9 +17,9 @@ import (
 	"github.com/btcsuite/btcutil/base58"
 	"golang.org/x/crypto/blake2b"
 
-	"gitlab.com/neatfusion/chainfusion/kryptology/pkg/core/curves"
-	"gitlab.com/neatfusion/chainfusion/kryptology/pkg/core/curves/native/pasta/fp"
-	"gitlab.com/neatfusion/chainfusion/kryptology/pkg/core/curves/native/pasta/fq"
+	"gitlab.com/chainfusion/kryptology/pkg/core/curves"
+	"gitlab.com/chainfusion/kryptology/pkg/core/curves/native/pasta/fp"
+	"gitlab.com/chainfusion/kryptology/pkg/core/curves/native/pasta/fq"
 )
 
 const version = 0xcb

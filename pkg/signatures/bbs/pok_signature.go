@@ -12,8 +12,8 @@ import (
 
 	"github.com/gtank/merlin"
 
-	"gitlab.com/neatfusion/chainfusion/kryptology/pkg/core/curves"
-	"gitlab.com/neatfusion/chainfusion/kryptology/pkg/signatures/common"
+	"gitlab.com/chainfusion/kryptology/pkg/core/curves"
+	"gitlab.com/chainfusion/kryptology/pkg/signatures/common"
 )
 
 // PokSignature a.k.a. Proof of Knowledge of a Signature

@@ -9,7 +9,7 @@ package bls_sig
 import (
 	"testing"
 
-	"gitlab.com/neatfusion/chainfusion/kryptology/pkg/core/curves/native/bls12381"
+	"gitlab.com/chainfusion/kryptology/pkg/core/curves/native/bls12381"
 )
 
 func generateBasicSignatureG1(sk *SecretKey, msg []byte, t *testing.T) *SignatureVt {

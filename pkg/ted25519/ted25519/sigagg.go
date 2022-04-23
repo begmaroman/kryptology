@@ -10,8 +10,8 @@ import (
 	"bytes"
 	"fmt"
 
-	"gitlab.com/neatfusion/chainfusion/kryptology/pkg/core/curves"
-	v1 "gitlab.com/neatfusion/chainfusion/kryptology/pkg/sharing/v1"
+	"gitlab.com/chainfusion/kryptology/pkg/core/curves"
+	v1 "gitlab.com/chainfusion/kryptology/pkg/sharing/v1"
 )
 
 type Signature = []byte

@@ -7,8 +7,8 @@
 package mina
 
 import (
-	"gitlab.com/neatfusion/chainfusion/kryptology/pkg/core/curves/native/pasta/fp"
-	"gitlab.com/neatfusion/chainfusion/kryptology/pkg/core/curves/native/pasta/fq"
+	"gitlab.com/chainfusion/kryptology/pkg/core/curves/native/pasta/fp"
+	"gitlab.com/chainfusion/kryptology/pkg/core/curves/native/pasta/fq"
 )
 
 type Context struct {

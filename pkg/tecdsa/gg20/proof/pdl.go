@@ -16,10 +16,10 @@ import (
 	"fmt"
 	"math/big"
 
-	crypto "gitlab.com/neatfusion/chainfusion/kryptology/pkg/core"
-	"gitlab.com/neatfusion/chainfusion/kryptology/pkg/core/curves"
-	paillier "gitlab.com/neatfusion/chainfusion/kryptology/pkg/paillier"
-	"gitlab.com/neatfusion/chainfusion/kryptology/pkg/tecdsa/gg20/dealer"
+	crypto "gitlab.com/chainfusion/kryptology/pkg/core"
+	"gitlab.com/chainfusion/kryptology/pkg/core/curves"
+	paillier "gitlab.com/chainfusion/kryptology/pkg/paillier"
+	"gitlab.com/chainfusion/kryptology/pkg/tecdsa/gg20/dealer"
 )
 
 // PdlProofParams encapsulates the parameters for ProvePDL in

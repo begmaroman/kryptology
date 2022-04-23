@@ -11,7 +11,7 @@ import (
 	"fmt"
 	"math/big"
 
-	mod "gitlab.com/neatfusion/chainfusion/kryptology/pkg/core"
+	mod "gitlab.com/chainfusion/kryptology/pkg/core"
 )
 
 const ell = 128
