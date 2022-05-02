@@ -246,11 +246,11 @@ func sameCurve(a, b *EcPoint) bool {
 	bParams := b.Curve.Params()
 
 	// Use curve order and name
-	return aParams.P == bParams.P &&
-		aParams.N == bParams.N &&
-		aParams.B == bParams.B &&
+	return aParams.P.Cmp(bParams.P) == 0 &&
+		aParams.N.Cmp(bParams.N) == 0 &&
+		aParams.B.Cmp(bParams.B) == 0 &&
 		aParams.BitSize == bParams.BitSize &&
-		aParams.Gx == bParams.Gx &&
-		aParams.Gy == bParams.Gy &&
+		aParams.Gx.Cmp(bParams.Gx) == 0 &&
+		aParams.Gy.Cmp(bParams.Gy) == 0 &&
 		aParams.Name == bParams.Name
 }
