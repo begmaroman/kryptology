@@ -27,9 +27,9 @@ func setupDkgRound3ParticipantMap(curve elliptic.Curve, t, n int) map[uint32]*Dk
 	feldman, _ := v1.NewFeldman(uint32(t), uint32(n), curve)
 	participants := make(map[uint32]*DkgParticipant, n)
 	prime1Idx := 0
-	pIds := make(map[uint32]*dkgParticipantData, n)
+	pIds := make(map[uint32]*DkgParticipantCommitment, n)
 	for j := 1; j <= n; j++ {
-		pIds[uint32(j)] = &dkgParticipantData{}
+		pIds[uint32(j)] = &DkgParticipantCommitment{}
 	}
 
 	for i := 0; i < n; i++ {

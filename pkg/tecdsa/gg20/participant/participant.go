@@ -312,7 +312,7 @@ func NewDkgParticipant(curve elliptic.Curve, id uint32) *DkgParticipant {
 	}
 }
 
-type dkgParticipantData struct {
+type DkgParticipantCommitment struct {
 	PublicKey   *paillier.PublicKey
 	ProofParams *dealer.ProofParams
 	Commitment  core.Commitment
@@ -335,7 +335,7 @@ type DkgState struct {
 	Threshold uint32
 	Limit     uint32
 	// Commitments and paillier public keys received from other participants
-	OtherParticipantData map[uint32]*dkgParticipantData
+	OtherParticipantData map[uint32]*DkgParticipantCommitment
 	// xi returned from Round 3
 	Xi *big.Int
 	// X1,...,Xn returned from Round 3
