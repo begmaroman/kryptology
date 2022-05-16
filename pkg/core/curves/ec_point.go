@@ -251,6 +251,5 @@ func sameCurve(a, b *EcPoint) bool {
 		aParams.B.Cmp(bParams.B) == 0 &&
 		aParams.BitSize == bParams.BitSize &&
 		aParams.Gx.Cmp(bParams.Gx) == 0 &&
-		aParams.Gy.Cmp(bParams.Gy) == 0 &&
-		aParams.Name == bParams.Name
+		aParams.Gy.Cmp(bParams.Gy) == 0
 }
