@@ -35,7 +35,7 @@ func (s *Signer) SignRound4(deltas map[uint32]*Round3Bcast) (*Round4Bcast, error
 	// 2. For j=[1,...,t+1]
 	for j, deltaj := range deltas {
 		// 3. If i = j, Continue
-		if j == s.id {
+		if j == s.Id {
 			continue
 		}
 

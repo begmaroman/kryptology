@@ -141,7 +141,7 @@ func TestConvertToAdditiveRecombine(t *testing.T) {
 				// See if combining works
 				x := new(big.Int)
 				y := new(big.Int)
-				for _, ps := range pss.publicSharesMap {
+				for _, ps := range pss.PublicSharesMap {
 					x, y = curve.Add(x, y, ps.Point.X, ps.Point.Y)
 				}
 
@@ -226,7 +226,7 @@ func TestSetCosigners(t *testing.T) {
 			// setup
 			s.resetSignRound()
 			s.state = &state{}
-			s.threshold = uint(test.threshold)
+			s.Threshold = uint(test.threshold)
 
 			cosigners := make([]uint32, 0)
 			for k := range test.cosigners {
@@ -306,8 +306,8 @@ func TestVerifyStateMapCosigners(t *testing.T) {
 			// setup
 			s.resetSignRound()
 			s.state = &state{}
-			s.id = test.self
-			s.threshold = 3
+			s.Id = test.self
+			s.Threshold = 3
 			cosigners := make([]uint32, 0)
 			for id := range test.cosigners {
 				cosigners = append(cosigners, id)

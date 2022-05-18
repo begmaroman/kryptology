@@ -41,7 +41,7 @@ func (signer *Signer) SignRound1() (*Round1Bcast, map[uint32]*Round1P2PSend, err
 		return nil, nil, err
 	}
 
-	pk := &signer.sk.PublicKey
+	pk := &signer.Sk.PublicKey
 
 	// 1. k_i \getsr Z_q
 	k, err := core.Rand(signer.Curve.Params().N)
@@ -81,7 +81,7 @@ func (signer *Signer) SignRound1() (*Round1Bcast, map[uint32]*Round1P2PSend, err
 		R:     r,
 	}
 	bcast := Round1Bcast{
-		Identifier: signer.id,
+		Identifier: signer.Id,
 		C:          Ci,
 		Ctxt:       ctxt,
 	}
@@ -98,7 +98,7 @@ func (signer *Signer) SignRound1() (*Round1Bcast, map[uint32]*Round1P2PSend, err
 		// 6. (figure 8.)DKG - for j = [1,...,t+1]
 		for id := range signer.state.cosigners {
 			// 7. DKG if i == j, continue
-			if signer.id == id {
+			if signer.Id == id {
 				continue
 			}
 			pp.DealerParams = signer.state.keyGenType.GetProofParams(id)

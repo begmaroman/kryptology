@@ -174,7 +174,7 @@ func setupSignersMap(t *testing.T, curve elliptic.Curve, playerThreshold, player
 		signersMap[i], err = p.PrepareToSign(pk, verify, curve, proofParams, pubSharesMap, pubkeys)
 		require.NoError(t, err)
 
-		signersMap[i].threshold = uint(playerThreshold)
+		signersMap[i].Threshold = uint(playerThreshold)
 
 		// Add the round 1 values if requested
 		if addRound1 {
@@ -222,7 +222,7 @@ func TestSignerSignRound1Works(t *testing.T) {
 			if signerIOut.Proof != nil {
 				err = signerIOut.Proof.Verify(&proof.Proof1Params{
 					Curve:        curve,
-					Pk:           &signer.sk.PublicKey,
+					Pk:           &signer.Sk.PublicKey,
 					DealerParams: dealerParams,
 					C:            signerIOut.Ctxt,
 				})
@@ -231,7 +231,7 @@ func TestSignerSignRound1Works(t *testing.T) {
 				for id, pf := range p2p {
 					err = pf.Verify(&proof.Proof1Params{
 						Curve:        curve,
-						Pk:           &signer.sk.PublicKey,
+						Pk:           &signer.Sk.PublicKey,
 						DealerParams: signer.state.keyGenType.GetProofParams(id),
 						C:            signerIOut.Ctxt,
 					})
@@ -305,7 +305,7 @@ func TestSignerSignRound2Works(t *testing.T) {
 		_, err = p2pi[2].Proof2.Finalize(&proof.ResponseVerifyParams{
 			Curve:        curve,
 			DealerParams: signer.state.keyGenType.GetProofParams(2),
-			Sk:           signers[2].sk,
+			Sk:           signers[2].Sk,
 			C1:           signers[2].state.ci,
 		})
 		require.NoError(t, err)
@@ -313,7 +313,7 @@ func TestSignerSignRound2Works(t *testing.T) {
 		_, err = p2pi[3].Proof2.Finalize(&proof.ResponseVerifyParams{
 			Curve:        curve,
 			DealerParams: signer.state.keyGenType.GetProofParams(3),
-			Sk:           signers[3].sk,
+			Sk:           signers[3].Sk,
 			C1:           signers[3].state.ci,
 		})
 		require.NoError(t, err)
@@ -321,19 +321,19 @@ func TestSignerSignRound2Works(t *testing.T) {
 		_, err = p2pi[2].Proof3.FinalizeWc(&proof.ResponseVerifyParams{
 			Curve:        curve,
 			DealerParams: signer.state.keyGenType.GetProofParams(2),
-			Sk:           signers[2].sk,
+			Sk:           signers[2].Sk,
 			C1:           signers[2].state.ci,
 			// pubkey of the proof creator which in this case is signer = signers[0]
-			B: signer.publicSharesMap[1].Point,
+			B: signer.PublicSharesMap[1].Point,
 		})
 		require.NoError(t, err)
 
 		_, err = p2pi[3].Proof3.FinalizeWc(&proof.ResponseVerifyParams{
 			Curve:        curve,
 			DealerParams: signer.state.keyGenType.GetProofParams(3),
-			Sk:           signers[3].sk,
+			Sk:           signers[3].Sk,
 			C1:           signers[3].state.ci,
-			B:            signer.publicSharesMap[1].Point,
+			B:            signer.PublicSharesMap[1].Point,
 		})
 		require.NoError(t, err)
 	}
@@ -459,7 +459,7 @@ func TestSignRound4(t *testing.T) {
 		ones := make(map[uint32]*Round3Bcast, 2)
 		s.state.cosigners = make(map[uint32]bool, 2)
 		for j := range signers {
-			if s.id == j {
+			if s.Id == j {
 				continue
 			}
 			ones[j] = &Round3Bcast{core.One}
@@ -652,7 +652,7 @@ func fullroundstest3Signers(t *testing.T, curve elliptic.Curve, msg []byte, veri
 	for _, useDistributed := range []bool{false, true} {
 		pk, signers := setupSignersMap(t, curve, playerMin, playerCnt, false, verify, useDistributed)
 
-		sk := signers[1].share.Value.Add(signers[2].share.Value).Add(signers[3].share.Value)
+		sk := signers[1].Share.Value.Add(signers[2].Share.Value).Add(signers[3].Share.Value)
 		_, ppk := btcec.PrivKeyFromBytes(curve, sk.Bytes())
 
 		if ppk.X.Cmp(pk.X) != 0 || ppk.Y.Cmp(pk.Y) != 0 {

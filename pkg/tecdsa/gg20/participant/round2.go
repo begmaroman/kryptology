@@ -52,7 +52,7 @@ func (signer *Signer) SignRound2(params map[uint32]*Round1Bcast, p2p map[uint32]
 		}
 	}
 
-	cnt := signer.threshold - 1
+	cnt := signer.Threshold - 1
 	p2PSend := make(map[uint32]*P2PSend, cnt)
 	signer.state.betaj = make(map[uint32]*big.Int, cnt)
 	signer.state.vuj = make(map[uint32]*big.Int, cnt)
@@ -63,17 +63,17 @@ func (signer *Signer) SignRound2(params map[uint32]*Round1Bcast, p2p map[uint32]
 	// params ciphertext
 	pp := &proof.Proof1Params{
 		Curve:        signer.Curve,
-		DealerParams: signer.state.keyGenType.GetProofParams(signer.id),
+		DealerParams: signer.state.keyGenType.GetProofParams(signer.Id),
 	}
 	rpp := proof.ResponseProofParams{
 		Curve: signer.Curve,
-		B:     signer.publicSharesMap[signer.id].Point,
+		B:     signer.PublicSharesMap[signer.Id].Point,
 	}
 
 	// 1. For j = [1 ... t+1]
 	for j, param := range params {
 		// 2. if i == j, continue
-		if param == nil || j == signer.id {
+		if param == nil || j == signer.Id {
 			continue
 		}
 
@@ -103,7 +103,7 @@ func (signer *Signer) SignRound2(params map[uint32]*Round1Bcast, p2p map[uint32]
 		}
 
 		// 5. Compute c^{w}_{ji}, \vu_{ji}, \pi^{Range3}_{ji} = MtaResponse_wc(w_i,W_i,g,q,pk_j,N~,h1,h2,c_j)
-		rpp.SmallB = signer.share.Value.BigInt()
+		rpp.SmallB = signer.Share.Value.BigInt()
 		proofW, err := rpp.ProveWc()
 		if err != nil {
 			return nil, err

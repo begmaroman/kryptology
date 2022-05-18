@@ -44,7 +44,7 @@ func (signer *Signer) SignRound5(witnesses map[uint32]*Round4Bcast) (*Round5Bcas
 			return nil, nil, fmt.Errorf("input witnesses cannot be nil")
 		}
 		// 3. If i == j, continue
-		if j == signer.id {
+		if j == signer.Id {
 			continue
 		}
 
@@ -97,7 +97,7 @@ func (signer *Signer) SignRound5(witnesses map[uint32]*Round4Bcast) (*Round5Bcas
 	p2p := make(map[uint32]*Round5P2PSend)
 	pdlParams := proof.PdlProofParams{
 		Curve:   signer.Curve,
-		Pk:      &signer.sk.PublicKey,
+		Pk:      &signer.Sk.PublicKey,
 		ScalarX: signer.state.ki,
 		PointX:  Rbari,
 		C:       signer.state.ci,
@@ -116,7 +116,7 @@ func (signer *Signer) SignRound5(witnesses map[uint32]*Round4Bcast) (*Round5Bcas
 		// 10. DKG - for j = [1,...,t+1]
 		for id := range signer.state.cosigners {
 			// 11. DKG if i == j, continue
-			if signer.id == id {
+			if signer.Id == id {
 				continue
 			}
 			pdlParams.DealerParams = signer.state.keyGenType.GetProofParams(id)

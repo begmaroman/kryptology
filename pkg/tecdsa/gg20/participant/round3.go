@@ -64,7 +64,7 @@ func (s *Signer) SignRound3(in map[uint32]*P2PSend) (*Round3Bcast, error) {
 	}
 
 	// 2. Compute σ_i = k_i w_i mod q
-	sigmai, err := core.Mul(s.state.ki, s.share.Value.BigInt(), s.Curve.Params().N)
+	sigmai, err := core.Mul(s.state.ki, s.Share.Value.BigInt(), s.Curve.Params().N)
 	if err != nil {
 		return nil, err
 	}
@@ -72,15 +72,15 @@ func (s *Signer) SignRound3(in map[uint32]*P2PSend) (*Round3Bcast, error) {
 	// 3. For j=[1,...,t+1]
 	verifyParams := &proof.ResponseVerifyParams{
 		Curve:        s.Curve,
-		DealerParams: s.state.keyGenType.GetProofParams(s.id),
-		Sk:           s.sk,
+		DealerParams: s.state.keyGenType.GetProofParams(s.Id),
+		Sk:           s.Sk,
 		C1:           s.state.ci,
 	}
 
 	for j, value := range in {
 
 		// 4. if i == j Continue
-		if j == s.id {
+		if j == s.Id {
 			continue
 		}
 
@@ -97,7 +97,7 @@ func (s *Signer) SignRound3(in map[uint32]*P2PSend) (*Round3Bcast, error) {
 		}
 
 		// 7. Compute μ_ij = MtAFinalize_wc(g,q,sk_i,pk_i,N~,h1,h2,c_i,c_ij,π_ij,W_j)
-		verifyParams.B = s.publicSharesMap[j].Point
+		verifyParams.B = s.PublicSharesMap[j].Point
 		mu, err := value.Proof3.FinalizeWc(verifyParams)
 
 		// 8. If μ_ij = ⊥, Abort

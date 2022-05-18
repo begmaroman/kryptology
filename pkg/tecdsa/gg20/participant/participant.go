@@ -29,13 +29,13 @@ type Participant struct {
 
 // Signer is a tECDSA player that holds the additive shares needed for performing the signing operation
 type Signer struct {
-	sk              *paillier.SecretKey            // paillier secret key assigned to this signer
-	share           *v1.ShamirShare                // secret signing share for this signer
-	publicSharesMap map[uint32]*dealer.PublicShare // public shares of our cosigners
-	id              uint32                         // The ID assigned to this signer's shamir share
+	Sk              *paillier.SecretKey            // paillier secret key assigned to this signer
+	Share           *v1.ShamirShare                // secret signing share for this signer
+	PublicSharesMap map[uint32]*dealer.PublicShare // public shares of our cosigners
+	Id              uint32                         // The ID assigned to this signer's shamir share
 	// This is minimum number of signers required to produce a valid signature,
-	// not the security threshold (as specified in [spec][GG20])
-	threshold uint
+	// not the security Threshold (as specified in [spec][GG20])
+	Threshold uint
 	PublicKey *curves.EcPoint
 	Curve     elliptic.Curve
 	Round     uint   // current signing round in our linear state machine
@@ -93,14 +93,14 @@ func (signer *Signer) verifyStateMap(round uint, in interface{}) error {
 
 	// Check for superfluous cosigners in the input
 	for id := range inCosignersMap {
-		if id != signer.id && !signer.state.cosigners[id] {
+		if id != signer.Id && !signer.state.cosigners[id] {
 			return fmt.Errorf("cosigner id=%v is not valid", id)
 		}
 	}
 
 	// Check for missing cosigners in the input
 	for id := range signer.state.cosigners {
-		if id != signer.id && !inCosignersMap[id] {
+		if id != signer.Id && !inCosignersMap[id] {
 			return fmt.Errorf("missing input from cosigner id=%v", id)
 		}
 	}
@@ -112,7 +112,7 @@ func (signer *Signer) verifyStateMap(round uint, in interface{}) error {
 // setCosigners establishes the list of cosigner IDs. This may or may not include self ID.
 func (signer *Signer) setCosigners(in []uint32) error {
 	// Ensure the input is exactly the right length
-	if len(in) != int(signer.threshold-1) && len(in) != int(signer.threshold) {
+	if len(in) != int(signer.Threshold-1) && len(in) != int(signer.Threshold) {
 		return internal.ErrIncorrectCount
 	}
 
@@ -234,9 +234,9 @@ func (p Participant) convertToAdditive(curve elliptic.Curve, publicSharesMap map
 	}
 
 	return &Signer{
-		sk:              p.sk,
-		share:           privateKeyShare,
-		publicSharesMap: additiveMap,
+		Sk:              p.sk,
+		Share:           privateKeyShare,
+		PublicSharesMap: additiveMap,
 		Round:           1,
 		state:           &state{},
 	}, nil
@@ -257,7 +257,7 @@ func (p Participant) PrepareToSign(pubKey *curves.EcPoint,
 	if err != nil {
 		return nil, err
 	}
-	signer.id = signer.share.Identifier
+	signer.Id = signer.Share.Identifier
 
 	signer.state.cosigners = make(map[uint32]bool, len(publicSharesMap)-1)
 	for id := range publicSharesMap {
@@ -275,7 +275,7 @@ func (p Participant) PrepareToSign(pubKey *curves.EcPoint,
 	signer.state.pks = pubKeys
 	signer.state.keyGenType = keyGenType
 	signer.state.verify = verify
-	signer.threshold = uint(len(publicSharesMap))
+	signer.Threshold = uint(len(publicSharesMap))
 	return signer, nil
 }
 

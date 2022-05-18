@@ -88,7 +88,7 @@ func (signer *Signer) signRound6Offline(in map[uint32]*Round5Bcast, p2p map[uint
 	// 2. For j=[1,...,t+1]
 	for j, value := range in {
 		// 3. If i = j, Continue
-		if j == signer.id {
+		if j == signer.Id {
 			continue
 		}
 
@@ -98,7 +98,7 @@ func (signer *Signer) signRound6Offline(in map[uint32]*Round5Bcast, p2p map[uint
 		verifyProofParams := &proof.PdlVerifyParams{
 			Curve:        signer.Curve,
 			Pk:           signer.state.pks[j],
-			DealerParams: signer.state.keyGenType.GetProofParams(signer.id),
+			DealerParams: signer.state.keyGenType.GetProofParams(signer.Id),
 			PointX:       value.Rbar,
 			PointR:       signer.state.R,
 			C:            signer.state.cj[j],
@@ -179,7 +179,7 @@ func (signer *Signer) SignOutput(in map[uint32]*Round6FullBcast) (*curves.EcdsaS
 	// 2. For j = [1,...,t+1]
 	for j, sj := range in {
 		// 3. If i = j, continue
-		if j == signer.id {
+		if j == signer.Id {
 			continue
 		}
 
