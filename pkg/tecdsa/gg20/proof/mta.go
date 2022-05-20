@@ -764,11 +764,6 @@ func verify2Proof(pi Range2Proof, pp *verifyProof2Params, wc bool) error {
 	}
 
 	eHat := new(big.Int).SetBytes(challenge)
-	// TODO: Fix proof verification
-	if wc {
-		eHat = pi.e
-	}
-
 	if !core.ConstantTimeEq(pi.e, eHat) {
 		return fmt.Errorf("e != eHat")
 	}

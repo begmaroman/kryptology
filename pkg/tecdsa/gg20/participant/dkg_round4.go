@@ -77,6 +77,15 @@ func (dp *DkgParticipant) DkgRound4(psfProof map[uint32]paillier.PsfProof) (*Dkg
 		}
 	}
 
+	participantData[dp.Id] = &DkgParticipantData{
+		PublicKey: dp.State.Pk,
+		ProofParams: &dealer.ProofParams{
+			N:  dp.State.N,
+			H1: dp.State.H1,
+			H2: dp.State.H2,
+		},
+	}
+
 	// Return all necessary information to complete signing
 	// the proof params, paillier public keys, and public commitments
 	// from other participants, the secret signing key share, and
