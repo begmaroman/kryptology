@@ -149,7 +149,7 @@ func (dp *DkgParticipant) DkgRound3(d map[uint32]*core.Witness, x map[uint32]*v1
 
 	dp.Round = 4
 	dp.State.Y = y
-	dp.State.Xi = xi.Value.BigInt()
+	dp.State.ShamirShare = xi
 	dp.State.PublicShares = publicShares
 
 	return psfProof, nil

@@ -22,36 +22,36 @@ import (
 // ParticipantData represents all data to be sent to a participant
 // after the dealer is finished
 type ParticipantData struct {
-	Id             uint32
-	DecryptKey     *paillier.SecretKey
-	SecretKeyShare *Share
+	Id          uint32
+	SecretKey   *paillier.SecretKey
+	ShamirShare *v1.ShamirShare
 	// Public values set to all signing participants
 	EcdsaPublicKey *curves.EcPoint
 	KeyGenType     KeyGenType
 	PublicShares   map[uint32]*PublicShare
-	EncryptKeys    map[uint32]*paillier.PublicKey
+	PublicKeys     map[uint32]*paillier.PublicKey
 }
 
 type ParticipantDataJson struct {
-	Id             uint32
-	DecryptKey     *paillier.SecretKey
-	SecretKeyShare *Share
+	Id          uint32
+	SecretKey   *paillier.SecretKey
+	ShamirShare *v1.ShamirShare
 	// Public values set to all signing participants
 	EcdsaPublicKey    *curves.EcPoint
 	DealerParams      *ProofParams
 	ParticipantParams map[uint32]*ProofParams
 	PublicShares      map[uint32]*PublicShare
-	EncryptKeys       map[uint32]*paillier.PublicKey
+	PublicKeys        map[uint32]*paillier.PublicKey
 }
 
 func (pd ParticipantData) MarshalJSON() ([]byte, error) {
 	data := ParticipantDataJson{
 		Id:             pd.Id,
-		DecryptKey:     pd.DecryptKey,
-		SecretKeyShare: pd.SecretKeyShare,
+		SecretKey:      pd.SecretKey,
+		ShamirShare:    pd.ShamirShare,
 		EcdsaPublicKey: pd.EcdsaPublicKey,
 		PublicShares:   pd.PublicShares,
-		EncryptKeys:    pd.EncryptKeys,
+		PublicKeys:     pd.PublicKeys,
 	}
 	if pd.KeyGenType.IsTrustedDealer() {
 		data.DealerParams = pd.KeyGenType.GetProofParams(0)
@@ -76,9 +76,9 @@ func (pd *ParticipantData) UnmarshalJSON(bytes []byte) error {
 		}
 	}
 	pd.Id = data.Id
-	pd.EncryptKeys = data.EncryptKeys
-	pd.DecryptKey = data.DecryptKey
-	pd.SecretKeyShare = data.SecretKeyShare
+	pd.PublicKeys = data.PublicKeys
+	pd.SecretKey = data.SecretKey
+	pd.ShamirShare = data.ShamirShare
 	pd.PublicShares = data.PublicShares
 	pd.EcdsaPublicKey = data.EcdsaPublicKey
 	return nil

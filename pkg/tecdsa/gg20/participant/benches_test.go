@@ -218,7 +218,7 @@ func benchSign(b *testing.B, hash []byte, curve elliptic.Curve, verify curves.Ec
 
 	signersMap := make(map[uint32]*Signer, threshold)
 	for i, k := range keysMap {
-		p := Participant{*sharesMap[i], k}
+		p := Participant{*sharesMap[i].ShamirShare, k}
 		signersMap[i], _ = p.PrepareToSign(pk, verify, curve, proofParams, pubSharesMap, pubKeys)
 	}
 
@@ -400,7 +400,7 @@ func sign2p(b *testing.B, bw *msgCounter, setup *signingSetup) {
 	msgHash := hashBi.Bytes()
 
 	// Create signers
-	p1 := Participant{*setup.sharesMap[1], setup.privkeys[1]}
+	p1 := Participant{*setup.sharesMap[1].ShamirShare, setup.privkeys[1]}
 	s1, err := p1.PrepareToSign(
 		setup.pk,
 		k256Verifier,
@@ -410,7 +410,7 @@ func sign2p(b *testing.B, bw *msgCounter, setup *signingSetup) {
 		setup.pubkeys)
 	require.NoError(b, err)
 
-	p2 := Participant{*setup.sharesMap[2], setup.privkeys[2]}
+	p2 := Participant{*setup.sharesMap[2].ShamirShare, setup.privkeys[2]}
 	s2, err := p2.PrepareToSign(
 		setup.pk,
 		k256Verifier,

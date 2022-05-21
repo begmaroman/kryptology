@@ -103,7 +103,7 @@ func (signer *Signer) SignRound2(params map[uint32]*Round1Bcast, p2p map[uint32]
 		}
 
 		// 5. Compute c^{w}_{ji}, \vu_{ji}, \pi^{Range3}_{ji} = MtaResponse_wc(w_i,W_i,g,q,pk_j,N~,h1,h2,c_j)
-		rpp.SmallB = signer.Share.Value.BigInt()
+		rpp.SmallB = signer.ShamirShare.Value.BigInt()
 		proofW, err := rpp.ProveWc()
 		if err != nil {
 			return nil, err

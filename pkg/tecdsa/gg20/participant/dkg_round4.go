@@ -8,11 +8,11 @@ package participant
 
 import (
 	"fmt"
-	"math/big"
 
 	"gitlab.com/chainfusion/kryptology/internal"
 	"gitlab.com/chainfusion/kryptology/pkg/core/curves"
 	"gitlab.com/chainfusion/kryptology/pkg/paillier"
+	v1 "gitlab.com/chainfusion/kryptology/pkg/sharing/v1"
 	"gitlab.com/chainfusion/kryptology/pkg/tecdsa/gg20/dealer"
 )
 
@@ -20,8 +20,8 @@ import (
 type DkgResult struct {
 	PublicShares    []*curves.EcPoint
 	VerificationKey *curves.EcPoint
-	SigningKeyShare *big.Int
-	EncryptionKey   *paillier.SecretKey
+	ShamirShare     *v1.ShamirShare
+	SecretKey       *paillier.SecretKey
 	ParticipantData map[uint32]*DkgParticipantData
 }
 
@@ -92,9 +92,9 @@ func (dp *DkgParticipant) DkgRound4(psfProof map[uint32]paillier.PsfProof) (*Dkg
 	// the public verification key
 	return &DkgResult{
 		VerificationKey: dp.State.Y,
-		SigningKeyShare: dp.State.Xi,
+		ShamirShare:     dp.State.ShamirShare,
 		PublicShares:    dp.State.PublicShares,
-		EncryptionKey:   dp.State.Sk,
+		SecretKey:       dp.State.Sk,
 		ParticipantData: participantData,
 	}, nil
 }

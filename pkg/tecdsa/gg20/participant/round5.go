@@ -97,7 +97,7 @@ func (signer *Signer) SignRound5(witnesses map[uint32]*Round4Bcast) (*Round5Bcas
 	p2p := make(map[uint32]*Round5P2PSend)
 	pdlParams := proof.PdlProofParams{
 		Curve:   signer.Curve,
-		Pk:      &signer.Sk.PublicKey,
+		Pk:      &signer.SecretKey.PublicKey,
 		ScalarX: signer.state.ki,
 		PointX:  Rbari,
 		C:       signer.state.ci,

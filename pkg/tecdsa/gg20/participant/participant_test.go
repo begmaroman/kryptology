@@ -20,6 +20,7 @@ import (
 	"gitlab.com/chainfusion/kryptology/internal"
 	"gitlab.com/chainfusion/kryptology/pkg/core"
 	"gitlab.com/chainfusion/kryptology/pkg/paillier"
+	v1 "gitlab.com/chainfusion/kryptology/pkg/sharing/v1"
 	"gitlab.com/chainfusion/kryptology/pkg/tecdsa/gg20/dealer"
 )
 
@@ -36,10 +37,7 @@ func TestConvertToAdditiveWorks(t *testing.T) {
 
 	for _, s := range shares {
 		pi := Participant{
-			dealer.Share{
-				ShamirShare: s.ShamirShare,
-				Point:       s.Point,
-			},
+			*s.ShamirShare,
 			nil,
 		}
 		_, err := pi.convertToAdditive(curve, publicShares)
@@ -53,7 +51,7 @@ func TestConvertToAdditiveNil(t *testing.T) {
 	curve := btcec.S256()
 	var publicSharesMap map[uint32]*dealer.PublicShare
 
-	pi := Participant{Share: dealer.Share{}}
+	pi := Participant{ShamirShare: v1.ShamirShare{}}
 	_, err := pi.convertToAdditive(curve, publicSharesMap)
 	if err == nil {
 		t.Errorf("convertToAdditive should've failed")
@@ -84,7 +82,7 @@ func TestConvertToAdditiveNotEnoughShares(t *testing.T) {
 		t.Errorf("PreparePublicShares failed: %v", err)
 	}
 
-	pi := Participant{Share: dealer.Share{}}
+	pi := Participant{ShamirShare: v1.ShamirShare{}}
 
 	_, err = pi.convertToAdditive(curve, map[uint32]*dealer.PublicShare{})
 	require.Error(t, err)
@@ -103,10 +101,8 @@ func TestConvertToAdditiveRecombine(t *testing.T) {
 	// 5*4*3 possible combinations, try them all.
 	for i, s := range sharesMap {
 		pi := Participant{
-			dealer.Share{
-				ShamirShare: s.ShamirShare,
-				Point:       s.Point,
-			}, nil,
+			*s.ShamirShare,
+			nil,
 		}
 		for j := range sharesMap {
 			if i == j {
@@ -426,14 +422,14 @@ func TestSerializeParticipantData(t *testing.T) {
 		EcdsaPublicKey: ecdsaPk,
 		KeyGenType:     keyGenType,
 		PublicShares:   pubSharesMap,
-		EncryptKeys:    encryptKeys,
+		PublicKeys:     encryptKeys,
 	}
 
 	for i := 0; i < participants; i++ {
 		id := uint32(i + 1)
 		p.Id = id
-		p.DecryptKey = paillierKeys[id]
-		p.SecretKeyShare = sharesMap[id]
+		p.SecretKey = paillierKeys[id]
+		p.ShamirShare = sharesMap[id].ShamirShare
 
 		data, err := json.Marshal(p)
 		require.NoError(t, err)
@@ -441,11 +437,11 @@ func TestSerializeParticipantData(t *testing.T) {
 		p2 := new(dealer.ParticipantData)
 		require.NoError(t, json.Unmarshal(data, p2))
 		require.Equal(t, p.Id, p2.Id)
-		require.Equal(t, p.DecryptKey, p2.DecryptKey)
-		require.Equal(t, p.SecretKeyShare, p2.SecretKeyShare)
+		require.Equal(t, p.SecretKey, p2.SecretKey)
+		require.Equal(t, p.ShamirShare, p2.ShamirShare)
 		require.Equal(t, p.KeyGenType, p2.KeyGenType)
 		require.Equal(t, p.EcdsaPublicKey, p2.EcdsaPublicKey)
-		require.Equal(t, p.EncryptKeys, p2.EncryptKeys)
+		require.Equal(t, p.PublicKeys, p2.PublicKeys)
 		require.Equal(t, p.PublicShares, p2.PublicShares)
 	}
 }
