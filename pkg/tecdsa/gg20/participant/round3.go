@@ -64,7 +64,7 @@ func (s *Signer) SignRound3(in map[uint32]*P2PSend) (*Round3Bcast, error) {
 	}
 
 	// 2. Compute σ_i = k_i w_i mod q
-	sigmai, err := core.Mul(s.state.ki, s.Share.Value.BigInt(), s.Curve.Params().N)
+	sigmai, err := core.Mul(s.state.ki, s.ShamirShare.Value.BigInt(), s.Curve.Params().N)
 	if err != nil {
 		return nil, err
 	}
@@ -73,7 +73,7 @@ func (s *Signer) SignRound3(in map[uint32]*P2PSend) (*Round3Bcast, error) {
 	verifyParams := &proof.ResponseVerifyParams{
 		Curve:        s.Curve,
 		DealerParams: s.state.keyGenType.GetProofParams(s.Id),
-		Sk:           s.Sk,
+		Sk:           s.SecretKey,
 		C1:           s.state.ci,
 	}
 

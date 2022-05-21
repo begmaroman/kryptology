@@ -41,7 +41,7 @@ func (signer *Signer) SignRound1() (*Round1Bcast, map[uint32]*Round1P2PSend, err
 		return nil, nil, err
 	}
 
-	pk := &signer.Sk.PublicKey
+	pk := &signer.SecretKey.PublicKey
 
 	// 1. k_i \getsr Z_q
 	k, err := core.Rand(signer.Curve.Params().N)

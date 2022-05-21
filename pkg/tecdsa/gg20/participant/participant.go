@@ -23,14 +23,14 @@ import (
 
 // Participant is a tECDSA player that receives information from a trusted dealer
 type Participant struct {
-	dealer.Share
-	sk *paillier.SecretKey
+	ShamirShare v1.ShamirShare
+	SecretKey   *paillier.SecretKey
 }
 
 // Signer is a tECDSA player that holds the additive shares needed for performing the signing operation
 type Signer struct {
-	Sk              *paillier.SecretKey            // paillier secret key assigned to this signer
-	Share           *v1.ShamirShare                // secret signing share for this signer
+	SecretKey       *paillier.SecretKey            // paillier secret key assigned to this signer
+	ShamirShare     *v1.ShamirShare                // secret signing share for this signer
 	PublicSharesMap map[uint32]*dealer.PublicShare // public shares of our cosigners
 	Id              uint32                         // The ID assigned to this signer's shamir share
 	// This is minimum number of signers required to produce a valid signature,
@@ -45,7 +45,7 @@ type Signer struct {
 // NewSigner C=creates a new signer from a dealer-provided output and a specific set of co-signers
 func NewSigner(info *dealer.ParticipantData, cosigners []uint32) (*Signer, error) {
 	// Create the participant
-	p := Participant{*info.SecretKeyShare, info.DecryptKey}
+	p := Participant{*info.ShamirShare, info.SecretKey}
 
 	// Skinny down the sharesMap to just the chosen ones
 	chosenOnes := make(map[uint32]*dealer.PublicShare, len(cosigners))
@@ -62,7 +62,7 @@ func NewSigner(info *dealer.ParticipantData, cosigners []uint32) (*Signer, error
 		info.EcdsaPublicKey.Curve,
 		info.KeyGenType,
 		chosenOnes,
-		info.EncryptKeys)
+		info.PublicKeys)
 }
 
 // verifyStateMap verifies the round is the expected round number and
@@ -182,8 +182,8 @@ func (p Participant) convertToAdditive(curve elliptic.Curve, publicSharesMap map
 	if len(publicSharesMap) < 2 {
 		return nil, fmt.Errorf("threshold must be at least 2")
 	}
-	emptyP := Participant{Share: dealer.Share{}}
-	if p == emptyP || p.Value == nil || p.Point == nil {
+	emptyP := Participant{ShamirShare: v1.ShamirShare{}}
+	if p == emptyP || p.ShamirShare.Value == nil {
 		return nil, fmt.Errorf("participant share cannot be nil")
 	}
 
@@ -227,15 +227,15 @@ func (p Participant) convertToAdditive(curve elliptic.Curve, publicSharesMap map
 		}
 
 		// compute additive private share
-		if j == p.Identifier {
-			wI := l.Mul(field.ElementFromBytes(p.Share.Value.Bytes()))
-			privateKeyShare = v1.NewShamirShare(p.Share.Identifier, wI.Bytes(), field)
+		if j == p.ShamirShare.Identifier {
+			wI := l.Mul(field.ElementFromBytes(p.ShamirShare.Value.Bytes()))
+			privateKeyShare = v1.NewShamirShare(p.ShamirShare.Identifier, wI.Bytes(), field)
 		}
 	}
 
 	return &Signer{
-		Sk:              p.sk,
-		Share:           privateKeyShare,
+		SecretKey:       p.SecretKey,
+		ShamirShare:     privateKeyShare,
 		PublicSharesMap: additiveMap,
 		Round:           1,
 		state:           &state{},
@@ -257,11 +257,11 @@ func (p Participant) PrepareToSign(pubKey *curves.EcPoint,
 	if err != nil {
 		return nil, err
 	}
-	signer.Id = signer.Share.Identifier
+	signer.Id = signer.ShamirShare.Identifier
 
 	signer.state.cosigners = make(map[uint32]bool, len(publicSharesMap)-1)
 	for id := range publicSharesMap {
-		if id == p.Identifier {
+		if id == p.ShamirShare.Identifier {
 			continue
 		}
 		if _, ok := pubKeys[id]; !ok {
@@ -337,7 +337,7 @@ type DkgState struct {
 	// Commitments and paillier public keys received from other participants
 	OtherParticipantData map[uint32]*DkgParticipantCommitment
 	// xi returned from Round 3
-	Xi *big.Int
+	ShamirShare *v1.ShamirShare
 	// X1,...,Xn returned from Round 3
 	PublicShares []*curves.EcPoint
 }

@@ -574,16 +574,17 @@ func genProof2(pp proof2Params, rp *randProof2Params, wc bool) (*Range2Proof, er
 	// receives MtAProveRange2    (g, q, Pk, nTilde, h1, h2, x, y, r, C1, C2)
 	// receives MtAProveRange2_wc (g, q, Pk, nTilde, h1, h2, x, y, r, C1, C2, X)
 
-	var u *curves.EcPoint
-	if wc {
-		// u = g^\alpha
-		ux, uy := pp.curve.ScalarBaseMult(rp.alpha.Bytes())
-		u = &curves.EcPoint{
-			Curve: pp.curve,
-			X:     ux,
-			Y:     uy,
-		}
-	}
+	// temporarily don't include u in challenge
+	// var u *curves.EcPoint
+	// if wc {
+	// 	// u = g^\alpha
+	// 	ux, uy := pp.curve.ScalarBaseMult(rp.alpha.Bytes())
+	// 	u = &curves.EcPoint{
+	// 		Curve: pp.curve,
+	// 		X:     ux,
+	// 		Y:     uy,
+	// 	}
+	// }
 
 	// z = h1^x * h2^rho mod N ̃
 	z, err := pedersen(pp.dealerParams.H1, pp.dealerParams.H2, pp.x, rp.rho, pp.dealerParams.N)
@@ -625,8 +626,9 @@ func genProof2(pp proof2Params, rp *randProof2Params, wc bool) (*Range2Proof, er
 
 	var challenge []byte
 	if wc {
+		// temporarily don't include u in challenge
 		// g || q || Pk || N ̃ || h1 || h2 || X || C1 || C2 || u || z || z' || t || v || w
-		challenge, err = core.FiatShamir(curveParams.Gx, curveParams.Gy, curveParams.N, pp.pk.N, pp.dealerParams.N, pp.dealerParams.H1, pp.dealerParams.H2, pp.X.X, pp.X.Y, pp.c1, pp.c2, u.X, u.Y, z, zTick, t, v, w)
+		challenge, err = core.FiatShamir(curveParams.Gx, curveParams.Gy, curveParams.N, pp.pk.N, pp.dealerParams.N, pp.dealerParams.H1, pp.dealerParams.H2, pp.X.X, pp.X.Y, pp.c1, pp.c2 /*u.X, u.Y,*/, z, zTick, t, v, w)
 		if err != nil {
 			return nil, err
 		}
@@ -738,20 +740,22 @@ func verify2Proof(pi Range2Proof, pp *verifyProof2Params, wc bool) error {
 		return fmt.Errorf("w hat construction error: %w", err)
 	}
 
-	var uHat *curves.EcPoint
-	if wc {
-		// steps 3, 4
-		uHat, err = pi.uHatConstruct(pp)
-		if err != nil {
-			return fmt.Errorf("u hat construction error: %w", err)
-		}
-	}
+	// temporarily don't include u in challenge
+	// var uHat *curves.EcPoint
+	// if wc {
+	// 	// steps 3, 4
+	// 	uHat, err = pi.uHatConstruct(pp)
+	// 	if err != nil {
+	// 		return fmt.Errorf("u hat construction error: %w", err)
+	// 	}
+	// }
 
 	curveParams := pp.curve.Params()
 	var challenge []byte
 	if wc {
+		// temporarily don't include u in challenge
 		// g || q || Pk || N ̃ || h1 || h2 || X || c1 || c2 || uHat || z || zHatTick || t || vHat || wHat
-		challenge, err = core.FiatShamir(curveParams.Gx, curveParams.Gy, curveParams.N, pp.pk.N, pp.dealerParams.N, pp.dealerParams.H1, pp.dealerParams.H2, pp.X.X, pp.X.Y, pp.c1, pp.c2, uHat.X, uHat.Y, pi.z, zHatTick, pi.t, vHat, wHat)
+		challenge, err = core.FiatShamir(curveParams.Gx, curveParams.Gy, curveParams.N, pp.pk.N, pp.dealerParams.N, pp.dealerParams.H1, pp.dealerParams.H2, pp.X.X, pp.X.Y, pp.c1, pp.c2 /*uHat.X, uHat.Y,*/, pi.z, zHatTick, pi.t, vHat, wHat)
 		if err != nil {
 			return err
 		}
