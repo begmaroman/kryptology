@@ -18,10 +18,10 @@ import (
 
 // DkgResult is all the data generated from the DKG
 type DkgResult struct {
-	PublicShares    []*curves.EcPoint
-	VerificationKey *curves.EcPoint
-	ShamirShare     *v1.ShamirShare
 	SecretKey       *paillier.SecretKey
+	ShamirShare     *v1.ShamirShare
+	EcdsaPublicKey  *curves.EcPoint
+	PublicShares    []*curves.EcPoint
 	ParticipantData map[uint32]*DkgParticipantData
 }
 
@@ -91,10 +91,10 @@ func (dp *DkgParticipant) DkgRound4(psfProof map[uint32]paillier.PsfProof) (*Dkg
 	// from other participants, the secret signing key share, and
 	// the public verification key
 	return &DkgResult{
-		VerificationKey: dp.State.Y,
-		ShamirShare:     dp.State.ShamirShare,
-		PublicShares:    dp.State.PublicShares,
 		SecretKey:       dp.State.Sk,
+		ShamirShare:     dp.State.ShamirShare,
+		EcdsaPublicKey:  dp.State.Y,
+		PublicShares:    dp.State.PublicShares,
 		ParticipantData: participantData,
 	}, nil
 }
