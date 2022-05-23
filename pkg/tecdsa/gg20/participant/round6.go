@@ -87,7 +87,7 @@ func (signer *Signer) signRound6Offline(in map[uint32]*Round5Bcast, p2p map[uint
 				return err
 			}
 		} else {
-			if err := p2p[j].Verify(verifyProofParams); err != nil {
+			if err := p2p[j].PdlProof.Verify(verifyProofParams); err != nil {
 				return err
 			}
 		}

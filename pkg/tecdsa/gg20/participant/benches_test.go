@@ -237,7 +237,7 @@ func benchSign(b *testing.B, hash []byte, curve elliptic.Curve, verify curves.Ec
 	}
 
 	// Sign Round 2
-	p2p := make(map[uint32]map[uint32]*P2PSend)
+	p2p := make(map[uint32]map[uint32]*Round2P2PSend)
 	for i, s := range signersMap {
 		in := make(map[uint32]*Round1Bcast, threshold-1)
 		for j := range signersMap {
@@ -255,7 +255,7 @@ func benchSign(b *testing.B, hash []byte, curve elliptic.Curve, verify curves.Ec
 	// Sign Round 3
 	r3Bcast := make(map[uint32]*Round3Bcast, threshold)
 	for i, s := range signersMap {
-		in := make(map[uint32]*P2PSend, threshold-1)
+		in := make(map[uint32]*Round2P2PSend, threshold-1)
 		for j := range signersMap {
 			if i == j {
 				continue
@@ -467,12 +467,12 @@ func sign2p(b *testing.B, bw *msgCounter, setup *signingSetup) {
 	// Sign Round 3
 	//
 	r3_s1_bcast, err := s1.SignRound3(
-		map[uint32]*P2PSend{2: r2_s2_p2p[1]},
+		map[uint32]*Round2P2PSend{2: r2_s2_p2p[1]},
 	)
 	require.NoError(b, err)
 
 	r3_s2_bcast, err := s2.SignRound3(
-		map[uint32]*P2PSend{1: r2_s1_p2p[2]},
+		map[uint32]*Round2P2PSend{1: r2_s1_p2p[2]},
 	)
 	require.NoError(b, err)
 

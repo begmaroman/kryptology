@@ -24,7 +24,9 @@ type Round1Bcast struct {
 	Proof      *proof.Range1Proof
 }
 
-type Round1P2PSend = proof.Range1Proof
+type Round1P2PSend struct {
+	Range1Proof *proof.Range1Proof
+}
 
 // SignRound1 performs round 1 signing operation
 // Trusted Dealer Mode: see [spec] fig 7: SignRound1
@@ -111,7 +113,9 @@ func (signer *Signer) SignRound1() (*Round1Bcast, map[uint32]*Round1P2PSend, err
 				return nil, nil, err
 			}
 			// 9. P2PSend
-			p2p[id] = pi
+			p2p[id] = &Round1P2PSend{
+				Range1Proof: pi,
+			}
 		}
 	}
 

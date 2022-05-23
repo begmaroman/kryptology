@@ -31,7 +31,7 @@ type Round3Bcast struct {
 // SignRound3 performs the round 3 signing operation according to
 // Trusted Dealer Mode: see [spec] fig 7: SignRound3
 // DKG Mode: see [spec] fig 8: SignRound3
-func (s *Signer) SignRound3(in map[uint32]*P2PSend) (*Round3Bcast, error) {
+func (s *Signer) SignRound3(in map[uint32]*Round2P2PSend) (*Round3Bcast, error) {
 	if err := s.verifyStateMap(3, in); err != nil {
 		return nil, err
 	}

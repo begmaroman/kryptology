@@ -229,7 +229,7 @@ func TestSignerSignRound1Works(t *testing.T) {
 				require.NoError(t, err)
 			} else {
 				for id, pf := range p2p {
-					err = pf.Verify(&proof.Proof1Params{
+					err = pf.Range1Proof.Verify(&proof.Proof1Params{
 						Curve:        curve,
 						Pk:           &signer.SecretKey.PublicKey,
 						DealerParams: signer.state.keyGenType.GetProofParams(id),
@@ -378,12 +378,12 @@ func TestSignRound3(t *testing.T) {
 			s.state.gammai = core.One
 			s.state.betaj = make(map[uint32]*big.Int)
 			s.state.vuj = make(map[uint32]*big.Int)
-			p2p := make(map[uint32]*P2PSend)
+			p2p := make(map[uint32]*Round2P2PSend)
 			th13een := big.NewInt(13)
 			for j := range signers {
 				s.state.betaj[j] = core.One
 				s.state.vuj[j] = core.One
-				p2p[j] = &P2PSend{
+				p2p[j] = &Round2P2PSend{
 					proof.ResponseProofMock(th13een),
 					proof.ResponseProofMock(th13een),
 				}
@@ -504,7 +504,7 @@ func TestSignerSignRound5Works(t *testing.T) {
 		// Sign Round 2
 		err = signers[1].setCosigners([]uint32{1, 2, 3})
 		require.NoError(t, err)
-		p2p := make(map[uint32]map[uint32]*P2PSend)
+		p2p := make(map[uint32]map[uint32]*Round2P2PSend)
 		if useDistributed {
 			_, err = signers[1].SignRound2(round2In, nil)
 			// check for required P2P round1 params
@@ -561,13 +561,13 @@ func TestSignerSignRound5Works(t *testing.T) {
 
 		// Sign Round 3
 		round3Bcast := make(map[uint32]*Round3Bcast, playerMin)
-		round3Bcast[1], err = signers[1].SignRound3(map[uint32]*P2PSend{2: p2p[2][1], 3: p2p[3][1]})
+		round3Bcast[1], err = signers[1].SignRound3(map[uint32]*Round2P2PSend{2: p2p[2][1], 3: p2p[3][1]})
 		require.NoError(t, err)
 
-		round3Bcast[2], err = signers[2].SignRound3(map[uint32]*P2PSend{1: p2p[1][2], 3: p2p[3][2]})
+		round3Bcast[2], err = signers[2].SignRound3(map[uint32]*Round2P2PSend{1: p2p[1][2], 3: p2p[3][2]})
 		require.NoError(t, err)
 
-		round3Bcast[3], err = signers[3].SignRound3(map[uint32]*P2PSend{1: p2p[1][3], 2: p2p[2][3]})
+		round3Bcast[3], err = signers[3].SignRound3(map[uint32]*Round2P2PSend{1: p2p[1][3], 2: p2p[2][3]})
 		require.NoError(t, err)
 
 		// Sign Round 4
@@ -656,7 +656,7 @@ func fullroundstest3Signers(t *testing.T, curve elliptic.Curve, msg []byte, veri
 
 		err = signers[1].setCosigners([]uint32{2, 3})
 		require.NoError(t, err)
-		p2p := make(map[uint32]map[uint32]*P2PSend)
+		p2p := make(map[uint32]map[uint32]*Round2P2PSend)
 		var r1P2pIn map[uint32]*Round1P2PSend
 		if useDistributed {
 			r1P2pIn = make(map[uint32]*Round1P2PSend, 3)
@@ -697,13 +697,13 @@ func fullroundstest3Signers(t *testing.T, curve elliptic.Curve, msg []byte, veri
 
 		// Sign Round 3
 		round3Bcast := make(map[uint32]*Round3Bcast, playerMin)
-		round3Bcast[1], err = signers[1].SignRound3(map[uint32]*P2PSend{2: p2p[2][1], 3: p2p[3][1]})
+		round3Bcast[1], err = signers[1].SignRound3(map[uint32]*Round2P2PSend{2: p2p[2][1], 3: p2p[3][1]})
 		require.NoError(t, err)
 
-		round3Bcast[2], err = signers[2].SignRound3(map[uint32]*P2PSend{1: p2p[1][2], 3: p2p[3][2]})
+		round3Bcast[2], err = signers[2].SignRound3(map[uint32]*Round2P2PSend{1: p2p[1][2], 3: p2p[3][2]})
 		require.NoError(t, err)
 
-		round3Bcast[3], err = signers[3].SignRound3(map[uint32]*P2PSend{1: p2p[1][3], 2: p2p[2][3]})
+		round3Bcast[3], err = signers[3].SignRound3(map[uint32]*Round2P2PSend{1: p2p[1][3], 2: p2p[2][3]})
 		require.NoError(t, err)
 
 		// Sign Round 4

@@ -23,7 +23,9 @@ type Round5Bcast struct {
 
 // Round5P2PSend are the values sent to each participant at the conclusion of
 // signing round 5
-type Round5P2PSend = proof.PdlProof
+type Round5P2PSend struct {
+	PdlProof *proof.PdlProof
+}
 
 // SignRound5 performs the round 5 signing operation. It takes input
 // the Witness values broadcast from signers at the conclusion of
@@ -129,7 +131,9 @@ func (signer *Signer) SignRound5(witnesses map[uint32]*Round4Bcast) (*Round5Bcas
 				return nil, nil, err
 			}
 			// 13. P2PSend π^{kCONSIST}_ij to Pj
-			p2p[id] = pdl
+			p2p[id] = &Round5P2PSend{
+				PdlProof: pdl,
+			}
 		}
 	}
 
