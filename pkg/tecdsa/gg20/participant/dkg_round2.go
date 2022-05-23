@@ -29,7 +29,7 @@ type DkgRound2P2PSend struct {
 
 // DkgRound2 implements distributed key generation round 2
 // [spec] fig 5: DistKeyGenRound2
-func (dp *DkgParticipant) DkgRound2(params map[uint32]*DkgRound1Bcast) (*DkgRound2Bcast, map[uint32]*DkgRound2P2PSend, error) {
+func (dp *DkgParticipant) DkgRound2(inBcast map[uint32]*DkgRound1Bcast) (*DkgRound2Bcast, map[uint32]*DkgRound2P2PSend, error) {
 	// Make sure dkg participant is not empty
 	if dp == nil || dp.Curve == nil {
 		return nil, nil, internal.ErrNilArguments
@@ -42,8 +42,8 @@ func (dp *DkgParticipant) DkgRound2(params map[uint32]*DkgRound1Bcast) (*DkgRoun
 
 	// Check the total number of parties
 	cnt := 0
-	for id := range params {
-		if params[id] == nil {
+	for id := range inBcast {
+		if inBcast[id] == nil {
 			continue
 		}
 		if id == dp.Id {
@@ -70,7 +70,7 @@ func (dp *DkgParticipant) DkgRound2(params map[uint32]*DkgRound1Bcast) (*DkgRoun
 
 	// For j = [1...n]
 	expKeySize := 2 * paillier.PaillierPrimeBits
-	for id, param := range params {
+	for id, param := range inBcast {
 		// If i = j, Continue
 		if id == dp.Id {
 			continue
@@ -130,5 +130,4 @@ func (dp *DkgParticipant) DkgRound2(params map[uint32]*DkgRound1Bcast) (*DkgRoun
 	return &DkgRound2Bcast{
 		Di: dp.State.D,
 	}, p2PSend, nil
-
 }

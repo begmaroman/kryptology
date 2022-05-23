@@ -22,13 +22,13 @@ type Round2P2PSend struct {
 // SignRound2 performs round 2 signing operations for a single signer
 // Trusted Dealer Mode: see [spec] fig 7: SignRound2
 // DKG Mode: see [spec] fig 8: SignRound2
-func (signer *Signer) SignRound2(params map[uint32]*Round1Bcast, p2p map[uint32]*Round1P2PSend) (map[uint32]*Round2P2PSend, error) {
-	if err := signer.verifyStateMap(2, params); err != nil {
+func (signer *Signer) SignRound2(inBcast map[uint32]*Round1Bcast, inP2P map[uint32]*Round1P2PSend) (map[uint32]*Round2P2PSend, error) {
+	if err := signer.verifyStateMap(2, inBcast); err != nil {
 		return nil, err
 	}
 	// In dearlerless version, p2p map must contain one message from each cosigner.
 	if !signer.state.keyGenType.IsTrustedDealer() {
-		if err := signer.verifyStateMap(2, p2p); err != nil {
+		if err := signer.verifyStateMap(2, inP2P); err != nil {
 			return nil, err
 		}
 	}
@@ -52,7 +52,7 @@ func (signer *Signer) SignRound2(params map[uint32]*Round1Bcast, p2p map[uint32]
 	}
 
 	// 1. For j = [1 ... t+1]
-	for j, param := range params {
+	for j, param := range inBcast {
 		// 2. if i == j, continue
 		if param == nil || j == signer.Id {
 			continue
@@ -68,7 +68,7 @@ func (signer *Signer) SignRound2(params map[uint32]*Round1Bcast, p2p map[uint32]
 			}
 		} else {
 			// The case using DKG, verify range proof in P2PSend
-			if err := p2p[j].Range1Proof.Verify(pp); err != nil {
+			if err := inP2P[j].Range1Proof.Verify(pp); err != nil {
 				return nil, err
 			}
 		}

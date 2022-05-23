@@ -32,19 +32,19 @@ type Round6FullBcast struct {
 // SignRound6Full performs the round 6 signing operation according to
 // Trusted Dealer Mode: see [spec] fig 7: SignRound6
 // DKG Mode: see [spec] fig 8: SignRound6
-func (signer *Signer) SignRound6Full(hash []byte, in map[uint32]*Round5Bcast, p2p map[uint32]*Round5P2PSend) (*Round6FullBcast, error) {
-	if err := signer.verifyStateMap(6, in); err != nil {
+func (signer *Signer) SignRound6Full(hash []byte, inBcast map[uint32]*Round5Bcast, inP2P map[uint32]*Round5P2PSend) (*Round6FullBcast, error) {
+	if err := signer.verifyStateMap(6, inBcast); err != nil {
 		return nil, err
 	}
 
 	if !signer.state.keyGenType.IsTrustedDealer() {
-		if err := signer.verifyStateMap(6, p2p); err != nil {
+		if err := signer.verifyStateMap(6, inP2P); err != nil {
 			return nil, err
 		}
 	}
 
 	// Steps 1-6
-	err := signer.signRound6Offline(in, p2p)
+	err := signer.signRound6Offline(inBcast, inP2P)
 	if err != nil {
 		return nil, err
 	}
@@ -56,7 +56,7 @@ func (signer *Signer) SignRound6Full(hash []byte, in map[uint32]*Round5Bcast, p2
 // signRound6Offline performs the round 6 signing operation according to
 // [spec] §6.fig 6
 // Verifies the accumulated computed values before signing the final result
-func (signer *Signer) signRound6Offline(in map[uint32]*Round5Bcast, p2p map[uint32]*Round5P2PSend) error {
+func (signer *Signer) signRound6Offline(inBcast map[uint32]*Round5Bcast, inP2P map[uint32]*Round5P2PSend) error {
 	// FUTURE: determine round state variables to accommodate on/offline modes
 	// before this function is exported
 	var err error
@@ -65,7 +65,7 @@ func (signer *Signer) signRound6Offline(in map[uint32]*Round5Bcast, p2p map[uint
 	v := signer.state.Rbari
 
 	// 2. For j=[1,...,t+1]
-	for j, value := range in {
+	for j, value := range inBcast {
 		// 3. If i = j, Continue
 		if j == signer.Id {
 			continue
@@ -87,7 +87,7 @@ func (signer *Signer) signRound6Offline(in map[uint32]*Round5Bcast, p2p map[uint
 				return err
 			}
 		} else {
-			if err := p2p[j].PdlProof.Verify(verifyProofParams); err != nil {
+			if err := inP2P[j].PdlProof.Verify(verifyProofParams); err != nil {
 				return err
 			}
 		}

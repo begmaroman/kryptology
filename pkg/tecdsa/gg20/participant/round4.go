@@ -23,9 +23,9 @@ type Round4Bcast struct {
 // round 3.
 // Trusted Dealer Mode: see [spec] fig 7: SignRound4
 // DKG Mode: see [spec] fig 8: SignRound4
-func (s *Signer) SignRound4(deltas map[uint32]*Round3Bcast) (*Round4Bcast, error) {
+func (s *Signer) SignRound4(inBcast map[uint32]*Round3Bcast) (*Round4Bcast, error) {
 	var err error
-	if err = s.verifyStateMap(4, deltas); err != nil {
+	if err = s.verifyStateMap(4, inBcast); err != nil {
 		return nil, err
 	}
 
@@ -33,7 +33,7 @@ func (s *Signer) SignRound4(deltas map[uint32]*Round3Bcast) (*Round4Bcast, error
 	delta := new(big.Int).Set(s.state.deltai)
 
 	// 2. For j=[1,...,t+1]
-	for j, deltaj := range deltas {
+	for j, deltaj := range inBcast {
 		// 3. If i = j, Continue
 		if j == s.Id {
 			continue

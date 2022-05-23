@@ -32,8 +32,8 @@ type DkgParticipantData struct {
 
 // DkgRound4 computes dkg round 4 as shown in
 // [spec] fig. 5: DistKeyGenRound4
-func (dp *DkgParticipant) DkgRound4(psfProof map[uint32]paillier.PsfProof) (*DkgResult, error) {
-	if len(psfProof) == 0 {
+func (dp *DkgParticipant) DkgRound4(inBcast map[uint32]*DkgRound3Bcast) (*DkgResult, error) {
+	if len(inBcast) == 0 {
 		return nil, internal.ErrIncorrectCount
 	}
 	if dp.Round != 4 {
@@ -44,7 +44,7 @@ func (dp *DkgParticipant) DkgRound4(psfProof map[uint32]paillier.PsfProof) (*Dkg
 		if id == dp.Id {
 			continue
 		}
-		if _, ok := psfProof[id]; !ok {
+		if _, ok := inBcast[id]; !ok {
 			return nil, fmt.Errorf("missing proof for participant %d", id)
 		}
 	}
@@ -54,7 +54,7 @@ func (dp *DkgParticipant) DkgRound4(psfProof map[uint32]paillier.PsfProof) (*Dkg
 		Y:     dp.State.Y,
 	}
 	// 1. for j = [1,...,n]
-	for id, p := range psfProof {
+	for id, p := range inBcast {
 		// 2. if i == j, continue
 		if dp.Id == id {
 			continue
@@ -62,7 +62,7 @@ func (dp *DkgParticipant) DkgRound4(psfProof map[uint32]paillier.PsfProof) (*Dkg
 		verifyPsfParams.PublicKey = dp.State.OtherParticipantData[id].PublicKey
 		verifyPsfParams.Pi = id
 		// 3. if VerifyPSF(\pi_j, pk_j.N, y, g, q, pj) = false, abort
-		if err := p.Verify(&verifyPsfParams); err != nil {
+		if err := p.PsfProof.Verify(&verifyPsfParams); err != nil {
 			return nil, err
 		}
 	}

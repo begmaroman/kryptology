@@ -32,8 +32,8 @@ type Round5P2PSend struct {
 // round 4.
 // Trusted Dealer Mode: see [spec] fig 7: SignRound5
 // DKG Mode: see [spec] fig 8: SignRound5
-func (signer *Signer) SignRound5(witnesses map[uint32]*Round4Bcast) (*Round5Bcast, map[uint32]*Round5P2PSend, error) {
-	if err := signer.verifyStateMap(5, witnesses); err != nil {
+func (signer *Signer) SignRound5(inBcast map[uint32]*Round4Bcast) (*Round5Bcast, map[uint32]*Round5P2PSend, error) {
+	if err := signer.verifyStateMap(5, inBcast); err != nil {
 		return nil, nil, err
 	}
 
@@ -41,7 +41,7 @@ func (signer *Signer) SignRound5(witnesses map[uint32]*Round4Bcast) (*Round5Bcas
 	R := signer.state.Gammai
 
 	// 2. For j = [1,...,t+1]
-	for j, d := range witnesses {
+	for j, d := range inBcast {
 		if d == nil {
 			return nil, nil, fmt.Errorf("input witnesses cannot be nil")
 		}

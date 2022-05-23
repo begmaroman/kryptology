@@ -18,10 +18,14 @@ import (
 	v1 "gitlab.com/chainfusion/kryptology/pkg/sharing/v1"
 )
 
+type DkgRound3Bcast struct {
+	PsfProof paillier.PsfProof
+}
+
 // DkgRound3 computes dkg round 3 as shown in
 // [spec] fig. 5: DistKeyGenRoun3
-func (dp *DkgParticipant) DkgRound3(d map[uint32]*core.Witness, x map[uint32]*v1.ShamirShare) (paillier.PsfProof, error) {
-	if len(d) == 0 || len(x) == 0 {
+func (dp *DkgParticipant) DkgRound3(inBcast map[uint32]*DkgRound2Bcast, inP2P map[uint32]*DkgRound2P2PSend) (*DkgRound3Bcast, error) {
+	if len(inBcast) == 0 || len(inP2P) == 0 {
 		return nil, internal.ErrNilArguments
 	}
 	if dp.Round != 3 {
@@ -29,7 +33,7 @@ func (dp *DkgParticipant) DkgRound3(d map[uint32]*core.Witness, x map[uint32]*v1
 	}
 
 	// Extract the share verifiers from the commitment
-	verifiers := make(map[uint32][]*v1.ShareVerifier, len(d))
+	verifiers := make(map[uint32][]*v1.ShareVerifier, len(inBcast))
 	// NOTE: ID-1 because participant IDs are 1-based
 	verifiers[dp.Id] = dp.State.V
 	verifierSize := internal.CalcFieldSize(dp.Curve) * 2
@@ -42,13 +46,14 @@ func (dp *DkgParticipant) DkgRound3(d map[uint32]*core.Witness, x map[uint32]*v1
 	xi := dp.State.X[dp.Id-1]
 
 	// 2. for j = [1,...,n]
-	for j, wit := range d {
+	for j, wit := range inBcast {
 		// 3. if i == j continue
 		if j == dp.Id {
 			continue
 		}
+
 		// 4. Compute [vj0, . . . , vjt] ←Open(Cj , Dj )
-		if ok, err := core.Open(dp.State.OtherParticipantData[j].Commitment, *d[j]); !ok {
+		if ok, err := core.Open(dp.State.OtherParticipantData[j].Commitment, *wit.Di); !ok {
 			if err != nil {
 				return nil, err
 			} else {
@@ -56,13 +61,13 @@ func (dp *DkgParticipant) DkgRound3(d map[uint32]*core.Witness, x map[uint32]*v1
 			}
 		}
 
-		verifiers[j], err = unmarshalFeldmanVerifiers(dp.Curve, wit.Msg, verifierSize, int(dp.State.Threshold))
+		verifiers[j], err = unmarshalFeldmanVerifiers(dp.Curve, wit.Di.Msg, verifierSize, int(dp.State.Threshold))
 		if err != nil {
 			return nil, err
 		}
 
 		// 6. If FeldmanVerify(g, q, xji, pi, [vj0, . . . , vjt]) = False, Abort
-		if ok, err := feldman.Verify(x[j], verifiers[j]); !ok {
+		if ok, err := feldman.Verify(inP2P[j].Xij, verifiers[j]); !ok {
 			if err != nil {
 				return nil, err
 			} else {
@@ -71,7 +76,7 @@ func (dp *DkgParticipant) DkgRound3(d map[uint32]*core.Witness, x map[uint32]*v1
 		}
 
 		// 7. Compute xi = xi + xji mod q
-		xi.Value = xi.Value.Add(x[j].Value)
+		xi.Value = xi.Value.Add(inP2P[j].Xij.Value)
 	}
 
 	v := make([]*curves.EcPoint, dp.State.Threshold)
@@ -152,7 +157,7 @@ func (dp *DkgParticipant) DkgRound3(d map[uint32]*core.Witness, x map[uint32]*v1
 	dp.State.ShamirShare = xi
 	dp.State.PublicShares = publicShares
 
-	return psfProof, nil
+	return &DkgRound3Bcast{psfProof}, nil
 }
 
 // unmarshalFeldmanVerifiers converts a byte sequence into
@@ -179,5 +184,6 @@ func unmarshalFeldmanVerifiers(curve elliptic.Curve, msg []byte, verifierSize, t
 			return nil, err
 		}
 	}
+
 	return verifiers, nil
 }
