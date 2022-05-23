@@ -12,7 +12,6 @@ package proof
 
 import (
 	"crypto/elliptic"
-	"encoding/json"
 	"fmt"
 	"math/big"
 
@@ -35,38 +34,7 @@ type PdlProofParams struct {
 // PdlProof is the proof generated in
 // [spec] fig 14
 type PdlProof struct {
-	z, e, s, s1, s2 *big.Int
-}
-
-type pdlProofJSON struct {
 	Z, E, S, S1, S2 *big.Int
-}
-
-func (pdlp PdlProof) MarshalJSON() ([]byte, error) {
-	data := pdlProofJSON{
-		Z:  pdlp.z,
-		E:  pdlp.e,
-		S:  pdlp.s,
-		S1: pdlp.s1,
-		S2: pdlp.s2,
-	}
-	return json.Marshal(data)
-}
-
-func (pdlp *PdlProof) UnmarshalJSON(bytes []byte) error {
-	data := new(pdlProofJSON)
-
-	err := json.Unmarshal(bytes, &data)
-	if err != nil {
-		return err
-	}
-	pdlp.z = data.Z
-	pdlp.e = data.E
-	pdlp.s = data.S
-	pdlp.s1 = data.S1
-	pdlp.s2 = data.S2
-
-	return nil
 }
 
 // PdlVerifyParams encapsulates the parameters for VerifyPDL in
@@ -163,7 +131,7 @@ func (p PdlProofParams) Prove() (*PdlProof, error) {
 // Verify checks the PdlProof as specified in
 // [spec] fig 14
 func (p PdlProof) Verify(pv *PdlVerifyParams) error {
-	if p.z == nil || p.e == nil || p.s1 == nil || p.s2 == nil || p.s == nil {
+	if p.Z == nil || p.E == nil || p.S1 == nil || p.S2 == nil || p.S == nil {
 		return fmt.Errorf("proof values cannot be nil")
 	}
 	if pv == nil || pv.Curve == nil || pv.C == nil || pv.Pk == nil ||
@@ -180,7 +148,7 @@ func (p PdlProof) Verify(pv *PdlVerifyParams) error {
 	}
 
 	// 2. If s1 > q3, Return False
-	if p.s1.Cmp(q3) == 1 {
+	if p.S1.Cmp(q3) == 1 {
 		return fmt.Errorf("s1 > q3")
 	}
 
@@ -207,12 +175,12 @@ func (p PdlProof) Verify(pv *PdlVerifyParams) error {
 		pv.Pk.N, pv.DealerParams.N, pv.DealerParams.H1, pv.DealerParams.H2,
 		pv.Curve.Params().Gx, pv.Curve.Params().Gy, pv.Curve.Params().N,
 		pv.PointR.X, pv.PointR.Y, pv.PointX.X, pv.PointX.Y, pv.C, uHat.X,
-		uHat.Y, p.z, vHat, wHat)
+		uHat.Y, p.Z, vHat, wHat)
 	if err != nil {
 		return err
 	}
 	eHat := new(big.Int).SetBytes(challenge)
-	if !crypto.ConstantTimeEq(p.e, eHat) {
+	if !crypto.ConstantTimeEq(p.E, eHat) {
 		return fmt.Errorf("e != eHat")
 	}
 
@@ -221,14 +189,14 @@ func (p PdlProof) Verify(pv *PdlVerifyParams) error {
 
 func (p PdlProof) uHatConstruct(pv *PdlVerifyParams) (*curves.EcPoint, error) {
 	// 3. Compute s1' = s1 mod q
-	s1Tick := new(big.Int).Mod(p.s1, pv.Curve.Params().N)
+	s1Tick := new(big.Int).Mod(p.S1, pv.Curve.Params().N)
 
 	// 4. \hat{u} = R^{s^\prime_1} . X^-e in G
 	pointRtoS1Tick, err := pv.PointR.ScalarMult(s1Tick)
 	if err != nil {
 		return nil, err
 	}
-	negE := new(big.Int).Neg(p.e)
+	negE := new(big.Int).Neg(p.E)
 	pointXtoNegE, err := pv.PointX.ScalarMult(negE)
 	if err != nil {
 		return nil, err
@@ -244,7 +212,7 @@ func (p PdlProof) vHatConstruct(pv *PdlVerifyParams) (*big.Int, error) {
 	// 5. \hat{v} = s^N . (N + 1)^s_1 . c^-e mod N^2
 
 	// s^N . (N + 1)^s_1 mod N^2
-	pedersenInc, err := inc(p.s1, p.s, pv.Pk.N)
+	pedersenInc, err := inc(p.S1, p.S, pv.Pk.N)
 	if err != nil {
 		return nil, err
 	}
@@ -253,7 +221,7 @@ func (p PdlProof) vHatConstruct(pv *PdlVerifyParams) (*big.Int, error) {
 	if err != nil {
 		return nil, err
 	}
-	cInvToE := new(big.Int).Exp(cInv, p.e, pv.Pk.N2)
+	cInvToE := new(big.Int).Exp(cInv, p.E, pv.Pk.N2)
 	vHat, err := crypto.Mul(pedersenInc, cInvToE, pv.Pk.N2)
 	if err != nil {
 		return nil, err
@@ -265,16 +233,16 @@ func (p PdlProof) wHatConstruct(pv *PdlVerifyParams) (*big.Int, error) {
 	// 6. \hat{w} = h_1^s_1 . h_2^s_2 . z^-e mod \tilde{N}
 
 	// h_1^s_1 . h_2^s_2 mod \tilde{N}
-	pedersenHS, err := pedersen(pv.DealerParams.H1, pv.DealerParams.H2, p.s1, p.s2, pv.DealerParams.N)
+	pedersenHS, err := pedersen(pv.DealerParams.H1, pv.DealerParams.H2, p.S1, p.S2, pv.DealerParams.N)
 	if err != nil {
 		return nil, err
 	}
 
-	zInv, err := crypto.Inv(p.z, pv.DealerParams.N)
+	zInv, err := crypto.Inv(p.Z, pv.DealerParams.N)
 	if err != nil {
 		return nil, err
 	}
-	zInvToE := new(big.Int).Exp(zInv, p.e, pv.DealerParams.N)
+	zInvToE := new(big.Int).Exp(zInv, p.E, pv.DealerParams.N)
 	wHat, err := crypto.Mul(pedersenHS, zInvToE, pv.DealerParams.N)
 	if err != nil {
 		return nil, err

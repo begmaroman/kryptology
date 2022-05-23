@@ -7,7 +7,6 @@
 package participant
 
 import (
-	"encoding/json"
 	"math/big"
 
 	"gitlab.com/chainfusion/kryptology/pkg/core"
@@ -17,25 +16,7 @@ import (
 
 // P2PSend is all the values that need to be sent to each player
 type P2PSend struct {
-	Proof2, Proof3 proof.ResponseFinalizer
-}
-
-// UnmarshalJSON explicitly unmarshals into ResponseProofs instead of ResponsFinalizer interface
-func (p2ps *P2PSend) UnmarshalJSON(bytes []byte) error {
-	// Temporary struct used to explicitly unmarshal into ResponseProofs instead of ResponseFinalizer
-	data := struct {
-		Proof2, Proof3 proof.ResponseProof
-	}{}
-
-	err := json.Unmarshal(bytes, &data)
-	if err != nil {
-		return err
-	}
-
-	p2ps.Proof2 = data.Proof2
-	p2ps.Proof3 = data.Proof3
-
-	return nil
+	Proof2, Proof3 *proof.ResponseProof
 }
 
 // SignRound2 performs round 2 signing operations for a single signer

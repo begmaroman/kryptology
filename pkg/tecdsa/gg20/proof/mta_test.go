@@ -86,7 +86,7 @@ func TestRange1ProofValuesTampered(t *testing.T) {
 		pi, err := pp.Prove()
 		require.NoError(t, err)
 
-		pi.s.Add(pi.s, crypto.One)
+		pi.S.Add(pi.S, crypto.One)
 		err = pi.Verify(pp)
 		if err == nil {
 			t.Errorf("Range1Proof verification passed but should've failed")
@@ -286,26 +286,26 @@ func TestRange2ProofValuesTampered(t *testing.T) {
 			c2:           pp.c2,
 		}
 
-		pi.s.Add(pi.s, crypto.One)
+		pi.S.Add(pi.S, crypto.One)
 		err = pi.Verify(vp)
 		if err == nil {
 			t.Errorf("Range2Proof verification passed but should've failed")
 		}
 
-		pi.s.Sub(pi.s, crypto.One)
-		pi.s1.Add(pi.s1, crypto.One)
+		pi.S.Sub(pi.S, crypto.One)
+		pi.S1.Add(pi.S1, crypto.One)
 		err = pi.Verify(vp)
 		if err == nil {
 			t.Errorf("Range2Proof verification passed but should've failed")
 		}
-		pi.s1.Sub(pi.s1, crypto.One)
+		pi.S1.Sub(pi.S1, crypto.One)
 
-		pi.t.Add(pi.t, crypto.One)
+		pi.T.Add(pi.T, crypto.One)
 		err = pi.Verify(vp)
 		if err == nil {
 			t.Errorf("Range2Proof verification passed but should've failed")
 		}
-		pi.t.Sub(pi.t, crypto.One)
+		pi.T.Sub(pi.T, crypto.One)
 
 		pp.c2.Add(pp.c2, crypto.One)
 		err = pi.Verify(vp)
@@ -583,7 +583,7 @@ func TestRange2ProofWcTampered(t *testing.T) {
 		if err := pi.VerifyWc(vp); err != nil {
 			t.Errorf("RangeProof2Wc failed: %v", err)
 		}
-		pi.z, _ = crypto.Add(pi.z, pi.z, pp.dealerParams.N)
+		pi.Z, _ = crypto.Add(pi.Z, pi.Z, pp.dealerParams.N)
 		if err := pi.VerifyWc(vp); err == nil {
 			t.Errorf("RangeProof2Wc Succeeded but should've failed")
 		}
@@ -1117,14 +1117,14 @@ func TestMarshalJsonRange2Proof(t *testing.T) {
 	hello := "test"
 	require.NotNil(t, hello)
 	test := Range2Proof{
-		z:  bi(12),
-		e:  bi(44),
-		s:  bi(56),
-		s1: bi(23),
-		s2: bi(14),
-		t:  bi(49),
-		t1: bi(99),
-		t2: bi(67),
+		Z:  bi(12),
+		E:  bi(44),
+		S:  bi(56),
+		S1: bi(23),
+		S2: bi(14),
+		T:  bi(49),
+		T1: bi(99),
+		T2: bi(67),
 	}
 
 	testJSON, err := json.Marshal(test)
@@ -1135,14 +1135,14 @@ func TestMarshalJsonRange2Proof(t *testing.T) {
 	err = json.Unmarshal(testJSON, unmarshaled)
 	require.NoError(t, err)
 
-	require.Equal(t, test.z, unmarshaled.z)
-	require.Equal(t, test.e, unmarshaled.e)
-	require.Equal(t, test.s, unmarshaled.s)
-	require.Equal(t, test.s1, unmarshaled.s1)
-	require.Equal(t, test.s2, unmarshaled.s2)
-	require.Equal(t, test.t, unmarshaled.t)
-	require.Equal(t, test.t1, unmarshaled.t1)
-	require.Equal(t, test.t2, unmarshaled.t2)
+	require.Equal(t, test.Z, unmarshaled.Z)
+	require.Equal(t, test.E, unmarshaled.E)
+	require.Equal(t, test.S, unmarshaled.S)
+	require.Equal(t, test.S1, unmarshaled.S1)
+	require.Equal(t, test.S2, unmarshaled.S2)
+	require.Equal(t, test.T, unmarshaled.T)
+	require.Equal(t, test.T1, unmarshaled.T1)
+	require.Equal(t, test.T2, unmarshaled.T2)
 }
 
 // Test that ResponseProof can be marshaled and unmarshaled correctly
@@ -1184,11 +1184,11 @@ func TestMarshalJsonResponseProof(t *testing.T) {
 
 	require.Equal(t, test.C2, unmarshaled.C2)
 	require.Equal(t, test.Beta, unmarshaled.Beta)
-	require.Equal(t, test.R2proof.z, unmarshaled.R2proof.z)
-	require.Equal(t, test.R2proof.s, unmarshaled.R2proof.s)
-	require.Equal(t, test.R2proof.s1, unmarshaled.R2proof.s1)
-	require.Equal(t, test.R2proof.t, unmarshaled.R2proof.t)
-	require.Equal(t, test.R2proof.t1, unmarshaled.R2proof.t1)
+	require.Equal(t, test.R2proof.Z, unmarshaled.R2proof.Z)
+	require.Equal(t, test.R2proof.S, unmarshaled.R2proof.S)
+	require.Equal(t, test.R2proof.S1, unmarshaled.R2proof.S1)
+	require.Equal(t, test.R2proof.T, unmarshaled.R2proof.T)
+	require.Equal(t, test.R2proof.T1, unmarshaled.R2proof.T1)
 }
 
 // Ensures that marshal-unmarshal Range1Proof is the identity function
@@ -1211,9 +1211,9 @@ func TestMarshalRange1ProofRoundTrip(t *testing.T) {
 	err = json.Unmarshal(jsonBytes, &actual)
 	require.NoError(t, err)
 
-	require.Equal(t, expected.z, actual.z)
-	require.Equal(t, expected.e, actual.e)
-	require.Equal(t, expected.s, actual.s)
-	require.Equal(t, expected.s1, actual.s1)
-	require.Equal(t, expected.s2, actual.s2)
+	require.Equal(t, expected.Z, actual.Z)
+	require.Equal(t, expected.E, actual.E)
+	require.Equal(t, expected.S, actual.S)
+	require.Equal(t, expected.S1, actual.S1)
+	require.Equal(t, expected.S2, actual.S2)
 }

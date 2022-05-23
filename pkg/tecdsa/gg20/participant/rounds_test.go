@@ -367,22 +367,6 @@ func TestSignerSignRound2RepeatCall(t *testing.T) {
 	}
 }
 
-// Mocks for response proof
-type responseProofMock struct {
-	finalizeResult, finalizeWcResult *big.Int
-}
-
-// Have the compiler ensure we're meeting our interface requirements
-var _ proof.ResponseFinalizer = (*responseProofMock)(nil)
-
-func (m *responseProofMock) Finalize(vp *proof.ResponseVerifyParams) (*big.Int, error) {
-	return m.finalizeResult, nil
-}
-
-func (m *responseProofMock) FinalizeWc(vp *proof.ResponseVerifyParams) (*big.Int, error) {
-	return m.finalizeWcResult, nil
-}
-
 func TestSignRound3(t *testing.T) {
 	for _, useDistributed := range []bool{false, true} {
 		// Reasonably valid setup for testing round 3
@@ -399,8 +383,9 @@ func TestSignRound3(t *testing.T) {
 			for j := range signers {
 				s.state.betaj[j] = core.One
 				s.state.vuj[j] = core.One
-				p2p[j] = &P2PSend{&responseProofMock{th13een, th13een},
-					&responseProofMock{th13een, th13een},
+				p2p[j] = &P2PSend{
+					proof.ResponseProofMock(th13een),
+					proof.ResponseProofMock(th13een),
 				}
 			}
 
@@ -432,7 +417,7 @@ func TestSignRound3(t *testing.T) {
 			})
 
 			t.Run("return value matches state", func(t *testing.T) {
-				require.Equal(t, bcast.deltaElement, s.state.deltai)
+				require.Equal(t, bcast.DeltaElement, s.state.deltai)
 			})
 
 			t.Run("round variable is updated", func(t *testing.T) {
@@ -843,7 +828,7 @@ func TestMarshalRound1BcastRoundTrip(t *testing.T) {
 // Ensures that marshal-unmarshal Round3Bcast is the identity function
 func TestMarshalRound3BcastRoundTrip(t *testing.T) {
 	expected := Round3Bcast{
-		deltaElement: tt.B10("22963319250927626464432314334264998185524558636490611781390004531598870711554"),
+		DeltaElement: tt.B10("22963319250927626464432314334264998185524558636490611781390004531598870711554"),
 	}
 	// Marshal and test
 	jsonBytes, err := json.Marshal(expected)
@@ -903,7 +888,7 @@ func TestMarshalRound5BcastRoundTrip(t *testing.T) {
 // Ensures that marshal-unmarshal Round3Bcast is the identity function
 func TestMarshalRound6FullBcast(t *testing.T) {
 	expected := Round6FullBcast{
-		sElement: tt.B10("22963319250927626464432314334264998185524558636490611781390004531598870711554"),
+		SElement: tt.B10("22963319250927626464432314334264998185524558636490611781390004531598870711554"),
 	}
 	// Marshal and test
 	jsonBytes, err := json.Marshal(expected)

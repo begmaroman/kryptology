@@ -9,7 +9,6 @@ package proof
 
 import (
 	"crypto/elliptic"
-	"encoding/json"
 	"fmt"
 	"math/big"
 
@@ -52,6 +51,14 @@ type ResponseFinalizer interface {
 type ResponseProof struct {
 	R2proof  *Range2Proof
 	C2, Beta *big.Int
+
+	mockResponse *big.Int
+}
+
+func ResponseProofMock(mockResponse *big.Int) *ResponseProof {
+	return &ResponseProof{
+		mockResponse: mockResponse,
+	}
 }
 
 // Proof1Params encapsulates the values over which a range proof (1) is computed.
@@ -72,11 +79,6 @@ type randProof1Params struct {
 // Range1Proof encapsulates the results returned in proof (1)
 // [spec] fig 10
 type Range1Proof struct {
-	z, e, s, s1, s2 *big.Int
-}
-
-// struct for JSON serialization
-type range1ProofJSON struct {
 	Z, E, S, S1, S2 *big.Int
 }
 
@@ -110,77 +112,8 @@ type randProof2Params struct {
 // Range2Proof encapsulates the values over which a range proof (2) is computed.
 // [spec] fig 12
 type Range2Proof struct {
-	z, e, s, s1, s2 *big.Int
-	t, t1, t2       *big.Int
-}
-
-// JSON struct for serialization
-type range2ProofJSON struct {
 	Z, E, S, S1, S2 *big.Int
 	T, T1, T2       *big.Int
-}
-
-// MarshalJSON converts Range1Proof into JSON
-func (r Range1Proof) MarshalJSON() ([]byte, error) {
-	return json.Marshal(range1ProofJSON{
-		Z:  r.z,
-		E:  r.e,
-		S:  r.s,
-		S1: r.s1,
-		S2: r.s2,
-	})
-}
-
-// UnmarshalJSON converts json into a Range1Proof
-func (r *Range1Proof) UnmarshalJSON(bytes []byte) error {
-	var proof range1ProofJSON
-	err := json.Unmarshal(bytes, &proof)
-	if err != nil {
-		return err
-	}
-
-	r.z = proof.Z
-	r.e = proof.E
-	r.s = proof.S
-	r.s1 = proof.S1
-	r.s2 = proof.S2
-	return nil
-}
-
-// MarshalJSON converts Range2Proof into JSON format
-func (rP2 Range2Proof) MarshalJSON() ([]byte, error) {
-	data := range2ProofJSON{
-		Z:  rP2.z,
-		E:  rP2.e,
-		S:  rP2.s,
-		S1: rP2.s1,
-		S2: rP2.s2,
-		T:  rP2.t,
-		T1: rP2.t1,
-		T2: rP2.t2,
-	}
-	return json.Marshal(data)
-}
-
-// UnmarshalJSON converts json into a Range2Proof
-func (rP2 *Range2Proof) UnmarshalJSON(bytes []byte) error {
-	data := new(range2ProofJSON)
-
-	err := json.Unmarshal(bytes, &data)
-	if err != nil {
-		return err
-	}
-
-	rP2.z = data.Z
-	rP2.e = data.E
-	rP2.s = data.S
-	rP2.s1 = data.S1
-	rP2.s2 = data.S2
-	rP2.t = data.T
-	rP2.t1 = data.T1
-	rP2.t2 = data.T2
-
-	return nil
 }
 
 // Prove computes a range proof over these parameters
@@ -260,12 +193,17 @@ func genResponseProof(rp ResponseProofParams, wc bool) (*ResponseProof, error) {
 		r2p,
 		c2,
 		beta,
+		nil,
 	}, nil
 }
 
 // Finalize checks a range (2) proof: [spec] fig 13: MtaFinalize
 // and returns the paillier encrypted random value
 func (rp ResponseProof) Finalize(vp *ResponseVerifyParams) (*big.Int, error) {
+	if rp.mockResponse != nil {
+		return rp.mockResponse, nil
+	}
+
 	v2Params := verifyProof2Params{
 		curve:        vp.Curve,
 		dealerParams: vp.DealerParams,
@@ -290,6 +228,10 @@ func (rp ResponseProof) Finalize(vp *ResponseVerifyParams) (*big.Int, error) {
 // FinalizeWc checks a range (2) proof: [spec] fig 13: MtaFinalize_wc
 // and returns the paillier encrypted random value
 func (rp ResponseProof) FinalizeWc(vp *ResponseVerifyParams) (*big.Int, error) {
+	if rp.mockResponse != nil {
+		return rp.mockResponse, nil
+	}
+
 	v2Params := verifyProof2Params{
 		curve:        vp.Curve,
 		dealerParams: vp.DealerParams,
@@ -433,11 +375,11 @@ func genProof1(in Proof1Params, rp *randProof1Params) (*Range1Proof, error) {
 
 	// 13: \Pi = [z,u,w,s,s_1,s_2]
 	pi := &Range1Proof{
-		z:  z,
-		e:  e,
-		s:  s,
-		s1: s1,
-		s2: s2,
+		Z:  z,
+		E:  e,
+		S:  s,
+		S1: s1,
+		S2: s2,
 	}
 
 	// 14: return \Pi
@@ -456,7 +398,7 @@ func (pi Range1Proof) Verify(pp *Proof1Params) error {
 	// 1: Set N = pk.N
 
 	// 2: Check range. s_1 > q^3 => return false
-	if pi.s1.Cmp(q3) == 1 {
+	if pi.S1.Cmp(q3) == 1 {
 		return fmt.Errorf("s1 > q3")
 	}
 
@@ -473,14 +415,14 @@ func (pi Range1Proof) Verify(pp *Proof1Params) error {
 	}
 
 	// 5: Compute e = H(g,q,Pk,N~,h_1,h_2,c,z,uHat,wHat)
-	bytes, err := core.FiatShamir(params.Gx, params.Gy, params.N, pp.Pk.N, pp.DealerParams.N, pp.DealerParams.H1, pp.DealerParams.H2, pp.C, pi.z, uHat, wHat)
+	bytes, err := core.FiatShamir(params.Gx, params.Gy, params.N, pp.Pk.N, pp.DealerParams.N, pp.DealerParams.H1, pp.DealerParams.H2, pp.C, pi.Z, uHat, wHat)
 	if err != nil {
 		return err
 	}
 	eHat := new(big.Int).SetBytes(bytes)
 
 	// 6: if e != eHat return false
-	if !core.ConstantTimeEq(pi.e, eHat) {
+	if !core.ConstantTimeEq(pi.E, eHat) {
 		return fmt.Errorf("e != eHat")
 	}
 
@@ -491,7 +433,7 @@ func (pi Range1Proof) Verify(pp *Proof1Params) error {
 func (pi Range1Proof) uHatConstruct(pp *Proof1Params) (*big.Int, error) {
 	// 3: \hat{u} = (N+1)^{s_1}s^{N}c^{-e} mod N^2
 
-	x, err := inc(pi.s1, pi.s, pp.Pk.N) // x = (N+1)^{s_1}(S^N) mod N^2
+	x, err := inc(pi.S1, pi.S, pp.Pk.N) // x = (N+1)^{s_1}(S^N) mod N^2
 	if err != nil {
 		return nil, err
 	}
@@ -499,7 +441,7 @@ func (pi Range1Proof) uHatConstruct(pp *Proof1Params) (*big.Int, error) {
 	if err != nil {
 		return nil, err
 	}
-	y, err := core.Exp(cInv, pi.e, pp.Pk.N2) // y = c^{-e} mod N^2
+	y, err := core.Exp(cInv, pi.E, pp.Pk.N2) // y = c^{-e} mod N^2
 	if err != nil {
 		return nil, err
 	}
@@ -513,15 +455,15 @@ func (pi Range1Proof) uHatConstruct(pp *Proof1Params) (*big.Int, error) {
 func (pi Range1Proof) wHatConstruct(pp *Proof1Params) (*big.Int, error) {
 	// 4: \hat{w} = h_1^{s_1}*h_2^{s_2}*z^{-e} mod N~
 
-	a, err := pedersen(pp.DealerParams.H1, pp.DealerParams.H2, pi.s1, pi.s2, pp.DealerParams.N) // a = h_1^{s_1}*h_2^{s_2} mod N~
+	a, err := pedersen(pp.DealerParams.H1, pp.DealerParams.H2, pi.S1, pi.S2, pp.DealerParams.N) // a = h_1^{s_1}*h_2^{s_2} mod N~
 	if err != nil {
 		return nil, err
 	}
-	zInv, err := core.Inv(pi.z, pp.DealerParams.N) // zInv = z^{-1} mod N~
+	zInv, err := core.Inv(pi.Z, pp.DealerParams.N) // zInv = z^{-1} mod N~
 	if err != nil {
 		return nil, err
 	}
-	b, err := core.Exp(zInv, pi.e, pp.DealerParams.N) // SmallB = z^{-e} mod N~
+	b, err := core.Exp(zInv, pi.E, pp.DealerParams.N) // SmallB = z^{-e} mod N~
 	if err != nil {
 		return nil, err
 	}
@@ -673,14 +615,14 @@ func genProof2(pp proof2Params, rp *randProof2Params, wc bool) (*Range2Proof, er
 	}
 
 	return &Range2Proof{
-		z:  z,
-		e:  e,
-		s:  s,
-		s1: s1,
-		s2: s2,
-		t:  t,
-		t1: t1,
-		t2: t2,
+		Z:  z,
+		E:  e,
+		S:  s,
+		S1: s1,
+		S2: s2,
+		T:  t,
+		T1: t1,
+		T2: t2,
 	}, nil
 }
 
@@ -709,7 +651,7 @@ func verify2Proof(pi Range2Proof, pp *verifyProof2Params, wc bool) error {
 	}
 
 	// 2: If s1 > q3, Return False
-	if pi.s1.Cmp(q3) == 1 {
+	if pi.S1.Cmp(q3) == 1 {
 		return fmt.Errorf("s1 > q3")
 	}
 
@@ -718,7 +660,7 @@ func verify2Proof(pi Range2Proof, pp *verifyProof2Params, wc bool) error {
 	// https://info.fireblocks.com/hubfs/A_Note_on_the_Security_of_GG.pdf
 	// The mitigation is described in Appendix A.3 from
 	// https://eprint.iacr.org/2019/114.pdf
-	if pi.t1.Cmp(q7) == 1 {
+	if pi.T1.Cmp(q7) == 1 {
 		return fmt.Errorf("t1 > q7")
 	}
 
@@ -755,20 +697,20 @@ func verify2Proof(pi Range2Proof, pp *verifyProof2Params, wc bool) error {
 	if wc {
 		// temporarily don't include u in challenge
 		// g || q || Pk || N ̃ || h1 || h2 || X || c1 || c2 || uHat || z || zHatTick || t || vHat || wHat
-		challenge, err = core.FiatShamir(curveParams.Gx, curveParams.Gy, curveParams.N, pp.pk.N, pp.dealerParams.N, pp.dealerParams.H1, pp.dealerParams.H2, pp.X.X, pp.X.Y, pp.c1, pp.c2 /*uHat.X, uHat.Y,*/, pi.z, zHatTick, pi.t, vHat, wHat)
+		challenge, err = core.FiatShamir(curveParams.Gx, curveParams.Gy, curveParams.N, pp.pk.N, pp.dealerParams.N, pp.dealerParams.H1, pp.dealerParams.H2, pp.X.X, pp.X.Y, pp.c1, pp.c2 /*uHat.X, uHat.Y,*/, pi.Z, zHatTick, pi.T, vHat, wHat)
 		if err != nil {
 			return err
 		}
 	} else {
 		// g || q || Pk || N ̃ || h1 || h2 || c1 || c2 || z || zHatTick || t || vHat || wHat
-		challenge, err = core.FiatShamir(curveParams.Gx, curveParams.Gy, curveParams.N, pp.pk.N, pp.dealerParams.N, pp.dealerParams.H1, pp.dealerParams.H2, pp.c1, pp.c2, pi.z, zHatTick, pi.t, vHat, wHat)
+		challenge, err = core.FiatShamir(curveParams.Gx, curveParams.Gy, curveParams.N, pp.pk.N, pp.dealerParams.N, pp.dealerParams.H1, pp.dealerParams.H2, pp.c1, pp.c2, pi.Z, zHatTick, pi.T, vHat, wHat)
 		if err != nil {
 			return err
 		}
 	}
 
 	eHat := new(big.Int).SetBytes(challenge)
-	if !core.ConstantTimeEq(pi.e, eHat) {
+	if !core.ConstantTimeEq(pi.E, eHat) {
 		return fmt.Errorf("e != eHat")
 	}
 
@@ -777,7 +719,7 @@ func verify2Proof(pi Range2Proof, pp *verifyProof2Params, wc bool) error {
 
 func (pi Range2Proof) uHatConstruct(pp *verifyProof2Params) (*curves.EcPoint, error) {
 	// 3. Compute s1' = s1 mod q
-	s1Tick := new(big.Int).Mod(pi.s1, pp.curve.Params().N)
+	s1Tick := new(big.Int).Mod(pi.S1, pp.curve.Params().N)
 
 	// 4: \hat{u} = g^{s^\prime_1} . X^{-e} in G
 
@@ -786,7 +728,7 @@ func (pi Range2Proof) uHatConstruct(pp *verifyProof2Params) (*curves.EcPoint, er
 		return nil, err
 	}
 
-	negE := new(big.Int).Neg(pi.e)
+	negE := new(big.Int).Neg(pi.E)
 
 	XnegE, err := pp.X.ScalarMult(negE)
 	if err != nil {
@@ -804,16 +746,16 @@ func (pi Range2Proof) zHatTickConstruct(pp *verifyProof2Params) (*big.Int, error
 	// 5: \hat{z} = (h_1)^s_1 . (h_2)^{s_2}z^{-e} mod \tilde{N}
 
 	// h_1^s_1 . h_2^s_2 mod \tilde{N}
-	pedersenHS, err := pedersen(pp.dealerParams.H1, pp.dealerParams.H2, pi.s1, pi.s2, pp.dealerParams.N)
+	pedersenHS, err := pedersen(pp.dealerParams.H1, pp.dealerParams.H2, pi.S1, pi.S2, pp.dealerParams.N)
 	if err != nil {
 		return nil, err
 	}
 
-	zInv, err := core.Inv(pi.z, pp.dealerParams.N)
+	zInv, err := core.Inv(pi.Z, pp.dealerParams.N)
 	if err != nil {
 		return nil, err
 	}
-	zInvToE := new(big.Int).Exp(zInv, pi.e, pp.dealerParams.N)
+	zInvToE := new(big.Int).Exp(zInv, pi.E, pp.dealerParams.N)
 
 	zHat, err := core.Mul(pedersenHS, zInvToE, pp.dealerParams.N)
 	if err != nil {
@@ -826,7 +768,7 @@ func (pi Range2Proof) vHatConstruct(pp *verifyProof2Params) (*big.Int, error) {
 	// 6: \hat{v} = (c_1)^s_1 . s^N . (N+1)^t_1 . c^-e_2 mod N^2
 
 	// s^N . (N+1)^t_1
-	pedersenInc, err := inc(pi.t1, pi.s, pp.pk.N)
+	pedersenInc, err := inc(pi.T1, pi.S, pp.pk.N)
 	if err != nil {
 		return nil, err
 	}
@@ -837,7 +779,7 @@ func (pi Range2Proof) vHatConstruct(pp *verifyProof2Params) (*big.Int, error) {
 	}
 
 	// c_1^s_1 . c^-e_2
-	pedersenCSCE, err := pedersen(pp.c1, c2Inv, pi.s1, pi.e, pp.pk.N2)
+	pedersenCSCE, err := pedersen(pp.c1, c2Inv, pi.S1, pi.E, pp.pk.N2)
 	if err != nil {
 		return nil, err
 	}
@@ -853,16 +795,16 @@ func (pi Range2Proof) wHatConstruct(pp *verifyProof2Params) (*big.Int, error) {
 	// 7: \hat{w} = (h_1)^t_1 . (h_2)^t_2 . t^-e mod \tilde{N}
 
 	// h_1^t_1 . h_2^t_2 mod \tilde{N}
-	pedersenHT, err := pedersen(pp.dealerParams.H1, pp.dealerParams.H2, pi.t1, pi.t2, pp.dealerParams.N)
+	pedersenHT, err := pedersen(pp.dealerParams.H1, pp.dealerParams.H2, pi.T1, pi.T2, pp.dealerParams.N)
 	if err != nil {
 		return nil, err
 	}
 
-	tInv, err := core.Inv(pi.t, pp.dealerParams.N)
+	tInv, err := core.Inv(pi.T, pp.dealerParams.N)
 	if err != nil {
 		return nil, err
 	}
-	tInvToE := new(big.Int).Exp(tInv, pi.e, pp.dealerParams.N)
+	tInvToE := new(big.Int).Exp(tInv, pi.E, pp.dealerParams.N)
 
 	wHat, err := core.Mul(pedersenHT, tInvToE, pp.dealerParams.N)
 	if err != nil {

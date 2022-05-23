@@ -7,7 +7,6 @@
 package participant
 
 import (
-	"encoding/json"
 	"fmt"
 	"math/big"
 
@@ -18,36 +17,16 @@ import (
 
 // Round6FullBcast are the values to be broadcast to the other players
 // This is the s_i value from §5.fig 5.SignRound6.step 9
-type (
-	Round6FullBcast struct {
-		// Note that sElement is some element of the entire s vector.
-		// In this round, it's s_i. For the recepients of this message in the final
-		// sign output round, this will be s_j
-		sElement *big.Int
-		// The reason we can't do something straightforward like `type BetterRound6FullBcast *big.int`
-		// is that although `big.int` has some methods implementing marshaler,
-		// they won't be accessible to `BetterRound6FullBcast`. So the json.Marhsal uses the default methods
-		// and since the two fields of `big.int` are not exported, the data of `BetterRound6FullBcast`
-		// won't actually be serialized and its deserialization results in nil.
-	}
-
-	Round6FullBcastJSON struct {
-		SElement *big.Int
-	}
-)
-
-func (r6b Round6FullBcast) MarshalJSON() ([]byte, error) {
-	return json.Marshal(Round6FullBcastJSON{r6b.sElement})
-}
-
-func (r6b *Round6FullBcast) UnmarshalJSON(data []byte) error {
-	message := &Round6FullBcastJSON{}
-	err := json.Unmarshal(data, message)
-	if err != nil {
-		return err
-	}
-	r6b.sElement = message.SElement
-	return nil
+type Round6FullBcast struct {
+	// Note that SElement is some element of the entire s vector.
+	// In this round, it's s_i. For the recepients of this message in the final
+	// sign output round, this will be s_j
+	SElement *big.Int
+	// The reason we can't do something straightforward like `type BetterRound6FullBcast *big.int`
+	// is that although `big.int` has some methods implementing marshaler,
+	// they won't be accessible to `BetterRound6FullBcast`. So the json.Marhsal uses the default methods
+	// and since the two fields of `big.int` are not exported, the data of `BetterRound6FullBcast`
+	// won't actually be serialized and its deserialization results in nil.
 }
 
 // SignRound6Full performs the round 6 signing operation according to
@@ -184,7 +163,7 @@ func (signer *Signer) SignOutput(in map[uint32]*Round6FullBcast) (*curves.EcdsaS
 		}
 
 		// 4. Compute s = s + s_j mod q
-		s, err = core.Add(s, sj.sElement, signer.Curve.Params().N)
+		s, err = core.Add(s, sj.SElement, signer.Curve.Params().N)
 		if err != nil {
 			return nil, err
 		}

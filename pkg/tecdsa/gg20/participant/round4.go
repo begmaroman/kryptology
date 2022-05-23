@@ -40,7 +40,7 @@ func (s *Signer) SignRound4(deltas map[uint32]*Round3Bcast) (*Round4Bcast, error
 		}
 
 		// 4. Compute δ = δ + δ_j mod q
-		delta, err = core.Add(delta, deltaj.deltaElement, s.Curve.Params().N)
+		delta, err = core.Add(delta, deltaj.DeltaElement, s.Curve.Params().N)
 		if err != nil {
 			return nil, err
 		}
