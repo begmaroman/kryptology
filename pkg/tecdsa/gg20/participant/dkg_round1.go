@@ -9,6 +9,7 @@ package participant
 import (
 	"fmt"
 	"math/big"
+	"runtime"
 
 	"gitlab.com/chainfusion/kryptology/internal"
 	"gitlab.com/chainfusion/kryptology/pkg/core"
@@ -72,7 +73,7 @@ func (dp *DkgParticipant) DkgRound1(threshold, total uint32) (*DkgRound1Bcast, e
 	}
 
 	// Step 4: ski, pki := PaillierKeyGen(1^k) (generate a 2048-bit Paillier key pair
-	pki, ski, err := paillier.NewKeys()
+	pki, ski, err := paillier.NewKeysParallel(runtime.NumCPU())
 	if err != nil {
 		return nil, err
 	}
@@ -85,7 +86,7 @@ func (dp *DkgParticipant) DkgRound1(threshold, total uint32) (*DkgRound1Bcast, e
 	for Pi == Qi {
 		for range []int{1, 2} {
 			go func() {
-				value, err := core.GenerateSafePrime(paillier.PaillierPrimeBits)
+				value, err := core.GenerateSafePrimeParallel(paillier.PaillierPrimeBits, runtime.NumCPU())
 				values <- value
 				errors <- err
 			}()

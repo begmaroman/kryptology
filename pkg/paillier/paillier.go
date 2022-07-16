@@ -76,6 +76,14 @@ func NewKeys() (*PublicKey, *SecretKey, error) {
 	return keyGenerator(core.GenerateSafePrime, PaillierPrimeBits)
 }
 
+// NewKeysParallel generates Paillier keys with `bits` sized safe primes
+// in n parallel goroutines.
+func NewKeysParallel(n int) (*PublicKey, *SecretKey, error) {
+	return keyGenerator(func(bits uint) (*big.Int, error) {
+		return core.GenerateSafePrimeParallel(bits, n)
+	}, PaillierPrimeBits)
+}
+
 // keyGenerator generates Paillier keys with `bits` sized safe primes using function
 // `genSafePrime` to generate the safe primes.
 func keyGenerator(genSafePrime func(uint) (*big.Int, error), bits uint) (*PublicKey, *SecretKey, error) {
