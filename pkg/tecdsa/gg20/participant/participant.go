@@ -12,6 +12,7 @@ import (
 	"fmt"
 	"math/big"
 	"reflect"
+	"strings"
 
 	"gitlab.com/chainfusion/kryptology/internal"
 	"gitlab.com/chainfusion/kryptology/pkg/core"
@@ -348,4 +349,13 @@ func (dp *DkgParticipant) verifyDkgRound(dkground uint) error {
 		return internal.ErrInvalidRound
 	}
 	return nil
+}
+
+func makeParticipantsError(failedParticipantIds []uint32, errors []error) error {
+	var participantErrorMessages []string
+	for id, participantId := range failedParticipantIds {
+		participantErrorMessages = append(participantErrorMessages, fmt.Sprintf("participant %d dkg error: %s", participantId, errors[id]))
+	}
+	participantError := strings.Join(participantErrorMessages, ", ")
+	return fmt.Errorf(participantError)
 }

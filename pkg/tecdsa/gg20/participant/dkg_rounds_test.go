@@ -99,25 +99,28 @@ func TestDkgRound3Works(t *testing.T) {
 	decommitments := setupDkgRound3Commitments(t, participants, playerCnt)
 
 	// Actual test
-	res1, err := participants[1].DkgRound3(decommitments, map[uint32]*DkgRound2P2PSend{
+	res1, failedParticipantIds, err := participants[1].DkgRound3(decommitments, map[uint32]*DkgRound2P2PSend{
 		1: {participants[1].State.X[0]},
 		2: {participants[2].State.X[0]},
 		3: {participants[3].State.X[0]},
 	})
+	require.Nil(t, failedParticipantIds)
 	require.NoError(t, err)
 	require.NotNil(t, res1)
-	res2, err := participants[2].DkgRound3(decommitments, map[uint32]*DkgRound2P2PSend{
+	res2, failedParticipantIds, err := participants[2].DkgRound3(decommitments, map[uint32]*DkgRound2P2PSend{
 		1: {participants[1].State.X[1]},
 		2: {participants[2].State.X[1]},
 		3: {participants[3].State.X[1]},
 	})
+	require.Nil(t, failedParticipantIds)
 	require.NoError(t, err)
 	require.NotNil(t, res2)
-	res3, err := participants[3].DkgRound3(decommitments, map[uint32]*DkgRound2P2PSend{
+	res3, failedParticipantIds, err := participants[3].DkgRound3(decommitments, map[uint32]*DkgRound2P2PSend{
 		1: {participants[1].State.X[2]},
 		2: {participants[2].State.X[2]},
 		3: {participants[3].State.X[2]},
 	})
+	require.Nil(t, failedParticipantIds)
 	require.NoError(t, err)
 	require.NotNil(t, res3)
 	field := curves.NewField(curve.Params().N)
@@ -158,18 +161,20 @@ func TestDkgRound3RepeatCall(t *testing.T) {
 	decommitments := setupDkgRound3Commitments(t, participants, playerCnt)
 
 	// Actual test
-	res1, err := participants[1].DkgRound3(decommitments, map[uint32]*DkgRound2P2PSend{
+	res1, failedParticipantIds, err := participants[1].DkgRound3(decommitments, map[uint32]*DkgRound2P2PSend{
 		1: {participants[1].State.X[0]},
 		2: {participants[2].State.X[0]},
 		3: {participants[3].State.X[0]},
 	})
+	require.Nil(t, failedParticipantIds)
 	require.NoError(t, err)
 	require.NotNil(t, res1)
-	res2, err := participants[1].DkgRound3(decommitments, map[uint32]*DkgRound2P2PSend{
+	res2, failedParticipantIds, err := participants[1].DkgRound3(decommitments, map[uint32]*DkgRound2P2PSend{
 		1: {participants[1].State.X[0]},
 		2: {participants[2].State.X[0]},
 		3: {participants[3].State.X[0]},
 	})
+	require.Nil(t, failedParticipantIds)
 	require.Error(t, err)
 	require.Nil(t, res2)
 }
@@ -186,11 +191,12 @@ func TestDkgRound3InvalidWitnesses(t *testing.T) {
 	decommitments[2].Di.Msg[1] ^= decommitments[1].Di.Msg[1]
 
 	// Actual test
-	res1, err := participants[1].DkgRound3(decommitments, map[uint32]*DkgRound2P2PSend{
+	res1, failedParticipantIds, err := participants[1].DkgRound3(decommitments, map[uint32]*DkgRound2P2PSend{
 		1: {participants[1].State.X[0]},
 		2: {participants[2].State.X[0]},
 		3: {participants[3].State.X[0]},
 	})
+	require.NotNil(t, failedParticipantIds)
 	require.Error(t, err)
 	require.Nil(t, res1)
 
@@ -201,11 +207,12 @@ func TestDkgRound3InvalidWitnesses(t *testing.T) {
 	// corrupt 3rd participant
 	decommitments[3].Di.Msg[0] ^= decommitments[1].Di.Msg[0]
 	decommitments[3].Di.Msg[1] ^= decommitments[1].Di.Msg[1]
-	res2, err := participants[1].DkgRound3(decommitments, map[uint32]*DkgRound2P2PSend{
+	res2, failedParticipantIds, err := participants[1].DkgRound3(decommitments, map[uint32]*DkgRound2P2PSend{
 		1: {participants[1].State.X[0]},
 		2: {participants[2].State.X[0]},
 		3: {participants[3].State.X[0]},
 	})
+	require.NotNil(t, failedParticipantIds)
 	require.Error(t, err)
 	require.Nil(t, res2)
 }
@@ -223,11 +230,12 @@ func TestDkgRound3InvalidShares(t *testing.T) {
 	participants[2].State.X[0].Value = curves.NewField(curve.Params().N).NewElement(big.NewInt(1))
 
 	// Actual test
-	res1, err := participants[1].DkgRound3(decommitments, map[uint32]*DkgRound2P2PSend{
+	res1, failedParticipantIds, err := participants[1].DkgRound3(decommitments, map[uint32]*DkgRound2P2PSend{
 		1: {participants[1].State.X[0]},
 		2: {participants[2].State.X[0]},
 		3: {participants[3].State.X[0]},
 	})
+	require.NotNil(t, failedParticipantIds)
 	require.Error(t, err)
 	require.Nil(t, res1)
 
@@ -237,11 +245,12 @@ func TestDkgRound3InvalidShares(t *testing.T) {
 	// corrupt 3rd participant share
 	participants[3].State.X[0].Value = curves.NewField(curve.Params().N).NewElement(big.NewInt(1))
 
-	res2, err := participants[1].DkgRound3(decommitments, map[uint32]*DkgRound2P2PSend{
+	res2, failedParticipantIds, err := participants[1].DkgRound3(decommitments, map[uint32]*DkgRound2P2PSend{
 		1: {participants[1].State.X[0]},
 		2: {participants[2].State.X[0]},
 		3: {participants[3].State.X[0]},
 	})
+	require.NotNil(t, failedParticipantIds)
 	require.Error(t, err)
 	require.Nil(t, res2)
 }
@@ -579,7 +588,8 @@ func TestDkgRound2Works(t *testing.T) {
 
 	// Test
 	participant := dkgParticipants[1]
-	bcast, p2psend, err := participant.DkgRound2(dpOutputs)
+	bcast, p2psend, failedParticipantIds, err := participant.DkgRound2(dpOutputs)
+	require.Nil(t, failedParticipantIds)
 	require.NoError(t, err)
 
 	// Verify the outputs
@@ -614,7 +624,8 @@ func TestDkgRound2Tampered(t *testing.T) {
 
 	// Tampering player 2 on Ni
 	dpOutputs[2].Ni.Add(dpOutputs[2].Ni, core.One)
-	_, _, err := participant.DkgRound2(dpOutputs)
+	_, _, failedParticipantIds, err := participant.DkgRound2(dpOutputs)
+	require.NotNil(t, failedParticipantIds)
 	require.Error(t, err)
 
 	// Restore player 2
@@ -623,7 +634,8 @@ func TestDkgRound2Tampered(t *testing.T) {
 
 	// Tamper player 3 on Ni
 	dpOutputs[3].Ni.Add(dpOutputs[3].Ni, core.One)
-	_, _, err = participant.DkgRound2(dpOutputs)
+	_, _, failedParticipantIds, err = participant.DkgRound2(dpOutputs)
+	require.NotNil(t, failedParticipantIds)
 	require.Error(t, err)
 
 	// Restore player 3
@@ -632,7 +644,8 @@ func TestDkgRound2Tampered(t *testing.T) {
 
 	// Tamper player 2 on h1
 	dpOutputs[2].H1i.Add(dpOutputs[2].H1i, core.One)
-	_, _, err = participant.DkgRound2(dpOutputs)
+	_, _, failedParticipantIds, err = participant.DkgRound2(dpOutputs)
+	require.NotNil(t, failedParticipantIds)
 	require.Error(t, err)
 }
 
@@ -646,13 +659,15 @@ func TestDkgRound2RepeatCall(t *testing.T) {
 	participant := dkgParticipants[1]
 
 	// Actual test
-	bcast, p2psend, err := participant.DkgRound2(dpOutputs)
+	bcast, p2psend, failedParticipantIds, err := participant.DkgRound2(dpOutputs)
+	require.Nil(t, failedParticipantIds)
 	require.NoError(t, err)
 	require.NotNil(t, bcast)
 	require.NotNil(t, p2psend)
 
 	// Repeat
-	bcast, p2psend, err = participant.DkgRound2(dpOutputs)
+	bcast, p2psend, failedParticipantIds, err = participant.DkgRound2(dpOutputs)
+	require.Nil(t, failedParticipantIds)
 	require.Error(t, err)
 	require.Nil(t, bcast)
 	require.Nil(t, p2psend)
@@ -671,7 +686,8 @@ func TestDkgRound2NotEnoughParties(t *testing.T) {
 	dpOutputs[2] = nil
 
 	// Actual test
-	bcast, p2psend, err := participant.DkgRound2(dpOutputs)
+	bcast, failedParticipantIds, p2psend, err := participant.DkgRound2(dpOutputs)
+	require.Nil(t, failedParticipantIds)
 	require.Error(t, err)
 	require.Nil(t, bcast)
 	require.Nil(t, p2psend)
@@ -685,45 +701,51 @@ func TestDkgRound4Works(t *testing.T) {
 	participants := setupDkgRound3ParticipantMap(curve, playerMin, playerCnt)
 	decommitments := setupDkgRound3Commitments(t, participants, playerCnt)
 
-	res1, err := participants[1].DkgRound3(decommitments, map[uint32]*DkgRound2P2PSend{
+	res1, failedParticipantIds, err := participants[1].DkgRound3(decommitments, map[uint32]*DkgRound2P2PSend{
 		1: {participants[1].State.X[0]},
 		2: {participants[2].State.X[0]},
 		3: {participants[3].State.X[0]},
 	})
+	require.Nil(t, failedParticipantIds)
 	require.NoError(t, err)
 	require.NotNil(t, res1)
-	res2, err := participants[2].DkgRound3(decommitments, map[uint32]*DkgRound2P2PSend{
+	res2, failedParticipantIds, err := participants[2].DkgRound3(decommitments, map[uint32]*DkgRound2P2PSend{
 		1: {participants[1].State.X[1]},
 		2: {participants[2].State.X[1]},
 		3: {participants[3].State.X[1]},
 	})
+	require.Nil(t, failedParticipantIds)
 	require.NoError(t, err)
 	require.NotNil(t, res2)
-	res3, err := participants[3].DkgRound3(decommitments, map[uint32]*DkgRound2P2PSend{
+	res3, failedParticipantIds, err := participants[3].DkgRound3(decommitments, map[uint32]*DkgRound2P2PSend{
 		1: {participants[1].State.X[2]},
 		2: {participants[2].State.X[2]},
 		3: {participants[3].State.X[2]},
 	})
+	require.Nil(t, failedParticipantIds)
 	require.NoError(t, err)
 	require.NotNil(t, res3)
 
 	// Actual test
-	out1, err := participants[1].DkgRound4(map[uint32]*DkgRound3Bcast{
+	out1, failedParticipantIds, err := participants[1].DkgRound4(map[uint32]*DkgRound3Bcast{
 		2: res2,
 		3: res3,
 	})
+	require.Nil(t, failedParticipantIds)
 	require.NoError(t, err)
 	require.NotNil(t, out1)
-	out2, err := participants[2].DkgRound4(map[uint32]*DkgRound3Bcast{
+	out2, failedParticipantIds, err := participants[2].DkgRound4(map[uint32]*DkgRound3Bcast{
 		1: res1,
 		3: res3,
 	})
+	require.Nil(t, failedParticipantIds)
 	require.NoError(t, err)
 	require.NotNil(t, out2)
-	out3, err := participants[3].DkgRound4(map[uint32]*DkgRound3Bcast{
+	out3, failedParticipantIds, err := participants[3].DkgRound4(map[uint32]*DkgRound3Bcast{
 		1: res1,
 		2: res2,
 	})
+	require.Nil(t, failedParticipantIds)
 	require.NoError(t, err)
 	require.NotNil(t, out3)
 
@@ -756,40 +778,45 @@ func TestDkgRound4RepeatCall(t *testing.T) {
 	participants := setupDkgRound3ParticipantMap(curve, playerMin, playerCnt)
 	decommitments := setupDkgRound3Commitments(t, participants, playerCnt)
 
-	res1, err := participants[1].DkgRound3(decommitments, map[uint32]*DkgRound2P2PSend{
+	res1, failedParticipantIds, err := participants[1].DkgRound3(decommitments, map[uint32]*DkgRound2P2PSend{
 		1: {participants[1].State.X[0]},
 		2: {participants[2].State.X[0]},
 		3: {participants[3].State.X[0]},
 	})
+	require.Nil(t, failedParticipantIds)
 	require.NoError(t, err)
 	require.NotNil(t, res1)
-	res2, err := participants[2].DkgRound3(decommitments, map[uint32]*DkgRound2P2PSend{
+	res2, failedParticipantIds, err := participants[2].DkgRound3(decommitments, map[uint32]*DkgRound2P2PSend{
 		1: {participants[1].State.X[1]},
 		2: {participants[2].State.X[1]},
 		3: {participants[3].State.X[1]},
 	})
+	require.Nil(t, failedParticipantIds)
 	require.NoError(t, err)
 	require.NotNil(t, res2)
-	res3, err := participants[3].DkgRound3(decommitments, map[uint32]*DkgRound2P2PSend{
+	res3, failedParticipantIds, err := participants[3].DkgRound3(decommitments, map[uint32]*DkgRound2P2PSend{
 		1: {participants[1].State.X[2]},
 		2: {participants[2].State.X[2]},
 		3: {participants[3].State.X[2]},
 	})
+	require.Nil(t, failedParticipantIds)
 	require.NoError(t, err)
 	require.NotNil(t, res3)
 
 	// Actual test
-	out1, err := participants[1].DkgRound4(map[uint32]*DkgRound3Bcast{
+	out1, failedParticipantIds, err := participants[1].DkgRound4(map[uint32]*DkgRound3Bcast{
 		2: res2,
 		3: res3,
 	})
+	require.Nil(t, failedParticipantIds)
 	require.NoError(t, err)
 	require.NotNil(t, out1)
 
-	out2, err := participants[1].DkgRound4(map[uint32]*DkgRound3Bcast{
+	out2, failedParticipantIds, err := participants[1].DkgRound4(map[uint32]*DkgRound3Bcast{
 		2: res2,
 		3: res3,
 	})
+	require.Nil(t, failedParticipantIds)
 	require.NoError(t, err)
 	require.Equal(t, out1, out2)
 }
@@ -802,37 +829,42 @@ func TestDkgRound4NotEnoughProofs(t *testing.T) {
 	participants := setupDkgRound3ParticipantMap(curve, playerMin, playerCnt)
 	decommitments := setupDkgRound3Commitments(t, participants, playerCnt)
 
-	res1, err := participants[1].DkgRound3(decommitments, map[uint32]*DkgRound2P2PSend{
+	res1, failedParticipantIds, err := participants[1].DkgRound3(decommitments, map[uint32]*DkgRound2P2PSend{
 		1: {participants[1].State.X[0]},
 		2: {participants[2].State.X[0]},
 		3: {participants[3].State.X[0]},
 	})
+	require.Nil(t, failedParticipantIds)
 	require.NoError(t, err)
 	require.NotNil(t, res1)
-	res2, err := participants[2].DkgRound3(decommitments, map[uint32]*DkgRound2P2PSend{
+	res2, failedParticipantIds, err := participants[2].DkgRound3(decommitments, map[uint32]*DkgRound2P2PSend{
 		1: {participants[1].State.X[1]},
 		2: {participants[2].State.X[1]},
 		3: {participants[3].State.X[1]},
 	})
+	require.Nil(t, failedParticipantIds)
 	require.NoError(t, err)
 	require.NotNil(t, res2)
-	res3, err := participants[3].DkgRound3(decommitments, map[uint32]*DkgRound2P2PSend{
+	res3, failedParticipantIds, err := participants[3].DkgRound3(decommitments, map[uint32]*DkgRound2P2PSend{
 		1: {participants[1].State.X[2]},
 		2: {participants[2].State.X[2]},
 		3: {participants[3].State.X[2]},
 	})
+	require.Nil(t, failedParticipantIds)
 	require.NoError(t, err)
 	require.NotNil(t, res3)
 
 	// Actual test
-	out1, err := participants[1].DkgRound4(map[uint32]*DkgRound3Bcast{
+	out1, failedParticipantIds, err := participants[1].DkgRound4(map[uint32]*DkgRound3Bcast{
 		2: res2,
 	})
+	require.NotNil(t, failedParticipantIds)
 	require.Error(t, err)
 	require.Nil(t, out1)
-	out2, err := participants[1].DkgRound4(map[uint32]*DkgRound3Bcast{
+	out2, failedParticipantIds, err := participants[1].DkgRound4(map[uint32]*DkgRound3Bcast{
 		3: res3,
 	})
+	require.NotNil(t, failedParticipantIds)
 	require.Error(t, err)
 	require.Nil(t, out2)
 }
@@ -845,16 +877,18 @@ func TestDkgRound4NoProofs(t *testing.T) {
 	participants := setupDkgRound3ParticipantMap(curve, playerMin, playerCnt)
 	decommitments := setupDkgRound3Commitments(t, participants, playerCnt)
 
-	res1, err := participants[1].DkgRound3(decommitments, map[uint32]*DkgRound2P2PSend{
+	res1, failedParticipantIds, err := participants[1].DkgRound3(decommitments, map[uint32]*DkgRound2P2PSend{
 		1: {participants[1].State.X[0]},
 		2: {participants[2].State.X[0]},
 		3: {participants[3].State.X[0]},
 	})
+	require.Nil(t, failedParticipantIds)
 	require.NoError(t, err)
 	require.NotNil(t, res1)
 
 	// Actual test
-	out1, err := participants[1].DkgRound4(map[uint32]*DkgRound3Bcast{})
+	out1, failedParticipantIds, err := participants[1].DkgRound4(map[uint32]*DkgRound3Bcast{})
+	require.Nil(t, failedParticipantIds)
 	require.Error(t, err)
 	require.Nil(t, out1)
 }
@@ -867,39 +901,44 @@ func TestDkgRound4WrongProofs(t *testing.T) {
 	participants := setupDkgRound3ParticipantMap(curve, playerMin, playerCnt)
 	decommitments := setupDkgRound3Commitments(t, participants, playerCnt)
 
-	res1, err := participants[1].DkgRound3(decommitments, map[uint32]*DkgRound2P2PSend{
+	res1, failedParticipantIds, err := participants[1].DkgRound3(decommitments, map[uint32]*DkgRound2P2PSend{
 		1: {participants[1].State.X[0]},
 		2: {participants[2].State.X[0]},
 		3: {participants[3].State.X[0]},
 	})
+	require.Nil(t, failedParticipantIds)
 	require.NoError(t, err)
 	require.NotNil(t, res1)
-	res2, err := participants[2].DkgRound3(decommitments, map[uint32]*DkgRound2P2PSend{
+	res2, failedParticipantIds, err := participants[2].DkgRound3(decommitments, map[uint32]*DkgRound2P2PSend{
 		1: {participants[1].State.X[1]},
 		2: {participants[2].State.X[1]},
 		3: {participants[3].State.X[1]},
 	})
+	require.Nil(t, failedParticipantIds)
 	require.NoError(t, err)
 	require.NotNil(t, res2)
-	res3, err := participants[3].DkgRound3(decommitments, map[uint32]*DkgRound2P2PSend{
+	res3, failedParticipantIds, err := participants[3].DkgRound3(decommitments, map[uint32]*DkgRound2P2PSend{
 		1: {participants[1].State.X[2]},
 		2: {participants[2].State.X[2]},
 		3: {participants[3].State.X[2]},
 	})
+	require.Nil(t, failedParticipantIds)
 	require.NoError(t, err)
 	require.NotNil(t, res3)
 
 	// Actual test
-	out1, err := participants[1].DkgRound4(map[uint32]*DkgRound3Bcast{
+	out1, failedParticipantIds, err := participants[1].DkgRound4(map[uint32]*DkgRound3Bcast{
 		2: res2,
 		3: res1,
 	})
+	require.NotNil(t, failedParticipantIds)
 	require.Error(t, err)
 	require.Nil(t, out1)
-	out2, err := participants[1].DkgRound4(map[uint32]*DkgRound3Bcast{
+	out2, failedParticipantIds, err := participants[1].DkgRound4(map[uint32]*DkgRound3Bcast{
 		2: res3,
 		3: res3,
 	})
+	require.NotNil(t, failedParticipantIds)
 	require.Error(t, err)
 	require.Nil(t, out2)
 }
@@ -912,7 +951,7 @@ func TestDkgFullRoundsWorks(t *testing.T) {
 	total := 3
 	threshold := 2
 	var err error
-
+	var failedParticipantIds []uint32
 	// Initiate 3 parties for DKG
 	dkgParticipants := make(map[uint32]*DkgParticipant, total)
 	for i := 1; i <= total; i++ {
@@ -938,7 +977,8 @@ func TestDkgFullRoundsWorks(t *testing.T) {
 	dkgR2Bcast := make(map[uint32]*DkgRound2Bcast, total)
 	dkgR2P2PSend := make(map[uint32]map[uint32]*DkgRound2P2PSend, total)
 	for i := 1; i <= total; i++ {
-		dkgR2Bcast[uint32(i)], dkgR2P2PSend[uint32(i)], err = dkgParticipants[uint32(i)].DkgRound2(dkgR1Out)
+		dkgR2Bcast[uint32(i)], dkgR2P2PSend[uint32(i)], failedParticipantIds, err = dkgParticipants[uint32(i)].DkgRound2(dkgR1Out)
+		require.Nil(t, failedParticipantIds)
 		require.NoError(t, err)
 	}
 
@@ -949,31 +989,35 @@ func TestDkgFullRoundsWorks(t *testing.T) {
 	decommitments[2] = &DkgRound2Bcast{dkgR2Bcast[2].Di}
 	decommitments[3] = &DkgRound2Bcast{dkgR2Bcast[3].Di}
 
-	dkgR3Out[1], err = dkgParticipants[1].DkgRound3(decommitments, map[uint32]*DkgRound2P2PSend{
+	dkgR3Out[1], failedParticipantIds, err = dkgParticipants[1].DkgRound3(decommitments, map[uint32]*DkgRound2P2PSend{
 		1: {dkgParticipants[1].State.X[0]},
 		2: {dkgParticipants[2].State.X[0]},
 		3: {dkgParticipants[3].State.X[0]},
 	})
+	require.Nil(t, failedParticipantIds)
 	require.NoError(t, err)
 
-	dkgR3Out[2], err = dkgParticipants[2].DkgRound3(decommitments, map[uint32]*DkgRound2P2PSend{
+	dkgR3Out[2], failedParticipantIds, err = dkgParticipants[2].DkgRound3(decommitments, map[uint32]*DkgRound2P2PSend{
 		1: {dkgParticipants[1].State.X[1]},
 		2: {dkgParticipants[2].State.X[1]},
 		3: {dkgParticipants[3].State.X[1]},
 	})
+	require.Nil(t, failedParticipantIds)
 	require.NoError(t, err)
 
-	dkgR3Out[3], err = dkgParticipants[3].DkgRound3(decommitments, map[uint32]*DkgRound2P2PSend{
+	dkgR3Out[3], failedParticipantIds, err = dkgParticipants[3].DkgRound3(decommitments, map[uint32]*DkgRound2P2PSend{
 		1: {dkgParticipants[1].State.X[2]},
 		2: {dkgParticipants[2].State.X[2]},
 		3: {dkgParticipants[3].State.X[2]},
 	})
+	require.Nil(t, failedParticipantIds)
 	require.NoError(t, err)
 
 	// Run Dkg Round 4
 	dkgR4Out := make(map[uint32]*DkgResult, total)
 	for i := 1; i <= total; i++ {
-		dkgR4Out[uint32(i)], err = dkgParticipants[uint32(i)].DkgRound4(dkgR3Out)
+		dkgR4Out[uint32(i)], failedParticipantIds, err = dkgParticipants[uint32(i)].DkgRound4(dkgR3Out)
+		require.Nil(t, failedParticipantIds)
 		require.NoError(t, err)
 	}
 

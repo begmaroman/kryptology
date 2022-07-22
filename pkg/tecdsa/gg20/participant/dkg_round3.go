@@ -24,12 +24,15 @@ type DkgRound3Bcast struct {
 
 // DkgRound3 computes dkg round 3 as shown in
 // [spec] fig. 5: DistKeyGenRoun3
-func (dp *DkgParticipant) DkgRound3(inBcast map[uint32]*DkgRound2Bcast, inP2P map[uint32]*DkgRound2P2PSend) (*DkgRound3Bcast, error) {
+func (dp *DkgParticipant) DkgRound3(inBcast map[uint32]*DkgRound2Bcast, inP2P map[uint32]*DkgRound2P2PSend) (*DkgRound3Bcast, []uint32, error) {
+	var failedParticipantIds []uint32
+	var failedParticipantErrors []error
+
 	if len(inBcast) == 0 || len(inP2P) == 0 {
-		return nil, internal.ErrNilArguments
+		return nil, failedParticipantIds, internal.ErrNilArguments
 	}
 	if dp.Round != 3 {
-		return nil, internal.ErrInvalidRound
+		return nil, failedParticipantIds, internal.ErrInvalidRound
 	}
 
 	// Extract the share verifiers from the commitment
@@ -39,7 +42,7 @@ func (dp *DkgParticipant) DkgRound3(inBcast map[uint32]*DkgRound2Bcast, inP2P ma
 	verifierSize := internal.CalcFieldSize(dp.Curve) * 2
 	feldman, err := v1.NewFeldman(dp.State.Threshold, dp.State.Limit, dp.Curve)
 	if err != nil {
-		return nil, err
+		return nil, failedParticipantIds, err
 	}
 
 	// 1. set xi = xii
@@ -55,28 +58,42 @@ func (dp *DkgParticipant) DkgRound3(inBcast map[uint32]*DkgRound2Bcast, inP2P ma
 		// 4. Compute [vj0, . . . , vjt] ←Open(Cj , Dj )
 		if ok, err := core.Open(dp.State.OtherParticipantData[j].Commitment, *wit.Di); !ok {
 			if err != nil {
-				return nil, err
+				failedParticipantIds = append(failedParticipantIds, j)
+				failedParticipantErrors = append(failedParticipantErrors, err)
+				continue
 			} else {
-				return nil, fmt.Errorf("invalid witness for participant %d", j+1)
+				failedParticipantIds = append(failedParticipantIds, j)
+				failedParticipantErrors = append(failedParticipantErrors, fmt.Errorf("invalid witness for participant"))
+				continue
 			}
 		}
 
 		verifiers[j], err = unmarshalFeldmanVerifiers(dp.Curve, wit.Di.Msg, verifierSize, int(dp.State.Threshold))
 		if err != nil {
-			return nil, err
+			failedParticipantIds = append(failedParticipantIds, j)
+			failedParticipantErrors = append(failedParticipantErrors, err)
+			continue
 		}
 
 		// 6. If FeldmanVerify(g, q, xji, pi, [vj0, . . . , vjt]) = False, Abort
 		if ok, err := feldman.Verify(inP2P[j].Xij, verifiers[j]); !ok {
 			if err != nil {
-				return nil, err
+				failedParticipantIds = append(failedParticipantIds, j)
+				failedParticipantErrors = append(failedParticipantErrors, err)
+				continue
 			} else {
-				return nil, fmt.Errorf("invalid share for participant %d", j+1)
+				failedParticipantIds = append(failedParticipantIds, j)
+				failedParticipantErrors = append(failedParticipantErrors, fmt.Errorf("invalid share for participant"))
+				continue
 			}
 		}
 
 		// 7. Compute xi = xi + xji mod q
 		xi.Value = xi.Value.Add(inP2P[j].Xij.Value)
+	}
+
+	if len(failedParticipantIds) != 0 {
+		return nil, failedParticipantIds, makeParticipantsError(failedParticipantIds, failedParticipantErrors)
 	}
 
 	v := make([]*curves.EcPoint, dp.State.Threshold)
@@ -85,7 +102,9 @@ func (dp *DkgParticipant) DkgRound3(inBcast map[uint32]*DkgRound2Bcast, inP2P ma
 		// 9. Set vj = 1 or identity point
 		v[j], err = curves.NewScalarBaseMult(dp.Curve, big.NewInt(0))
 		if err != nil {
-			return nil, err
+			failedParticipantIds = append(failedParticipantIds, uint32(j+1))
+			failedParticipantErrors = append(failedParticipantErrors, err)
+			continue
 		}
 
 		// 10. for k = [1,...,n]
@@ -93,9 +112,15 @@ func (dp *DkgParticipant) DkgRound3(inBcast map[uint32]*DkgRound2Bcast, inP2P ma
 			// 11. Compute vj = vj · vkj in G
 			v[j], err = v[j].Add(verifier[j])
 			if err != nil {
-				return nil, err
+				failedParticipantIds = append(failedParticipantIds, uint32(j+1))
+				failedParticipantErrors = append(failedParticipantErrors, err)
+				continue
 			}
 		}
+	}
+
+	if len(failedParticipantIds) != 0 {
+		return nil, failedParticipantIds, makeParticipantsError(failedParticipantIds, failedParticipantErrors)
 	}
 
 	// 12. y = v0 i.e the public key
@@ -104,7 +129,7 @@ func (dp *DkgParticipant) DkgRound3(inBcast map[uint32]*DkgRound2Bcast, inP2P ma
 	// This is a sanity check to make sure nothing went wrong when
 	// computing the public key
 	if !dp.Curve.IsOnCurve(y.X, y.Y) || y.IsIdentity() {
-		return nil, fmt.Errorf("invalid public key")
+		return nil, failedParticipantIds, fmt.Errorf("invalid public key")
 	}
 
 	// Xj's
@@ -125,19 +150,29 @@ func (dp *DkgParticipant) DkgRound3(inBcast map[uint32]*DkgRound2Bcast, inP2P ma
 			pj := big.NewInt(int64(id))
 			ck, err := core.Mul(pj, big.NewInt(int64(k+1)), dp.Curve.Params().N)
 			if err != nil {
-				return nil, err
+				failedParticipantIds = append(failedParticipantIds, id)
+				failedParticipantErrors = append(failedParticipantErrors, err)
+				continue
 			}
 			// 17. compute Xj = Xj x vk ^ ck in G
 			t, err := v[k].ScalarMult(ck)
 			if err != nil {
-				return nil, err
+				failedParticipantIds = append(failedParticipantIds, id)
+				failedParticipantErrors = append(failedParticipantErrors, err)
+				continue
 			}
 			// Xj = Xj * t in G
 			publicShares[j], err = publicShares[j].Add(t)
 			if err != nil {
-				return nil, err
+				failedParticipantIds = append(failedParticipantIds, id)
+				failedParticipantErrors = append(failedParticipantErrors, err)
+				continue
 			}
 		}
+	}
+
+	if len(failedParticipantIds) != 0 {
+		return nil, failedParticipantIds, makeParticipantsError(failedParticipantIds, failedParticipantErrors)
 	}
 
 	// 18. Compute πPSF = ProvePSF(ski.N, ski.φ(N), y, g, q, pi)
@@ -149,7 +184,7 @@ func (dp *DkgParticipant) DkgRound3(inBcast map[uint32]*DkgRound2Bcast, inP2P ma
 	}
 	psfProof, err := psfParams.Prove()
 	if err != nil {
-		return nil, err
+		return nil, failedParticipantIds, err
 	}
 
 	dp.Round = 4
@@ -157,7 +192,7 @@ func (dp *DkgParticipant) DkgRound3(inBcast map[uint32]*DkgRound2Bcast, inP2P ma
 	dp.State.ShamirShare = xi
 	dp.State.PublicShares = publicShares
 
-	return &DkgRound3Bcast{psfProof}, nil
+	return &DkgRound3Bcast{psfProof}, failedParticipantIds, nil
 }
 
 // unmarshalFeldmanVerifiers converts a byte sequence into
