@@ -32,12 +32,15 @@ type DkgParticipantData struct {
 
 // DkgRound4 computes dkg round 4 as shown in
 // [spec] fig. 5: DistKeyGenRound4
-func (dp *DkgParticipant) DkgRound4(inBcast map[uint32]*DkgRound3Bcast) (*DkgResult, error) {
+func (dp *DkgParticipant) DkgRound4(inBcast map[uint32]*DkgRound3Bcast) (*DkgResult, []uint32, error) {
+	var failedParticipantIds []uint32
+	var failedParticipantErrors []error
+
 	if len(inBcast) == 0 {
-		return nil, internal.ErrIncorrectCount
+		return nil, failedParticipantIds, internal.ErrIncorrectCount
 	}
 	if dp.Round != 4 {
-		return nil, internal.ErrInvalidRound
+		return nil, failedParticipantIds, internal.ErrInvalidRound
 	}
 	// Make sure all participants sent a proof
 	for id := range dp.State.OtherParticipantData {
@@ -45,8 +48,14 @@ func (dp *DkgParticipant) DkgRound4(inBcast map[uint32]*DkgRound3Bcast) (*DkgRes
 			continue
 		}
 		if _, ok := inBcast[id]; !ok {
-			return nil, fmt.Errorf("missing proof for participant %d", id)
+			failedParticipantIds = append(failedParticipantIds, id)
+			failedParticipantErrors = append(failedParticipantErrors, fmt.Errorf("missing proof for participant"))
+			continue
 		}
+	}
+
+	if len(failedParticipantIds) != 0 {
+		return nil, failedParticipantIds, makeParticipantsError(failedParticipantIds, failedParticipantErrors)
 	}
 
 	verifyPsfParams := paillier.PsfVerifyParams{
@@ -63,8 +72,14 @@ func (dp *DkgParticipant) DkgRound4(inBcast map[uint32]*DkgRound3Bcast) (*DkgRes
 		verifyPsfParams.Pi = id
 		// 3. if VerifyPSF(\pi_j, pk_j.N, y, g, q, pj) = false, abort
 		if err := p.PsfProof.Verify(&verifyPsfParams); err != nil {
-			return nil, err
+			failedParticipantIds = append(failedParticipantIds, id)
+			failedParticipantErrors = append(failedParticipantErrors, err)
+			continue
 		}
+	}
+
+	if len(failedParticipantIds) != 0 {
+		return nil, failedParticipantIds, makeParticipantsError(failedParticipantIds, failedParticipantErrors)
 	}
 
 	// Return paillier public keys and proof params
@@ -96,5 +111,5 @@ func (dp *DkgParticipant) DkgRound4(inBcast map[uint32]*DkgRound3Bcast) (*DkgRes
 		EcdsaPublicKey:  dp.State.Y,
 		PublicShares:    dp.State.PublicShares,
 		ParticipantData: participantData,
-	}, nil
+	}, failedParticipantIds, nil
 }

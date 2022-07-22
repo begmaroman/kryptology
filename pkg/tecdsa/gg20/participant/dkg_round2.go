@@ -29,15 +29,17 @@ type DkgRound2P2PSend struct {
 
 // DkgRound2 implements distributed key generation round 2
 // [spec] fig 5: DistKeyGenRound2
-func (dp *DkgParticipant) DkgRound2(inBcast map[uint32]*DkgRound1Bcast) (*DkgRound2Bcast, map[uint32]*DkgRound2P2PSend, error) {
+func (dp *DkgParticipant) DkgRound2(inBcast map[uint32]*DkgRound1Bcast) (*DkgRound2Bcast, map[uint32]*DkgRound2P2PSend, []uint32, error) {
+	var failedParticipantIds []uint32
+	var failedParticipantErrors []error
 	// Make sure dkg participant is not empty
 	if dp == nil || dp.Curve == nil {
-		return nil, nil, internal.ErrNilArguments
+		return nil, nil, failedParticipantIds, internal.ErrNilArguments
 	}
 
 	// Check DkgParticipant has the correct dkg round number
 	if err := dp.verifyDkgRound(2); err != nil {
-		return nil, nil, err
+		return nil, nil, failedParticipantIds, err
 	}
 
 	// Check the total number of parties
@@ -52,7 +54,7 @@ func (dp *DkgParticipant) DkgRound2(inBcast map[uint32]*DkgRound1Bcast) (*DkgRou
 		cnt++
 	}
 	if uint32(cnt) != dp.State.Limit-1 {
-		return nil, nil, internal.ErrIncorrectCount
+		return nil, nil, failedParticipantIds, internal.ErrIncorrectCount
 	}
 
 	// Initiate P2P channel to other parties
@@ -83,7 +85,9 @@ func (dp *DkgParticipant) DkgRound2(inBcast map[uint32]*DkgRound1Bcast) (*DkgRou
 		bitlen := param.Pki.N.BitLen()
 		if bitlen != expKeySize &&
 			bitlen != expKeySize-1 {
-			return nil, nil, fmt.Errorf("invalid paillier keys")
+			failedParticipantIds = append(failedParticipantIds, id)
+			failedParticipantErrors = append(failedParticipantErrors, fmt.Errorf("invalid paillier keys"))
+			continue
 		}
 
 		// If VerifyCompositeDL(pi_1j^CDL, g, q, h1j, h2j, tildeN_j) = False, Abort
@@ -91,7 +95,9 @@ func (dp *DkgParticipant) DkgRound2(inBcast map[uint32]*DkgRound1Bcast) (*DkgRou
 		cdlParams1.H2 = param.H2i
 		cdlParams1.N = param.Ni
 		if err := param.Proof1i.Verify(&cdlParams1); err != nil {
-			return nil, nil, err
+			failedParticipantIds = append(failedParticipantIds, id)
+			failedParticipantErrors = append(failedParticipantErrors, err)
+			continue
 		}
 
 		// If VerifyCompositeDL(pi_2j^CDL, g, q, h2j, h1j, tildeN_j) = False, Abort
@@ -100,18 +106,23 @@ func (dp *DkgParticipant) DkgRound2(inBcast map[uint32]*DkgRound1Bcast) (*DkgRou
 		cdlParams2.H2 = param.H1i
 		cdlParams2.N = param.Ni
 		if err := param.Proof2i.Verify(&cdlParams2); err != nil {
-			return nil, nil, err
+			failedParticipantIds = append(failedParticipantIds, id)
+			failedParticipantErrors = append(failedParticipantErrors, err)
+			continue
 		}
 
 		// P2PSend xij to player Pj
 		if dp.State.X == nil || dp.State.X[id-1] == nil {
-			return nil, nil, fmt.Errorf("missing Shamir share to P2P send")
+			failedParticipantIds = append(failedParticipantIds, id)
+			failedParticipantErrors = append(failedParticipantErrors, fmt.Errorf("missing Shamir share to P2P send"))
+			continue
 		}
 		p2PSend[id] = &DkgRound2P2PSend{
 			Xij: dp.State.X[id-1],
 		}
 
 		// Store other parties data
+		//TODO: validate Identifier and Ci
 		dp.State.OtherParticipantData[id] = &DkgParticipantCommitment{
 			PublicKey:  param.Pki,
 			Commitment: param.Ci,
@@ -123,11 +134,15 @@ func (dp *DkgParticipant) DkgRound2(inBcast map[uint32]*DkgRound1Bcast) (*DkgRou
 		}
 	}
 
+	if len(failedParticipantIds) != 0 {
+		return nil, nil, failedParticipantIds, makeParticipantsError(failedParticipantIds, failedParticipantErrors)
+	}
+
 	// Assign dkg round to 3
 	dp.Round = 3
 
 	// EchoBroadcast Di to all other players. Also return it with P2PSend
 	return &DkgRound2Bcast{
 		Di: dp.State.D,
-	}, p2PSend, nil
+	}, p2PSend, failedParticipantIds, nil
 }
