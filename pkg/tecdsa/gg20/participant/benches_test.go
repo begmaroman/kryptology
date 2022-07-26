@@ -230,7 +230,7 @@ func benchSign(b *testing.B, hash []byte, curve elliptic.Curve, verify curves.Ec
 	var err error
 	signerOut := make(map[uint32]*Round1Bcast, threshold)
 	for i, s := range signersMap {
-		signerOut[i], _, err = s.SignRound1()
+		signerOut[i], _, _, err = s.SignRound1()
 		if err != nil {
 			return err
 		}
@@ -246,7 +246,7 @@ func benchSign(b *testing.B, hash []byte, curve elliptic.Curve, verify curves.Ec
 			}
 			in[j] = signerOut[j]
 		}
-		p2p[i], err = s.SignRound2(in, nil) // TODO: fix me later
+		p2p[i], _, err = s.SignRound2(in, nil) // TODO: fix me later
 		if err != nil {
 			return nil
 		}
@@ -262,7 +262,7 @@ func benchSign(b *testing.B, hash []byte, curve elliptic.Curve, verify curves.Ec
 			}
 			in[j] = p2p[j][i]
 		}
-		r3Bcast[i], err = s.SignRound3(in)
+		r3Bcast[i], _, err = s.SignRound3(in)
 		if err != nil {
 			return err
 		}
@@ -278,7 +278,7 @@ func benchSign(b *testing.B, hash []byte, curve elliptic.Curve, verify curves.Ec
 			}
 			in[j] = r3Bcast[j]
 		}
-		r4Bcast[i], err = s.SignRound4(in)
+		r4Bcast[i], _, err = s.SignRound4(in)
 		if err != nil {
 			return err
 		}
@@ -295,7 +295,7 @@ func benchSign(b *testing.B, hash []byte, curve elliptic.Curve, verify curves.Ec
 			}
 			in[j] = r4Bcast[j]
 		}
-		r5Bcast[i], r5P2p[i], err = s.SignRound5(in)
+		r5Bcast[i], r5P2p[i], _, err = s.SignRound5(in)
 		if err != nil {
 			return err
 		}
@@ -311,7 +311,7 @@ func benchSign(b *testing.B, hash []byte, curve elliptic.Curve, verify curves.Ec
 			}
 			in[j] = r5Bcast[j]
 		}
-		r6Bcast[i], err = s.SignRound6Full(hash, in, r5P2p[i])
+		r6Bcast[i], _, err = s.SignRound6Full(hash, in, r5P2p[i])
 		if err != nil {
 			return err
 		}
@@ -326,7 +326,7 @@ func benchSign(b *testing.B, hash []byte, curve elliptic.Curve, verify curves.Ec
 			}
 			in[j] = r6Bcast[j]
 		}
-		_, err = s.SignOutput(in)
+		_, _, err = s.SignOutput(in)
 		if err != nil {
 			return err
 		}
@@ -423,10 +423,12 @@ func sign2p(b *testing.B, bw *msgCounter, setup *signingSetup) {
 	//
 	// Sign Round 1
 	//
-	r1_s1_bcast, r1_s1_p2p, err := s1.SignRound1()
+	r1_s1_bcast, r1_s1_p2p, failedCosignerIds, err := s1.SignRound1()
+	require.Nil(b, failedCosignerIds)
 	require.NoError(b, err)
 
-	r1_s2_bcast, r1_s2_p2p, err := s2.SignRound1()
+	r1_s2_bcast, r1_s2_p2p, failedCosignerIds, err := s2.SignRound1()
+	require.Nil(b, failedCosignerIds)
 	require.NoError(b, err)
 
 	// Count R1 msgs
@@ -443,16 +445,18 @@ func sign2p(b *testing.B, bw *msgCounter, setup *signingSetup) {
 	//
 	// Sign Round 2
 	//
-	r2_s1_p2p, err := s1.SignRound2(
+	r2_s1_p2p, failedCosignerIds, err := s1.SignRound2(
 		map[uint32]*Round1Bcast{2: r1_s2_bcast},
 		map[uint32]*Round1P2PSend{2: r1_s2_p2p[1]},
 	)
+	require.Nil(b, failedCosignerIds)
 	require.NoError(b, err)
 
-	r2_s2_p2p, err := s2.SignRound2(
+	r2_s2_p2p, failedCosignerIds, err := s2.SignRound2(
 		map[uint32]*Round1Bcast{1: r1_s1_bcast},
 		map[uint32]*Round1P2PSend{1: r1_s1_p2p[2]},
 	)
+	require.Nil(b, failedCosignerIds)
 	require.NoError(b, err)
 
 	// Count R2 msgs
@@ -466,14 +470,16 @@ func sign2p(b *testing.B, bw *msgCounter, setup *signingSetup) {
 	//
 	// Sign Round 3
 	//
-	r3_s1_bcast, err := s1.SignRound3(
+	r3_s1_bcast, failedCosignerIds, err := s1.SignRound3(
 		map[uint32]*Round2P2PSend{2: r2_s2_p2p[1]},
 	)
+	require.Nil(b, failedCosignerIds)
 	require.NoError(b, err)
 
-	r3_s2_bcast, err := s2.SignRound3(
+	r3_s2_bcast, failedCosignerIds, err := s2.SignRound3(
 		map[uint32]*Round2P2PSend{1: r2_s1_p2p[2]},
 	)
+	require.Nil(b, failedCosignerIds)
 	require.NoError(b, err)
 
 	// Count R3 msgs
@@ -487,12 +493,14 @@ func sign2p(b *testing.B, bw *msgCounter, setup *signingSetup) {
 	//
 	// Sign Round 4
 	//
-	r4_s1_bcast, err := s1.SignRound4(
+	r4_s1_bcast, failedCosignerIds, err := s1.SignRound4(
 		map[uint32]*Round3Bcast{2: r3_s2_bcast})
+	require.Nil(b, failedCosignerIds)
 	require.NoError(b, err)
 
-	r4_s2_bcast, err := s2.SignRound4(
+	r4_s2_bcast, failedCosignerIds, err := s2.SignRound4(
 		map[uint32]*Round3Bcast{1: r3_s1_bcast})
+	require.Nil(b, failedCosignerIds)
 	require.NoError(b, err)
 
 	// Count R4 msgs
@@ -506,14 +514,16 @@ func sign2p(b *testing.B, bw *msgCounter, setup *signingSetup) {
 	//
 	// Sign Round 5
 	//
-	r5_s1_bcast, r5_s1_p2p, err := s1.SignRound5(
+	r5_s1_bcast, r5_s1_p2p, failedCosignerIds, err := s1.SignRound5(
 		map[uint32]*Round4Bcast{2: r4_s2_bcast},
 	)
+	require.Nil(b, failedCosignerIds)
 	require.NoError(b, err)
 
-	r5_s2_bcast, r5_s2_p2p, err := s2.SignRound5(
+	r5_s2_bcast, r5_s2_p2p, failedCosignerIds, err := s2.SignRound5(
 		map[uint32]*Round4Bcast{1: r4_s1_bcast},
 	)
+	require.Nil(b, failedCosignerIds)
 	require.NoError(b, err)
 
 	// Count R5 msgs
@@ -529,16 +539,18 @@ func sign2p(b *testing.B, bw *msgCounter, setup *signingSetup) {
 	//
 	// Sign Round 6
 	//
-	r6_s1_bcast, err := s1.SignRound6Full(msgHash,
+	r6_s1_bcast, failedCosignerIds, err := s1.SignRound6Full(msgHash,
 		map[uint32]*Round5Bcast{2: r5_s2_bcast},
 		map[uint32]*Round5P2PSend{2: r5_s2_p2p[1]},
 	)
+	require.Nil(b, failedCosignerIds)
 	require.NoError(b, err)
 
-	r6_s2_bcast, err := s2.SignRound6Full(msgHash,
+	r6_s2_bcast, failedCosignerIds, err := s2.SignRound6Full(msgHash,
 		map[uint32]*Round5Bcast{1: r5_s1_bcast},
 		map[uint32]*Round5P2PSend{1: r5_s1_p2p[2]},
 	)
+	require.Nil(b, failedCosignerIds)
 	require.NoError(b, err)
 
 	// Count R6 msgs
@@ -553,14 +565,16 @@ func sign2p(b *testing.B, bw *msgCounter, setup *signingSetup) {
 	// Compute signature
 	//
 
-	s1_sig, err := s1.SignOutput(
+	s1_sig, failedCosignerIds, err := s1.SignOutput(
 		map[uint32]*Round6FullBcast{2: r6_s2_bcast},
 	)
+	require.Nil(b, failedCosignerIds)
 	require.NoError(b, err)
 
-	s2_sig, err := s2.SignOutput(
+	s2_sig, failedCosignerIds, err := s2.SignOutput(
 		map[uint32]*Round6FullBcast{1: r6_s1_bcast},
 	)
+	require.Nil(b, failedCosignerIds)
 	require.NoError(b, err)
 
 	// Verify that both parties compute the same signature

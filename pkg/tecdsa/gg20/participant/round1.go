@@ -34,13 +34,16 @@ type Round1P2PSend struct {
 // NOTE: Pseudocode shows N~, h1, h2, the curve's g, q, and signer's public key as inputs
 // Since `signer` already knows the paillier secret and public keys, this input is not necessary here
 // `participant.PrepareToSign` receives the other inputs and stores them as state variables.
-func (signer *Signer) SignRound1() (*Round1Bcast, map[uint32]*Round1P2PSend, error) {
+func (signer *Signer) SignRound1() (*Round1Bcast, map[uint32]*Round1P2PSend, []uint32, error) {
+	var failedCosignerIds []uint32
+	var failedCosignerErrors []error
+
 	if signer == nil || signer.Curve == nil {
-		return nil, nil, internal.ErrNilArguments
+		return nil, nil, nil, internal.ErrNilArguments
 	}
 
 	if err := signer.verifyStateMap(1, nil); err != nil {
-		return nil, nil, err
+		return nil, nil, nil, err
 	}
 
 	pk := &signer.SecretKey.PublicKey
@@ -48,31 +51,31 @@ func (signer *Signer) SignRound1() (*Round1Bcast, map[uint32]*Round1P2PSend, err
 	// 1. k_i \getsr Z_q
 	k, err := core.Rand(signer.Curve.Params().N)
 	if err != nil {
-		return nil, nil, err
+		return nil, nil, nil, err
 	}
 
 	// 2. \gamma_i \getsr Z_q
 	gamma, err := core.Rand(signer.Curve.Params().N)
 	if err != nil {
-		return nil, nil, err
+		return nil, nil, nil, err
 	}
 
 	// 3. \Gamma_i = g^{\gamma_i} in \G
 	Gamma, err := curves.NewScalarBaseMult(signer.Curve, gamma)
 	if err != nil {
-		return nil, nil, err
+		return nil, nil, nil, err
 	}
 
 	// 4. C_i, D_i = Commit(\Gamma_i)
 	Ci, Di, err := core.Commit(Gamma.Bytes())
 	if err != nil {
-		return nil, nil, err
+		return nil, nil, nil, err
 	}
 
 	// 5. c_i, r_i = PaillierEncryptAndReturnRandomness(pk_i, k_i)
 	ctxt, r, err := pk.Encrypt(k)
 	if err != nil {
-		return nil, nil, err
+		return nil, nil, nil, err
 	}
 
 	pp := proof.Proof1Params{
@@ -94,7 +97,7 @@ func (signer *Signer) SignRound1() (*Round1Bcast, map[uint32]*Round1P2PSend, err
 		// 6. TrustedDealer - \pi_i^{\Range1} = MtAProveRange1(g,q,pk_i,N~,h_1,h_2,k_i,c_i,r_i)
 		bcast.Proof, err = pp.Prove()
 		if err != nil {
-			return nil, nil, err
+			return nil, nil, failedCosignerIds, err
 		}
 	} else {
 		// 6. (figure 8.)DKG - for j = [1,...,t+1]
@@ -105,18 +108,26 @@ func (signer *Signer) SignRound1() (*Round1Bcast, map[uint32]*Round1P2PSend, err
 			}
 			pp.DealerParams = signer.state.keyGenType.GetProofParams(id)
 			if pp.DealerParams == nil {
-				return nil, nil, fmt.Errorf("no proof params found for cosigner %d", id)
+				failedCosignerIds = append(failedCosignerIds, id)
+				failedCosignerErrors = append(failedCosignerErrors, fmt.Errorf("no proof params found for cosigner"))
+				continue
 			}
 			// 8. DKG \pi_ij^{\Range1} = MtAProveRange1(g,q,pk_i,N~j,h_1j,h_2j,k_i,c_i,r_i)
 			pi, err := pp.Prove()
 			if err != nil {
-				return nil, nil, err
+				failedCosignerIds = append(failedCosignerIds, id)
+				failedCosignerErrors = append(failedCosignerErrors, err)
+				continue
 			}
 			// 9. P2PSend
 			p2p[id] = &Round1P2PSend{
 				Range1Proof: pi,
 			}
 		}
+	}
+
+	if len(failedCosignerIds) != 0 {
+		return nil, nil, failedCosignerIds, makeCosignerError(failedCosignerIds, failedCosignerErrors)
 	}
 
 	// 8. Stored locally (k_i, \gamma_i, D_i, c_i, r_i)
@@ -131,5 +142,5 @@ func (signer *Signer) SignRound1() (*Round1Bcast, map[uint32]*Round1P2PSend, err
 	// (figure 7) 7. Broadcast (C_i, c_i, \pi^{Range1}_i)
 	// (figure 8) 9. P2PSend(\pi^{Range1}_ij)
 	// (figure 8) 10. Broadcast (C_i, c_i)
-	return &bcast, p2p, nil
+	return &bcast, p2p, nil, nil
 }
