@@ -131,6 +131,15 @@ func (signer *Signer) resetSignRound() {
 	signer.state = nil
 }
 
+func makeCosignerError(failedCosignerIds []uint32, errors []error) error {
+	var cosignerErrorMessages []string
+	for id, participantId := range failedCosignerIds {
+		cosignerErrorMessages = append(cosignerErrorMessages, fmt.Sprintf("cosigner %d sign error: %s", participantId, errors[id]))
+	}
+	participantError := strings.Join(cosignerErrorMessages, ", ")
+	return fmt.Errorf(participantError)
+}
+
 // state encapsulates all the values used in the signing rounds state machine
 type state struct {
 	keyGenType dealer.KeyGenType

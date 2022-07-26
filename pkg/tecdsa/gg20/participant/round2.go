@@ -22,14 +22,17 @@ type Round2P2PSend struct {
 // SignRound2 performs round 2 signing operations for a single signer
 // Trusted Dealer Mode: see [spec] fig 7: SignRound2
 // DKG Mode: see [spec] fig 8: SignRound2
-func (signer *Signer) SignRound2(inBcast map[uint32]*Round1Bcast, inP2P map[uint32]*Round1P2PSend) (map[uint32]*Round2P2PSend, error) {
+func (signer *Signer) SignRound2(inBcast map[uint32]*Round1Bcast, inP2P map[uint32]*Round1P2PSend) (map[uint32]*Round2P2PSend, []uint32, error) {
+	var failedCosignerIds []uint32
+	var failedCosignerErrors []error
+
 	if err := signer.verifyStateMap(2, inBcast); err != nil {
-		return nil, err
+		return nil, nil, err
 	}
 	// In dearlerless version, p2p map must contain one message from each cosigner.
 	if !signer.state.keyGenType.IsTrustedDealer() {
 		if err := signer.verifyStateMap(2, inP2P); err != nil {
-			return nil, err
+			return nil, nil, err
 		}
 	}
 
@@ -64,12 +67,16 @@ func (signer *Signer) SignRound2(inBcast map[uint32]*Round1Bcast, inP2P map[uint
 
 		if signer.state.keyGenType.IsTrustedDealer() {
 			if err := param.Proof.Verify(pp); err != nil {
-				return nil, err
+				failedCosignerIds = append(failedCosignerIds, j)
+				failedCosignerErrors = append(failedCosignerErrors, err)
+				continue
 			}
 		} else {
 			// The case using DKG, verify range proof in P2PSend
 			if err := inP2P[j].Range1Proof.Verify(pp); err != nil {
-				return nil, err
+				failedCosignerIds = append(failedCosignerIds, j)
+				failedCosignerErrors = append(failedCosignerErrors, err)
+				continue
 			}
 		}
 
@@ -80,14 +87,18 @@ func (signer *Signer) SignRound2(inBcast map[uint32]*Round1Bcast, inP2P map[uint
 		rpp.Pk = signer.state.pks[j]
 		proofGamma, err := rpp.Prove()
 		if err != nil {
-			return nil, err
+			failedCosignerIds = append(failedCosignerIds, j)
+			failedCosignerErrors = append(failedCosignerErrors, err)
+			continue
 		}
 
 		// 5. Compute c^{w}_{ji}, \vu_{ji}, \pi^{Range3}_{ji} = MtaResponse_wc(w_i,W_i,g,q,pk_j,N~,h1,h2,c_j)
 		rpp.SmallB = signer.ShamirShare.Value.BigInt()
 		proofW, err := rpp.ProveWc()
 		if err != nil {
-			return nil, err
+			failedCosignerIds = append(failedCosignerIds, j)
+			failedCosignerErrors = append(failedCosignerErrors, err)
+			continue
 		}
 
 		// Store the values for later rounds
@@ -106,6 +117,11 @@ func (signer *Signer) SignRound2(inBcast map[uint32]*Round1Bcast, inP2P map[uint
 			Proof3: proofW,
 		}
 	}
+
+	if len(failedCosignerIds) != 0 {
+		return nil, failedCosignerIds, makeCosignerError(failedCosignerIds, failedCosignerErrors)
+	}
+
 	signer.Round = 3
-	return p2PSend, nil
+	return p2PSend, nil, nil
 }

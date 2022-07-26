@@ -32,9 +32,12 @@ type Round5P2PSend struct {
 // round 4.
 // Trusted Dealer Mode: see [spec] fig 7: SignRound5
 // DKG Mode: see [spec] fig 8: SignRound5
-func (signer *Signer) SignRound5(inBcast map[uint32]*Round4Bcast) (*Round5Bcast, map[uint32]*Round5P2PSend, error) {
+func (signer *Signer) SignRound5(inBcast map[uint32]*Round4Bcast) (*Round5Bcast, map[uint32]*Round5P2PSend, []uint32, error) {
+	var failedCosignerIds []uint32
+	var failedCosignerErrors []error
+
 	if err := signer.verifyStateMap(5, inBcast); err != nil {
-		return nil, nil, err
+		return nil, nil, nil, err
 	}
 
 	// 1. Compute R = g^{γ_i} in G
@@ -43,7 +46,9 @@ func (signer *Signer) SignRound5(inBcast map[uint32]*Round4Bcast) (*Round5Bcast,
 	// 2. For j = [1,...,t+1]
 	for j, d := range inBcast {
 		if d == nil {
-			return nil, nil, fmt.Errorf("input witnesses cannot be nil")
+			failedCosignerIds = append(failedCosignerIds, j)
+			failedCosignerErrors = append(failedCosignerErrors, fmt.Errorf("input witnesses cannot be nil"))
+			continue
 		}
 		// 3. If i == j, continue
 		if j == signer.Id {
@@ -54,45 +59,57 @@ func (signer *Signer) SignRound5(inBcast map[uint32]*Round4Bcast) (*Round5Bcast,
 		// 4. Compute Γ_j = Open(C_j , D_j)
 		ok, err := core.Open(signer.state.Cj[j], *d.Witness)
 		if err != nil {
-			return nil, nil, err
+			failedCosignerIds = append(failedCosignerIds, j)
+			failedCosignerErrors = append(failedCosignerErrors, err)
+			continue
 		}
 		if !ok {
-			return nil, nil, fmt.Errorf("commitment couldn't be opened")
+			failedCosignerIds = append(failedCosignerIds, j)
+			failedCosignerErrors = append(failedCosignerErrors, fmt.Errorf("commitment couldn't be opened"))
+			continue
 		}
 
 		// 5. If Γ_j = ⊥, Abort
 		Gammaj, err := curves.PointFromBytesUncompressed(signer.Curve, d.Witness.Msg)
 		if err != nil {
-			return nil, nil, err
+			failedCosignerIds = append(failedCosignerIds, j)
+			failedCosignerErrors = append(failedCosignerErrors, err)
+			continue
 		}
 
 		// 6. Compute R = R · Γ_j in G
 		R, err = R.Add(Gammaj)
 		if err != nil {
-			return nil, nil, err
+			failedCosignerIds = append(failedCosignerIds, j)
+			failedCosignerErrors = append(failedCosignerErrors, err)
+			continue
 		}
+	}
+
+	if len(failedCosignerIds) != 0 {
+		return nil, nil, failedCosignerIds, makeCosignerError(failedCosignerIds, failedCosignerErrors)
 	}
 
 	// 7. Compute R= R^{δ^{−1}} in G
 	deltaInv, err := core.Inv(signer.state.delta, signer.Curve.Params().N)
 	if err != nil {
-		return nil, nil, err
+		return nil, nil, nil, err
 	}
 	R, err = R.ScalarMult(deltaInv)
 	if err != nil {
-		return nil, nil, err
+		return nil, nil, nil, err
 	}
 
 	// 9. Compute \overline{R_i} = R^{k_i}
 	Rbari, err := R.ScalarMult(signer.state.ki)
 	if err != nil {
-		return nil, nil, err
+		return nil, nil, nil, err
 	}
 
 	// Sanity check
 	Rbark, err := R.ScalarMult(signer.state.sigmai)
 	if err != nil {
-		return nil, nil, err
+		return nil, nil, nil, err
 	}
 
 	bcast := &Round5Bcast{Rbari, nil}
@@ -112,7 +129,7 @@ func (signer *Signer) SignRound5(inBcast map[uint32]*Round4Bcast) (*Round5Bcast,
 		pdlParams.DealerParams = signer.state.keyGenType.GetProofParams(0) //note ID is ignored for trusted dealer
 		bcast.Proof, err = pdlParams.Prove()
 		if err != nil {
-			return nil, nil, err
+			return nil, nil, nil, err
 		}
 	} else {
 		// 10. DKG - for j = [1,...,t+1]
@@ -123,18 +140,26 @@ func (signer *Signer) SignRound5(inBcast map[uint32]*Round4Bcast) (*Round5Bcast,
 			}
 			pdlParams.DealerParams = signer.state.keyGenType.GetProofParams(id)
 			if pdlParams.DealerParams == nil {
-				return nil, nil, fmt.Errorf("no proof params found for cosigner %d", id)
+				failedCosignerIds = append(failedCosignerIds, id)
+				failedCosignerErrors = append(failedCosignerErrors, fmt.Errorf("no proof params found for cosigner"))
+				continue
 			}
 			// 12. DKG - Compute π^{kCONSIST}_ij = ProvePDL(g, q, R, pk_i, N~_j, h1_j, h2_j, k_i, \overline{R_i}, c_i, r_i)
 			pdl, err := pdlParams.Prove()
 			if err != nil {
-				return nil, nil, err
+				failedCosignerIds = append(failedCosignerIds, id)
+				failedCosignerErrors = append(failedCosignerErrors, err)
+				continue
 			}
 			// 13. P2PSend π^{kCONSIST}_ij to Pj
 			p2p[id] = &Round5P2PSend{
 				PdlProof: pdl,
 			}
 		}
+	}
+
+	if len(failedCosignerIds) != 0 {
+		return nil, nil, failedCosignerIds, makeCosignerError(failedCosignerIds, failedCosignerErrors)
 	}
 
 	// Used in Round 6
@@ -151,5 +176,5 @@ func (signer *Signer) SignRound5(inBcast map[uint32]*Round4Bcast) (*Round5Bcast,
 
 	// 11. TrustedDealer - Broadcast {R_i, π^{kCONSIST}_i} to all other players
 	// 13. DKG - Broadcast R_i to all other players, P2PSend π^{kCONSIST}_ij
-	return bcast, p2p, nil
+	return bcast, p2p, nil, nil
 }

@@ -23,10 +23,13 @@ type Round4Bcast struct {
 // round 3.
 // Trusted Dealer Mode: see [spec] fig 7: SignRound4
 // DKG Mode: see [spec] fig 8: SignRound4
-func (s *Signer) SignRound4(inBcast map[uint32]*Round3Bcast) (*Round4Bcast, error) {
+func (s *Signer) SignRound4(inBcast map[uint32]*Round3Bcast) (*Round4Bcast, []uint32, error) {
+	var failedCosignerIds []uint32
+	var failedCosignerErrors []error
+
 	var err error
 	if err = s.verifyStateMap(4, inBcast); err != nil {
-		return nil, err
+		return nil, nil, err
 	}
 
 	// 1. Set δ = δ_i
@@ -42,8 +45,14 @@ func (s *Signer) SignRound4(inBcast map[uint32]*Round3Bcast) (*Round4Bcast, erro
 		// 4. Compute δ = δ + δ_j mod q
 		delta, err = core.Add(delta, deltaj.DeltaElement, s.Curve.Params().N)
 		if err != nil {
-			return nil, err
+			failedCosignerIds = append(failedCosignerIds, j)
+			failedCosignerErrors = append(failedCosignerErrors, err)
+			continue
 		}
+	}
+
+	if len(failedCosignerIds) != 0 {
+		return nil, failedCosignerIds, makeCosignerError(failedCosignerIds, failedCosignerErrors)
 	}
 
 	// 6. Return δ
@@ -56,5 +65,5 @@ func (s *Signer) SignRound4(inBcast map[uint32]*Round3Bcast) (*Round4Bcast, erro
 	// 5. Broadcast D_i to all other players
 	return &Round4Bcast{
 		s.state.Di,
-	}, nil
+	}, nil, nil
 }

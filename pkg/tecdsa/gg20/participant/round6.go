@@ -32,33 +32,39 @@ type Round6FullBcast struct {
 // SignRound6Full performs the round 6 signing operation according to
 // Trusted Dealer Mode: see [spec] fig 7: SignRound6
 // DKG Mode: see [spec] fig 8: SignRound6
-func (signer *Signer) SignRound6Full(hash []byte, inBcast map[uint32]*Round5Bcast, inP2P map[uint32]*Round5P2PSend) (*Round6FullBcast, error) {
+func (signer *Signer) SignRound6Full(hash []byte, inBcast map[uint32]*Round5Bcast, inP2P map[uint32]*Round5P2PSend) (*Round6FullBcast, []uint32, error) {
+	var failedCosignerIds []uint32
+	var err error
+
 	if err := signer.verifyStateMap(6, inBcast); err != nil {
-		return nil, err
+		return nil, nil, err
 	}
 
 	if !signer.state.keyGenType.IsTrustedDealer() {
 		if err := signer.verifyStateMap(6, inP2P); err != nil {
-			return nil, err
+			return nil, nil, err
 		}
 	}
 
 	// Steps 1-6
-	err := signer.signRound6Offline(inBcast, inP2P)
+	failedCosignerIds, err = signer.signRound6Offline(inBcast, inP2P)
 	if err != nil {
-		return nil, err
+		return nil, failedCosignerIds, err
 	}
-
+	round6FullBcast, err := signer.signRound6Online(hash)
 	// Steps 7-10
-	return signer.signRound6Online(hash)
+	return round6FullBcast, nil, err
 }
 
 // signRound6Offline performs the round 6 signing operation according to
 // [spec] §6.fig 6
 // Verifies the accumulated computed values before signing the final result
-func (signer *Signer) signRound6Offline(inBcast map[uint32]*Round5Bcast, inP2P map[uint32]*Round5P2PSend) error {
+func (signer *Signer) signRound6Offline(inBcast map[uint32]*Round5Bcast, inP2P map[uint32]*Round5P2PSend) ([]uint32, error) {
 	// FUTURE: determine round state variables to accommodate on/offline modes
 	// before this function is exported
+	var failedCosignerIds []uint32
+	var failedCosignerErrors []error
+
 	var err error
 
 	// 1. Set V = \bar{R}_i
@@ -84,27 +90,38 @@ func (signer *Signer) signRound6Offline(inBcast map[uint32]*Round5Bcast, inP2P m
 		}
 		if signer.state.keyGenType.IsTrustedDealer() {
 			if err := value.Proof.Verify(verifyProofParams); err != nil {
-				return err
+				failedCosignerIds = append(failedCosignerIds, j)
+				failedCosignerErrors = append(failedCosignerErrors, err)
+				continue
 			}
 		} else {
 			if err := inP2P[j].PdlProof.Verify(verifyProofParams); err != nil {
-				return err
+				failedCosignerIds = append(failedCosignerIds, j)
+				failedCosignerErrors = append(failedCosignerErrors, err)
+				continue
 			}
 		}
 
 		// 5. Compute V = V · R_j in G
 		v, err = v.Add(value.Rbar)
 		if err != nil {
-			return err
+			failedCosignerIds = append(failedCosignerIds, j)
+			failedCosignerErrors = append(failedCosignerErrors, err)
+			continue
 		}
 	}
+
+	if len(failedCosignerIds) != 0 {
+		return failedCosignerIds, makeCosignerError(failedCosignerIds, failedCosignerErrors)
+	}
+
 	// 6 If V != g, Abort
 	if !v.IsBasePoint() {
-		return fmt.Errorf("v != g")
+		return nil, fmt.Errorf("v != g")
 	}
 	// 7. return r, k, \sigma,
 	// These are already stored
-	return nil
+	return nil, nil
 }
 
 // SignRound6Online performs the round 6 signing operation according to
@@ -147,10 +164,13 @@ func (signer *Signer) signRound6Online(hash []byte) (*Round6FullBcast, error) {
 
 // SignOutput performs the signature aggregation step in
 // [spec] §5.fig 5
-func (signer *Signer) SignOutput(in map[uint32]*Round6FullBcast) (*curves.EcdsaSignature, error) {
+func (signer *Signer) SignOutput(in map[uint32]*Round6FullBcast) (*curves.EcdsaSignature, []uint32, error) {
 	var err error
+	var failedCosignerIds []uint32
+	var failedCosignerErrors []error
+
 	if err = signer.verifyStateMap(7, in); err != nil {
-		return nil, err
+		return nil, nil, err
 	}
 	// 1. Set s = s_i
 	s := new(big.Int).Set(signer.state.si)
@@ -165,8 +185,14 @@ func (signer *Signer) SignOutput(in map[uint32]*Round6FullBcast) (*curves.EcdsaS
 		// 4. Compute s = s + s_j mod q
 		s, err = core.Add(s, sj.SElement, signer.Curve.Params().N)
 		if err != nil {
-			return nil, err
+			failedCosignerIds = append(failedCosignerIds, j)
+			failedCosignerErrors = append(failedCosignerErrors, err)
+			continue
 		}
+	}
+
+	if len(failedCosignerIds) != 0 {
+		return nil, failedCosignerIds, makeCosignerError(failedCosignerIds, failedCosignerErrors)
 	}
 
 	sOld := new(big.Int).Set(s)
@@ -182,11 +208,11 @@ func (signer *Signer) SignOutput(in map[uint32]*Round6FullBcast) (*curves.EcdsaS
 
 	// 6. If ECDSAVerify(y, \sigma, M) = False, Abort
 	if !signer.state.verify(signer.PublicKey, signer.state.msgHash, sigma) {
-		return nil, fmt.Errorf("signature is not valid")
+		return nil, nil, fmt.Errorf("signature is not valid")
 	}
 
 	// 7. Return \sigma
-	return sigma, nil
+	return sigma, nil, nil
 }
 
 func (signer Signer) normalizeS(s *big.Int) *big.Int {
