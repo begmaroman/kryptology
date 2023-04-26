@@ -10,8 +10,8 @@ import (
 	"encoding/binary"
 	"fmt"
 
-	"gitlab.com/chainfusion/kryptology/pkg/core/curves"
-	v1 "gitlab.com/chainfusion/kryptology/pkg/sharing/v1"
+	"github.com/nerifnetwork/kryptology/pkg/core/curves"
+	v1 "github.com/nerifnetwork/kryptology/pkg/sharing/v1"
 )
 
 // PublicKeyFromBytes converts byte array into PublicKey byte array

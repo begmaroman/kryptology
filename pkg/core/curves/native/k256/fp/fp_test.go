@@ -14,8 +14,8 @@ import (
 
 	"github.com/stretchr/testify/require"
 
-	"gitlab.com/chainfusion/kryptology/internal"
-	"gitlab.com/chainfusion/kryptology/pkg/core/curves/native"
+	"github.com/nerifnetwork/kryptology/internal"
+	"github.com/nerifnetwork/kryptology/pkg/core/curves/native"
 )
 
 func TestFpSetOne(t *testing.T) {

@@ -6,8 +6,8 @@ import (
 
 	"github.com/pkg/errors"
 
-	"gitlab.com/chainfusion/kryptology/pkg/core/curves"
-	"gitlab.com/chainfusion/kryptology/pkg/zkp/schnorr"
+	"github.com/nerifnetwork/kryptology/pkg/core/curves"
+	"github.com/nerifnetwork/kryptology/pkg/zkp/schnorr"
 )
 
 // ReceiverStreamOTRun exposes the entire seed OT process for the receiver in "stream mode" to the user.

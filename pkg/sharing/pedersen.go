@@ -10,7 +10,7 @@ import (
 	"fmt"
 	"io"
 
-	"gitlab.com/chainfusion/kryptology/pkg/core/curves"
+	"github.com/nerifnetwork/kryptology/pkg/core/curves"
 )
 
 // Pedersen Verifiable Secret Sharing Scheme

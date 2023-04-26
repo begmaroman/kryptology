@@ -6,8 +6,8 @@ import (
 
 	"github.com/pkg/errors"
 
-	"gitlab.com/chainfusion/kryptology/pkg/core/curves"
-	"gitlab.com/chainfusion/kryptology/pkg/ot/base/simplest"
+	"github.com/nerifnetwork/kryptology/pkg/core/curves"
+	"github.com/nerifnetwork/kryptology/pkg/ot/base/simplest"
 )
 
 // ReceiverStreamCOtRun exposes an end-to-end "streaming" version of the cOT process for the receiver.

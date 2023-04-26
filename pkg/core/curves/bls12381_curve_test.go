@@ -13,7 +13,7 @@ import (
 
 	"github.com/stretchr/testify/require"
 
-	"gitlab.com/chainfusion/kryptology/pkg/core/curves/native/bls12381"
+	"github.com/nerifnetwork/kryptology/pkg/core/curves/native/bls12381"
 )
 
 func TestScalarBls12381G1Random(t *testing.T) {

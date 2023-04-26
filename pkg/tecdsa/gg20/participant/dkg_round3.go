@@ -11,11 +11,11 @@ import (
 	"fmt"
 	"math/big"
 
-	"gitlab.com/chainfusion/kryptology/internal"
-	"gitlab.com/chainfusion/kryptology/pkg/core"
-	"gitlab.com/chainfusion/kryptology/pkg/core/curves"
-	"gitlab.com/chainfusion/kryptology/pkg/paillier"
-	v1 "gitlab.com/chainfusion/kryptology/pkg/sharing/v1"
+	"github.com/nerifnetwork/kryptology/internal"
+	"github.com/nerifnetwork/kryptology/pkg/core"
+	"github.com/nerifnetwork/kryptology/pkg/core/curves"
+	"github.com/nerifnetwork/kryptology/pkg/paillier"
+	v1 "github.com/nerifnetwork/kryptology/pkg/sharing/v1"
 )
 
 type DkgRound3Bcast struct {

@@ -21,7 +21,7 @@ import (
 
 	"github.com/stretchr/testify/require"
 
-	"gitlab.com/chainfusion/kryptology/pkg/core/curves"
+	"github.com/nerifnetwork/kryptology/pkg/core/curves"
 )
 
 // sign.input.gz is a selection of test cases from

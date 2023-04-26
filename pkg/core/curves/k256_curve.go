@@ -15,11 +15,11 @@ import (
 
 	"github.com/btcsuite/btcd/btcec"
 
-	"gitlab.com/chainfusion/kryptology/internal"
-	"gitlab.com/chainfusion/kryptology/pkg/core/curves/native"
-	secp256k1 "gitlab.com/chainfusion/kryptology/pkg/core/curves/native/k256"
-	"gitlab.com/chainfusion/kryptology/pkg/core/curves/native/k256/fp"
-	"gitlab.com/chainfusion/kryptology/pkg/core/curves/native/k256/fq"
+	"github.com/nerifnetwork/kryptology/internal"
+	"github.com/nerifnetwork/kryptology/pkg/core/curves/native"
+	secp256k1 "github.com/nerifnetwork/kryptology/pkg/core/curves/native/k256"
+	"github.com/nerifnetwork/kryptology/pkg/core/curves/native/k256/fp"
+	"github.com/nerifnetwork/kryptology/pkg/core/curves/native/k256/fq"
 )
 
 var oldK256Initonce sync.Once

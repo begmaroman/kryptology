@@ -9,11 +9,11 @@ package participant
 import (
 	"fmt"
 
-	"gitlab.com/chainfusion/kryptology/internal"
-	"gitlab.com/chainfusion/kryptology/pkg/core/curves"
-	"gitlab.com/chainfusion/kryptology/pkg/paillier"
-	v1 "gitlab.com/chainfusion/kryptology/pkg/sharing/v1"
-	"gitlab.com/chainfusion/kryptology/pkg/tecdsa/gg20/dealer"
+	"github.com/nerifnetwork/kryptology/internal"
+	"github.com/nerifnetwork/kryptology/pkg/core/curves"
+	"github.com/nerifnetwork/kryptology/pkg/paillier"
+	v1 "github.com/nerifnetwork/kryptology/pkg/sharing/v1"
+	"github.com/nerifnetwork/kryptology/pkg/tecdsa/gg20/dealer"
 )
 
 // DkgResult is all the data generated from the DKG

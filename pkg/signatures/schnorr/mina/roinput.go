@@ -7,8 +7,8 @@
 package mina
 
 import (
-	"gitlab.com/chainfusion/kryptology/pkg/core/curves/native/pasta/fp"
-	"gitlab.com/chainfusion/kryptology/pkg/core/curves/native/pasta/fq"
+	"github.com/nerifnetwork/kryptology/pkg/core/curves/native/pasta/fp"
+	"github.com/nerifnetwork/kryptology/pkg/core/curves/native/pasta/fq"
 )
 
 // Handles the packing of bits and fields according to Mina spec

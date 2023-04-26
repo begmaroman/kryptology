@@ -5,9 +5,9 @@
 //
 
 // Package proof contains the following implementations
-//  - proof of discrete logarithm (PDL) subprotocol from [spec] §8
-//  - multiplicative-to-additive (MtA) subprotocol from [spec] §7
-//  - proof of knowledge of a discrete log modulo a composite (fig 16), i.e., ProveCompositeDL and VerifyCompositeDL
+//   - proof of discrete logarithm (PDL) subprotocol from [spec] §8
+//   - multiplicative-to-additive (MtA) subprotocol from [spec] §7
+//   - proof of knowledge of a discrete log modulo a composite (fig 16), i.e., ProveCompositeDL and VerifyCompositeDL
 package proof
 
 import (
@@ -15,10 +15,10 @@ import (
 	"fmt"
 	"math/big"
 
-	crypto "gitlab.com/chainfusion/kryptology/pkg/core"
-	"gitlab.com/chainfusion/kryptology/pkg/core/curves"
-	paillier "gitlab.com/chainfusion/kryptology/pkg/paillier"
-	"gitlab.com/chainfusion/kryptology/pkg/tecdsa/gg20/dealer"
+	crypto "github.com/nerifnetwork/kryptology/pkg/core"
+	"github.com/nerifnetwork/kryptology/pkg/core/curves"
+	paillier "github.com/nerifnetwork/kryptology/pkg/paillier"
+	"github.com/nerifnetwork/kryptology/pkg/tecdsa/gg20/dealer"
 )
 
 // PdlProofParams encapsulates the parameters for ProvePDL in

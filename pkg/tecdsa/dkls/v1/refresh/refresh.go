@@ -6,11 +6,11 @@
 
 // This file implements the key refresh protocol of [DKLs18](https://eprint.iacr.org/2018/499.pdf).
 // The key refresh protocol is defined as follows:
-// 1. Key Share:
-//   1.1. alice generates k_A <-- F_q; writes it to merlin transcript. sends it to bob.
-//   1.2. bob receives k_A and writes it to merlin transcript. generates k_B <-- F_q and writes it to merlin transcript. reads k out of merlin transcript. overwrites sk_B *= k. sends k_B to Alice.
-//   1.3. alice writes k_B to merlin transcript. reads k from it. overwrites sk_A *= k^{-1}.
-// 2. OT: Redo OT (as it is done in the DKG)
+//  1. Key Share:
+//     1.1. alice generates k_A <-- F_q; writes it to merlin transcript. sends it to bob.
+//     1.2. bob receives k_A and writes it to merlin transcript. generates k_B <-- F_q and writes it to merlin transcript. reads k out of merlin transcript. overwrites sk_B *= k. sends k_B to Alice.
+//     1.3. alice writes k_B to merlin transcript. reads k from it. overwrites sk_A *= k^{-1}.
+//  2. OT: Redo OT (as it is done in the DKG)
 package refresh
 
 import (
@@ -19,11 +19,11 @@ import (
 	"github.com/gtank/merlin"
 	"github.com/pkg/errors"
 
-	"gitlab.com/chainfusion/kryptology/pkg/core/curves"
-	"gitlab.com/chainfusion/kryptology/pkg/ot/base/simplest"
-	"gitlab.com/chainfusion/kryptology/pkg/ot/extension/kos"
-	"gitlab.com/chainfusion/kryptology/pkg/tecdsa/dkls/v1/dkg"
-	"gitlab.com/chainfusion/kryptology/pkg/zkp/schnorr"
+	"github.com/nerifnetwork/kryptology/pkg/core/curves"
+	"github.com/nerifnetwork/kryptology/pkg/ot/base/simplest"
+	"github.com/nerifnetwork/kryptology/pkg/ot/extension/kos"
+	"github.com/nerifnetwork/kryptology/pkg/tecdsa/dkls/v1/dkg"
+	"github.com/nerifnetwork/kryptology/pkg/zkp/schnorr"
 )
 
 // Alice struct encoding Alice's state during one execution of the overall signing algorithm.

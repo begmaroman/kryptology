@@ -12,8 +12,8 @@ import (
 	"fmt"
 	"math/big"
 
-	"gitlab.com/chainfusion/kryptology/internal"
-	"gitlab.com/chainfusion/kryptology/pkg/core/curves"
+	"github.com/nerifnetwork/kryptology/internal"
+	"github.com/nerifnetwork/kryptology/pkg/core/curves"
 )
 
 // Pedersen Verifiable Secret Sharing Scheme

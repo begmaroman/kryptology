@@ -15,9 +15,9 @@ import (
 
 	"github.com/pkg/errors"
 
-	"gitlab.com/chainfusion/kryptology/internal"
-	"gitlab.com/chainfusion/kryptology/pkg/core/curves"
-	"gitlab.com/chainfusion/kryptology/pkg/sharing"
+	"github.com/nerifnetwork/kryptology/internal"
+	"github.com/nerifnetwork/kryptology/pkg/core/curves"
+	"github.com/nerifnetwork/kryptology/pkg/sharing"
 )
 
 // Round1Bcast are values that are broadcast to all other participants

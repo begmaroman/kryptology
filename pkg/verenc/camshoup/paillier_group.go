@@ -16,9 +16,9 @@ import (
 
 	"git.sr.ht/~sircmpwn/go-bare"
 
-	"gitlab.com/chainfusion/kryptology/internal"
-	crypto "gitlab.com/chainfusion/kryptology/pkg/core"
-	"gitlab.com/chainfusion/kryptology/pkg/paillier"
+	"github.com/nerifnetwork/kryptology/internal"
+	crypto "github.com/nerifnetwork/kryptology/pkg/core"
+	"github.com/nerifnetwork/kryptology/pkg/paillier"
 )
 
 // PaillierGroup holds public values for Verifiable Encryption

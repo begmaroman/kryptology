@@ -7,7 +7,7 @@
 package common
 
 import (
-	"gitlab.com/chainfusion/kryptology/pkg/core/curves"
+	"github.com/nerifnetwork/kryptology/pkg/core/curves"
 )
 
 // Commitment represents a point Pedersen commitment of one or more

@@ -3,9 +3,9 @@ package p256
 import (
 	"sync"
 
-	"gitlab.com/chainfusion/kryptology/internal"
-	"gitlab.com/chainfusion/kryptology/pkg/core/curves/native"
-	"gitlab.com/chainfusion/kryptology/pkg/core/curves/native/p256/fp"
+	"github.com/nerifnetwork/kryptology/internal"
+	"github.com/nerifnetwork/kryptology/pkg/core/curves/native"
+	"github.com/nerifnetwork/kryptology/pkg/core/curves/native/p256/fp"
 )
 
 var (

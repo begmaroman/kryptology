@@ -15,7 +15,7 @@ import (
 	"io/ioutil"
 	"os"
 
-	bls "gitlab.com/chainfusion/kryptology/pkg/signatures/bls/bls_sig"
+	bls "github.com/nerifnetwork/kryptology/pkg/signatures/bls/bls_sig"
 )
 
 type signOp struct {

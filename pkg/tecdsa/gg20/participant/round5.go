@@ -9,9 +9,9 @@ package participant
 import (
 	"fmt"
 
-	"gitlab.com/chainfusion/kryptology/pkg/core"
-	"gitlab.com/chainfusion/kryptology/pkg/core/curves"
-	"gitlab.com/chainfusion/kryptology/pkg/tecdsa/gg20/proof"
+	"github.com/nerifnetwork/kryptology/pkg/core"
+	"github.com/nerifnetwork/kryptology/pkg/core/curves"
+	"github.com/nerifnetwork/kryptology/pkg/tecdsa/gg20/proof"
 )
 
 // Round5Bcast are the values to be broadcast to the other players at the conclusion

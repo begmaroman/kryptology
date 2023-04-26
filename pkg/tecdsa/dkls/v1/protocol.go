@@ -3,7 +3,7 @@
 package v1
 
 import (
-	"gitlab.com/chainfusion/kryptology/pkg/core/protocol"
+	"github.com/nerifnetwork/kryptology/pkg/core/protocol"
 )
 
 // Basic protocol interface implementation that calls the next step func in a pre-defined list

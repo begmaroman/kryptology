@@ -7,8 +7,8 @@ import (
 
 	"github.com/pkg/errors"
 
-	"gitlab.com/chainfusion/kryptology/internal"
-	"gitlab.com/chainfusion/kryptology/pkg/core/curves/native"
+	"github.com/nerifnetwork/kryptology/internal"
+	"github.com/nerifnetwork/kryptology/pkg/core/curves/native"
 )
 
 var (

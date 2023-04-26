@@ -22,7 +22,7 @@ import (
 	"io"
 	"strconv"
 
-	"gitlab.com/chainfusion/kryptology/pkg/core/curves"
+	"github.com/nerifnetwork/kryptology/pkg/core/curves"
 )
 
 const (

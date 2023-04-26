@@ -12,9 +12,9 @@ import (
 	"fmt"
 	"math/big"
 
-	"gitlab.com/chainfusion/kryptology/internal"
-	crypto "gitlab.com/chainfusion/kryptology/pkg/core"
-	"gitlab.com/chainfusion/kryptology/pkg/core/curves"
+	"github.com/nerifnetwork/kryptology/internal"
+	crypto "github.com/nerifnetwork/kryptology/pkg/core"
+	"github.com/nerifnetwork/kryptology/pkg/core/curves"
 )
 
 // [spec] 10.2 and ProvePSF, VerifyPSF fig.15

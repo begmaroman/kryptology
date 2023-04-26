@@ -16,7 +16,7 @@ import (
 
 	"git.sr.ht/~sircmpwn/go-bare"
 
-	"gitlab.com/chainfusion/kryptology/pkg/core/curves"
+	"github.com/nerifnetwork/kryptology/pkg/core/curves"
 )
 
 type structMarshal struct {

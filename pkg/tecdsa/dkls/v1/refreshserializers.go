@@ -6,11 +6,11 @@ import (
 
 	"github.com/pkg/errors"
 
-	"gitlab.com/chainfusion/kryptology/pkg/core/curves"
-	"gitlab.com/chainfusion/kryptology/pkg/core/protocol"
-	"gitlab.com/chainfusion/kryptology/pkg/ot/base/simplest"
-	"gitlab.com/chainfusion/kryptology/pkg/tecdsa/dkls/v1/dkg"
-	"gitlab.com/chainfusion/kryptology/pkg/tecdsa/dkls/v1/refresh"
+	"github.com/nerifnetwork/kryptology/pkg/core/curves"
+	"github.com/nerifnetwork/kryptology/pkg/core/protocol"
+	"github.com/nerifnetwork/kryptology/pkg/ot/base/simplest"
+	"github.com/nerifnetwork/kryptology/pkg/tecdsa/dkls/v1/dkg"
+	"github.com/nerifnetwork/kryptology/pkg/tecdsa/dkls/v1/refresh"
 )
 
 func newRefreshProtocolMessage(payload []byte, round string, version uint) *protocol.Message {

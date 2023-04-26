@@ -9,7 +9,7 @@ package participant
 import (
 	"math/big"
 
-	"gitlab.com/chainfusion/kryptology/pkg/core"
+	"github.com/nerifnetwork/kryptology/pkg/core"
 )
 
 // Round4Bcast are the values to be broadcast to the other players at the conclusion

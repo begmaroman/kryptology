@@ -7,7 +7,7 @@
 package common
 
 import (
-	"gitlab.com/chainfusion/kryptology/pkg/core/curves"
+	"github.com/nerifnetwork/kryptology/pkg/core/curves"
 )
 
 // SignatureBlinding is a value used for computing blind signatures

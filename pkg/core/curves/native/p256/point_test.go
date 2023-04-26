@@ -6,10 +6,10 @@ import (
 
 	"github.com/stretchr/testify/require"
 
-	"gitlab.com/chainfusion/kryptology/pkg/core/curves"
-	"gitlab.com/chainfusion/kryptology/pkg/core/curves/native"
-	"gitlab.com/chainfusion/kryptology/pkg/core/curves/native/p256"
-	"gitlab.com/chainfusion/kryptology/pkg/core/curves/native/p256/fp"
+	"github.com/nerifnetwork/kryptology/pkg/core/curves"
+	"github.com/nerifnetwork/kryptology/pkg/core/curves/native"
+	"github.com/nerifnetwork/kryptology/pkg/core/curves/native/p256"
+	"github.com/nerifnetwork/kryptology/pkg/core/curves/native/p256/fp"
 )
 
 func TestP256PointArithmetic_Double(t *testing.T) {

@@ -13,10 +13,10 @@ import (
 
 	"filippo.io/edwards25519"
 
-	"gitlab.com/chainfusion/kryptology/pkg/core/curves"
-	dkg "gitlab.com/chainfusion/kryptology/pkg/dkg/frost"
-	"gitlab.com/chainfusion/kryptology/pkg/sharing"
-	"gitlab.com/chainfusion/kryptology/pkg/ted25519/frost"
+	"github.com/nerifnetwork/kryptology/pkg/core/curves"
+	dkg "github.com/nerifnetwork/kryptology/pkg/dkg/frost"
+	"github.com/nerifnetwork/kryptology/pkg/sharing"
+	"github.com/nerifnetwork/kryptology/pkg/ted25519/frost"
 )
 
 const LIMIT = 4

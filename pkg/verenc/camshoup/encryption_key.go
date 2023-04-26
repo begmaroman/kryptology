@@ -12,7 +12,7 @@ import (
 
 	"git.sr.ht/~sircmpwn/go-bare"
 
-	mod "gitlab.com/chainfusion/kryptology/pkg/core"
+	mod "github.com/nerifnetwork/kryptology/pkg/core"
 )
 
 type encryptionKeyMarshal struct {

@@ -15,9 +15,9 @@ import (
 	"github.com/btcsuite/btcd/btcec"
 	"github.com/stretchr/testify/require"
 
-	"gitlab.com/chainfusion/kryptology/internal"
-	crypto "gitlab.com/chainfusion/kryptology/pkg/core"
-	curves2 "gitlab.com/chainfusion/kryptology/pkg/core/curves"
+	"github.com/nerifnetwork/kryptology/internal"
+	crypto "github.com/nerifnetwork/kryptology/pkg/core"
+	curves2 "github.com/nerifnetwork/kryptology/pkg/core/curves"
 )
 
 var testPrimes = []*big.Int{

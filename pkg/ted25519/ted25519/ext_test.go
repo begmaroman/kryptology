@@ -14,8 +14,8 @@ import (
 
 	"github.com/stretchr/testify/require"
 
-	"gitlab.com/chainfusion/kryptology/pkg/core/curves"
-	v1 "gitlab.com/chainfusion/kryptology/pkg/sharing/v1"
+	"github.com/nerifnetwork/kryptology/pkg/core/curves"
+	v1 "github.com/nerifnetwork/kryptology/pkg/sharing/v1"
 )
 
 const expectedSeedHex = "9d61b19deffd5a60ba844af492ec2cc44449c5697b326919703bac031cae7f60"

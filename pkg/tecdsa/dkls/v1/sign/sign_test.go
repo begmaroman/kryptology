@@ -13,11 +13,11 @@ import (
 	"github.com/stretchr/testify/require"
 	"golang.org/x/crypto/sha3"
 
-	"gitlab.com/chainfusion/kryptology/pkg/core/curves"
-	"gitlab.com/chainfusion/kryptology/pkg/ot/base/simplest"
-	"gitlab.com/chainfusion/kryptology/pkg/ot/extension/kos"
-	"gitlab.com/chainfusion/kryptology/pkg/ot/ottest"
-	"gitlab.com/chainfusion/kryptology/pkg/tecdsa/dkls/v1/dkg"
+	"github.com/nerifnetwork/kryptology/pkg/core/curves"
+	"github.com/nerifnetwork/kryptology/pkg/ot/base/simplest"
+	"github.com/nerifnetwork/kryptology/pkg/ot/extension/kos"
+	"github.com/nerifnetwork/kryptology/pkg/ot/ottest"
+	"github.com/nerifnetwork/kryptology/pkg/tecdsa/dkls/v1/dkg"
 )
 
 func TestSign(t *testing.T) {

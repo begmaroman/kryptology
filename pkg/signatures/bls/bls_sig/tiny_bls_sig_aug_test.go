@@ -9,7 +9,7 @@ package bls_sig
 import (
 	"testing"
 
-	"gitlab.com/chainfusion/kryptology/pkg/core/curves/native/bls12381"
+	"github.com/nerifnetwork/kryptology/pkg/core/curves/native/bls12381"
 )
 
 func generateAugSignatureG1(sk *SecretKey, msg []byte, t *testing.T) *SignatureVt {

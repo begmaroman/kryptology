@@ -5,7 +5,7 @@ import (
 	"math/big"
 	"sync"
 
-	"gitlab.com/chainfusion/kryptology/pkg/core/curves/native"
+	"github.com/nerifnetwork/kryptology/pkg/core/curves/native"
 )
 
 type Fq [native.FieldLimbs]uint64

@@ -18,7 +18,7 @@ import (
 	"github.com/btcsuite/btcd/btcec"
 	"golang.org/x/crypto/hkdf"
 
-	"gitlab.com/chainfusion/kryptology/internal"
+	"github.com/nerifnetwork/kryptology/internal"
 )
 
 type HashField struct {

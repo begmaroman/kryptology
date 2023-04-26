@@ -11,7 +11,7 @@ import (
 	"fmt"
 	"math/big"
 
-	"gitlab.com/chainfusion/kryptology/internal"
+	"github.com/nerifnetwork/kryptology/internal"
 )
 
 type Fp fiat_pasta_fp_montgomery_domain_field_element

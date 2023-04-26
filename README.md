@@ -4,28 +4,28 @@ Coinbase's advanced cryptography library
 ## Quickstart
 Use the latest version of this library:
 ```$xslt
-go get gitlab.com/chainfusion/kryptology
+go get github.com/nerifnetwork/kryptology
 ```
 
 Pin a specific release of this library:
 ```$xslt
-go get gitlab.com/chainfusion/kryptology@v1.6.0
+go get github.com/nerifnetwork/kryptology@v1.6.0
 ```
 
 ## Documentation
 
-Public documentations can be found at https://pkg.go.dev/gitlab.com/chainfusion/kryptology
+Public documentations can be found at https://pkg.go.dev/github.com/nerifnetwork/kryptology
 
 To access the documentation of the local version, run `godoc -http=:6060` and open
 the following url in your browser.
 
-http://localhost:6060/pkg/gitlab.com/chainfusion/kryptology/
+http://localhost:6060/pkg/github.com/nerifnetwork/kryptology/
 
 ## Developer Setup
 **Prerequisites**: `golang 1.17`, `make`
 
 ```$xslt
-git clone git@gitlab.com/chainfusion/kryptology.git && make 
+git clone git@github.com/nerifnetwork/kryptology.git && make 
 ``` 
 
 ## Components

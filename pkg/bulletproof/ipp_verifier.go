@@ -4,7 +4,7 @@ import (
 	"github.com/gtank/merlin"
 	"github.com/pkg/errors"
 
-	"gitlab.com/chainfusion/kryptology/pkg/core/curves"
+	"github.com/nerifnetwork/kryptology/pkg/core/curves"
 )
 
 // InnerProductVerifier is the struct used to verify inner product proofs
@@ -160,7 +160,7 @@ func getxs(transcript *merlin.Transcript, Ls, Rs []curves.Point, curve curves.Cu
 
 // gets calculates the vector s of values used for verification
 // See the second expression of section 3.1 on pg15
-//nolint
+// nolint
 func (verifier *InnerProductVerifier) gets(xs []curves.Scalar, n int) ([]curves.Scalar, error) {
 	ss := make([]curves.Scalar, n)
 	for i := 0; i < n; i++ {

@@ -16,9 +16,9 @@ import (
 
 	"github.com/btcsuite/btcd/btcec"
 
-	"gitlab.com/chainfusion/kryptology/pkg/core/curves"
-	dkg "gitlab.com/chainfusion/kryptology/pkg/dkg/gennaro"
-	v1 "gitlab.com/chainfusion/kryptology/pkg/sharing/v1"
+	"github.com/nerifnetwork/kryptology/pkg/core/curves"
+	dkg "github.com/nerifnetwork/kryptology/pkg/dkg/gennaro"
+	v1 "github.com/nerifnetwork/kryptology/pkg/sharing/v1"
 )
 
 const LIMIT = 4

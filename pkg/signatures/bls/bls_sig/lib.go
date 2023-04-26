@@ -15,11 +15,11 @@ import (
 
 	"golang.org/x/crypto/hkdf"
 
-	"gitlab.com/chainfusion/kryptology/internal"
-	"gitlab.com/chainfusion/kryptology/pkg/core/curves"
-	"gitlab.com/chainfusion/kryptology/pkg/core/curves/native"
-	"gitlab.com/chainfusion/kryptology/pkg/core/curves/native/bls12381"
-	"gitlab.com/chainfusion/kryptology/pkg/sharing"
+	"github.com/nerifnetwork/kryptology/internal"
+	"github.com/nerifnetwork/kryptology/pkg/core/curves"
+	"github.com/nerifnetwork/kryptology/pkg/core/curves/native"
+	"github.com/nerifnetwork/kryptology/pkg/core/curves/native/bls12381"
+	"github.com/nerifnetwork/kryptology/pkg/sharing"
 )
 
 // Secret key in Fr

@@ -9,8 +9,8 @@ package gennaro
 import (
 	"fmt"
 
-	"gitlab.com/chainfusion/kryptology/internal"
-	v1 "gitlab.com/chainfusion/kryptology/pkg/sharing/v1"
+	"github.com/nerifnetwork/kryptology/internal"
+	v1 "github.com/nerifnetwork/kryptology/pkg/sharing/v1"
 )
 
 // Round3Bcast contains values that will be broadcast to other participants.

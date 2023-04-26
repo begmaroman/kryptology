@@ -13,7 +13,7 @@ import (
 
 	"github.com/btcsuite/btcutil/base58"
 
-	"gitlab.com/chainfusion/kryptology/pkg/core/curves"
+	"github.com/nerifnetwork/kryptology/pkg/core/curves"
 )
 
 // Transaction is a Mina transaction for payments or delegations

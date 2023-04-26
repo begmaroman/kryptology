@@ -9,7 +9,7 @@ package bbs
 import (
 	"errors"
 
-	"gitlab.com/chainfusion/kryptology/pkg/core/curves"
+	"github.com/nerifnetwork/kryptology/pkg/core/curves"
 )
 
 // MessageGenerators are used to sign a vector of commitments for

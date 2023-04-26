@@ -9,7 +9,7 @@ package common
 import (
 	"io"
 
-	"gitlab.com/chainfusion/kryptology/pkg/core/curves"
+	"github.com/nerifnetwork/kryptology/pkg/core/curves"
 )
 
 // ProofMessage classifies how a message is presented in a proof

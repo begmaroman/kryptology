@@ -20,11 +20,11 @@ import (
 	"github.com/stretchr/testify/require"
 	"golang.org/x/crypto/sha3"
 
-	"gitlab.com/chainfusion/kryptology/pkg/core/curves"
-	"gitlab.com/chainfusion/kryptology/pkg/core/protocol"
-	"gitlab.com/chainfusion/kryptology/pkg/ot/extension/kos"
-	v0 "gitlab.com/chainfusion/kryptology/pkg/tecdsa/dkls/v0"
-	"gitlab.com/chainfusion/kryptology/pkg/tecdsa/dkls/v1/dkg"
+	"github.com/nerifnetwork/kryptology/pkg/core/curves"
+	"github.com/nerifnetwork/kryptology/pkg/core/protocol"
+	"github.com/nerifnetwork/kryptology/pkg/ot/extension/kos"
+	v0 "github.com/nerifnetwork/kryptology/pkg/tecdsa/dkls/v0"
+	"github.com/nerifnetwork/kryptology/pkg/tecdsa/dkls/v1/dkg"
 )
 
 // For DKG bob starts first. For refresh and sign, Alice starts first.

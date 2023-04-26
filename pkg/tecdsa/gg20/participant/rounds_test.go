@@ -16,12 +16,12 @@ import (
 	"github.com/btcsuite/btcd/btcec"
 	"github.com/stretchr/testify/require"
 
-	tt "gitlab.com/chainfusion/kryptology/internal"
-	"gitlab.com/chainfusion/kryptology/pkg/core"
-	"gitlab.com/chainfusion/kryptology/pkg/core/curves"
-	"gitlab.com/chainfusion/kryptology/pkg/paillier"
-	"gitlab.com/chainfusion/kryptology/pkg/tecdsa/gg20/dealer"
-	"gitlab.com/chainfusion/kryptology/pkg/tecdsa/gg20/proof"
+	tt "github.com/nerifnetwork/kryptology/internal"
+	"github.com/nerifnetwork/kryptology/pkg/core"
+	"github.com/nerifnetwork/kryptology/pkg/core/curves"
+	"github.com/nerifnetwork/kryptology/pkg/paillier"
+	"github.com/nerifnetwork/kryptology/pkg/tecdsa/gg20/dealer"
+	"github.com/nerifnetwork/kryptology/pkg/tecdsa/gg20/proof"
 )
 
 var (

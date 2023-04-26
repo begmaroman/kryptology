@@ -10,9 +10,9 @@ import (
 	"fmt"
 	"math/big"
 
-	"gitlab.com/chainfusion/kryptology/internal"
-	"gitlab.com/chainfusion/kryptology/pkg/core"
-	v1 "gitlab.com/chainfusion/kryptology/pkg/sharing/v1"
+	"github.com/nerifnetwork/kryptology/internal"
+	"github.com/nerifnetwork/kryptology/pkg/core"
+	v1 "github.com/nerifnetwork/kryptology/pkg/sharing/v1"
 )
 
 // Round1Bcast are the values that are broadcast to all other participants

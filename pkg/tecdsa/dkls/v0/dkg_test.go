@@ -13,7 +13,7 @@ import (
 	"github.com/btcsuite/btcd/btcec"
 	"github.com/stretchr/testify/require"
 
-	"gitlab.com/chainfusion/kryptology/pkg/core/curves"
+	"github.com/nerifnetwork/kryptology/pkg/core/curves"
 )
 
 func testDKG(alice *Alice, bob *Bob, alicePipe *pipeWrapper, bobPipe *pipeWrapper) error {

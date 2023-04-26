@@ -7,7 +7,7 @@
 package mina
 
 import (
-	"gitlab.com/chainfusion/kryptology/pkg/core/curves/native/pasta/fp"
+	"github.com/nerifnetwork/kryptology/pkg/core/curves/native/pasta/fp"
 )
 
 // SBox is the type of exponentiation to perform

@@ -12,8 +12,8 @@ import (
 
 	"github.com/gtank/merlin"
 
-	"gitlab.com/chainfusion/kryptology/pkg/core/curves"
-	"gitlab.com/chainfusion/kryptology/pkg/signatures/common"
+	"github.com/nerifnetwork/kryptology/pkg/core/curves"
+	"github.com/nerifnetwork/kryptology/pkg/signatures/common"
 )
 
 // PokSignatureProof is the actual proof sent from a prover

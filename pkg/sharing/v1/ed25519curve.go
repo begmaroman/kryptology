@@ -13,8 +13,8 @@ import (
 
 	ed "filippo.io/edwards25519"
 
-	"gitlab.com/chainfusion/kryptology/internal"
-	"gitlab.com/chainfusion/kryptology/pkg/core/curves"
+	"github.com/nerifnetwork/kryptology/internal"
+	"github.com/nerifnetwork/kryptology/pkg/core/curves"
 )
 
 var ed25519Initonce sync.Once
